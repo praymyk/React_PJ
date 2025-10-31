@@ -1,0 +1,20 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3rem;
+  background-color: #f0f0f0;
+  color: #333;
+  font-size: 0.875rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+
+  /* Dark mode override */
+  :global(html.dark) & {
+    background-color: #111827;
+    color: #f9fafb;
+  }
+}

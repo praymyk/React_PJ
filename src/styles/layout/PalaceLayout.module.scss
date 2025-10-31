@@ -1,0 +1,37 @@
+.palace-layout {
+  display: flex;
+  height: 100vh;
+  background-color: #f9fafb;
+  color: #111827;
+
+  :global(html.dark) & {
+    background-color: #1f2937;
+    color: #f9fafb;
+  }
+}
+
+.sidebar {
+  width: 220px;
+  background-color: #e5e7eb;
+  padding: 1rem;
+
+  :global(html.dark) & {
+    background-color: #374151;
+  }
+}
+
+.main-content {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.mini-sidebar {
+  width: 80px;
+  background-color: #e5e7eb;
+  padding: 1rem;
+
+  :global(html.dark) & {
+    background-color: #374151;
+  }
+}
