@@ -9,7 +9,7 @@ export default function Home() {
     return (
         <div className={styles.homeContainer}>
             <h1>REACT</h1>
-            <p>서비스에 오신 것을 환영합니다.</p>
+            <p>REACT 기반 서비스 폼 제작 중.</p>
             <button onClick={() => router.push('/login')}>
                 로그인 화면으로 이동
             </button>

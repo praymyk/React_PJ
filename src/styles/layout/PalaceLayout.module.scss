@@ -1,37 +1,79 @@
-.palace-layout {
+.palaceLayout {
   display: flex;
-  height: 100vh;
-  background-color: #f9fafb;
-  color: #111827;
-
-  :global(html.dark) & {
-    background-color: #1f2937;
-    color: #f9fafb;
-  }
-}
-
-.sidebar {
-  width: 220px;
-  background-color: #e5e7eb;
-  padding: 1rem;
-
-  :global(html.dark) & {
-    background-color: #374151;
-  }
-}
-
-.main-content {
   flex: 1;
-  padding: 1.5rem;
-  overflow-y: auto;
+
+  /* 레이아웃 전체 배경은 body 톤 */
+  background-color: var(--color-bg-body);
+  color: var(--color-text-main);
+
+  transition:
+          background-color 280ms ease-in-out,
+          color 280ms ease-in-out
 }
 
-.mini-sidebar {
-  width: 80px;
-  background-color: #e5e7eb;
-  padding: 1rem;
+.mainContent {
+  display: flex;
+  flex: 1;
+}
 
-  :global(html.dark) & {
-    background-color: #374151;
-  }
+/* 메인 컨텐츠 영역 그리드 */
+.contentGrid {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 0.3rem;
+  padding: 0.3rem;
+  box-sizing: border-box;
+}
+
+/* 카드 박스 */
+.contentBox {
+  flex: 1 1 30%;
+  min-width: 220px;
+
+  /* 카드 배경은 surface 톤 */
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-main);
+
+  padding: 1rem;
+  border-radius: 0.75rem;
+  box-sizing: border-box;
+
+  /* 라이트에선 살짝, 다크에선 더 강하게 보이는 공통 그림자/보더 */
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: var(--shadow-elevated);
+
+  transition:
+          background-color 280ms ease-in-out,
+          color 280ms ease-in-out,
+          border-color 280ms ease-in-out,
+          box-shadow 280ms ease-in-out;
+}
+
+/* 좌측 메뉴 영역 */
+.menu {
+  background-color: transparent;
+  color: var(--color-text-main);
+
+  transition:
+          background-color 280ms ease-in-out,
+          color 280ms ease-in-out;
+}
+
+/* 우측 플로팅 사이드바 (리본 같은 영역 가정) */
+.sidebar {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  height: auto;
+  z-index: 40;
+
+  /* 배경은 약간의 반투명 + blur 주고 싶다면 여기서 */
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+
 }

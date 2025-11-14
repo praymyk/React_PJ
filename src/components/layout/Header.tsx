@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import styles from '@/styles/layout/Header.module.scss';
+import styles from '@styles/layout/Header.module.scss';
 
 export default function Header() {
     const [darkMode, setDarkMode] = useState(false);
@@ -12,9 +12,9 @@ export default function Header() {
 
     return (
         <header className={styles.header}>
-            <span>냠냠 헤더</span>
+            <span>Header NYAM NYAM</span>
             <button onClick={() => setDarkMode(prev => !prev)} style={{ marginLeft: 'auto' }}>
-                Toggle Dark Mode
+                다크모드
             </button>
         </header>
     );

@@ -4,18 +4,16 @@
   left: 0;
   right: 0;
   height: 2rem;
-  background-color: #f0f0f0;
-  color: #333;
+  background-color: var(--color-bg-footer);
+  color: var(--color-text-main);
   font-size: 0.75rem;
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 50;
 
-  /* Dark mode override */
-  :global(html.dark) & {
-    background-color: #111827;
-    color: #f9fafb;
-  }
+  transition:
+          background-color 280ms ease-in-out,
+          color 280ms ease-in-out
 }
 

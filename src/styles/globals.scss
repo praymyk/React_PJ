@@ -1,6 +1,6 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap");
+@import '@styles/base/fonts'; // ← 폰트 관련 설정은 fonts.scss로 분리
+@import '@styles/theme/tokens';
 
-// SCSS 변수 ( 예시 )
 $font-sans: var(--font-geist-sans);
 
 :root {
@@ -8,19 +8,16 @@ $font-sans: var(--font-geist-sans);
   --foreground: #171717;
 }
 
-// Dark mode 토글 클래스
-* {
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-html.dark {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-}
-
 body {
-  font-family: "Roboto Mono", monospace;
-  background-color: var(--background);
-  color: var(--foreground);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  background-color: var(--color-bg-body);
+  color: var(--color-text-main);
+}
+
+/* 글로벌 리셋 */
+body,
+html,
+main {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }

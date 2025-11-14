@@ -5,13 +5,12 @@
 }
 
 .dashboardContent {
-  background-color: #ffffff;
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-main);
   padding: 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
 
-  :global(html.dark) & {
-    background-color: #1e293b;
-    color: #f9fafb;
-  }
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: var(--shadow-elevated);
 }

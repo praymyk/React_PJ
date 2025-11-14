@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
-import '@/styles/globals.scss';
-import ClientLayout from './ClientLayout';
+import '@/styles/theme/tokens.scss'; // 토큰 먼저
+import '@/styles/globals.scss';      // 나머지 전역 스타일
+
+import MainLayout from '@components/layout/MainLayout';
 
 export const metadata: Metadata = {
     title: 'IPCC React',
@@ -11,7 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang="ko">
             <body>
-                <ClientLayout>{children}</ClientLayout>
+                <MainLayout>{children}</MainLayout>
             </body>
         </html>
     );

@@ -1,0 +1,57 @@
+
+/* 라이트 모드 값 */
+:root {
+  /* 전체 배경 (앱 배경) */
+  --color-bg-body: #e5e7eb;
+
+  /* 카드 / 패널 톤 (컨텐츠 박스, 대시보드 카드 등) */
+  --color-bg-surface: #f9fafb;
+
+  /* 왼쪽 메뉴 */
+  --color-bg-nav: #f3f4f6;
+  /* 헤더/푸터 */
+  --color-bg-header: #f3f4f6;
+  --color-bg-footer: #f3f4f6;
+
+  /* 텍스트 */
+  --color-text-main: #111827;
+  --color-text-muted: #6b7280;
+
+  /* 테두리 / 구분선 */
+  --color-border-subtle: #d4d7dc;
+
+  /* 포인트 색상 */
+  --color-accent: #5865f2;
+  --color-accent-soft: rgba(88, 101, 242, 0.12);
+  --color-accent-soft-strong: rgba(88, 101, 242, 0.24);
+
+  /* 카드/패널 그림자 */
+  --shadow-elevated: 0 8px 24px rgba(15, 23, 42, 0.05);
+}
+
+/* 다크 모드 값 */
+html.dark {
+  /* 전체 배경 */
+  --color-bg-body: #1e1f22;
+
+  /* 카드 / 헤더 / 메뉴 같은 surface 계층 */
+  --color-bg-surface: #2b2d31;
+  --color-bg-nav: #2b2d31;
+  --color-bg-header: #2b2d31;
+  --color-bg-footer: #2b2d31;
+
+  /* 텍스트 */
+  --color-text-main: #f9fafb;
+  --color-text-muted: #b5bac1;
+
+  /* 테두리 / 구분선 */
+  --color-border-subtle: #3f4147;
+
+  /* 포인트 색상: */
+  --color-accent: #5865f2;
+  --color-accent-soft: rgba(88, 101, 242, 0.18);
+  --color-accent-soft-strong: rgba(88, 101, 242, 0.35);
+
+  /* 카드/패널 그림자 */
+  --shadow-elevated: 0 12px 30px rgba(0, 0, 0, 0.6);
+}
