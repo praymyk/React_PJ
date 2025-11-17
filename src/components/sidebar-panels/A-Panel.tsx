@@ -1,9 +1,12 @@
 'use client';
 
+import CounselFormLayout from "@components/forms/CounselFormLayout";
+
+
+
 export default function APanel() {
+
     return (
-        <div>
-            테스트
-        </div>
+        <CounselFormLayout />
     );
 }

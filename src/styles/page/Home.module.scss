@@ -17,20 +17,20 @@
           color 280ms ease-in-out;
 
   h1 {
-    font-size: 2.25rem;
-    font-weight: 600;
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
     margin-bottom: 0.5rem;
   }
 
   p {
-    font-size: 1.125rem;
+    font-size: var(--font-size-lg);
     color: var(--color-text-muted);
     opacity: 0.9;
   }
 
   button {
     padding: 0.75rem 1.5rem;
-    font-size: 1rem;
+    font-size: var(--font-size-md);
     background-color: var(--color-accent);           /* 포인트 컬러 */
     color: #ffffff;
     border: none;
@@ -62,12 +62,12 @@
     padding: 1.25rem;
 
     h1 {
-      font-size: 1.75rem;
+      font-size: var(--font-size-2xl-md);
     }
 
     p,
     button {
-      font-size: 0.95rem;
+      font-size: var(--font-size-base);
     }
   }
 }
