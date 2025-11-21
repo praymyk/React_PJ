@@ -1,3 +1,4 @@
+/*** 사이드 바 스타일 ***/
 .sidebarContainer {
   display: flex;
   flex-direction: column;
@@ -65,26 +66,57 @@
 }
 
 /* 사이드바 컨텐츠 패널 */
-.rightPanel {
+.rightPanelWrapper {
   position: fixed;
   top: var(--top-offset);
-  height: calc(100vh - var(--top-offset) - var(--top-offset) - var(--bottom-offset));
   right: 0;
+  height: calc(100vh - var(--top-offset) - var(--top-offset) - var(--bottom-offset));
+  z-index: 100;
+
+  display: flex;
+  align-items: stretch;  // 높이 맞추기(패널탭 + 패널)
+  /* 슬라이드 애니메이션 */
+  transform: translateX(0);
+  transition:
+          background-color 280ms ease-in-out,
+          color 280ms ease-in-out,
+          border-color 280ms ease-in-out,
+          box-shadow 280ms ease-in-out,
+          transform 0.3s ease-in-out;
+}
+
+.panelTab {
+  position: absolute;
+  top: 1.5rem;          /* 패널 padding-top 이랑 맞추기 */
+  left: 0;
+  transform: translateX(-100%);  /* 패널 왼쪽 경계에서 정확히 한 칸 밖으로 */
+  z-index: 2;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.rightPanelExit {
+  transform: translateX(100%);
+}
+
+.rightPanel {
   width: 400px;
+  height: 100%;
   max-height: none;
   display: flex;
   flex-direction: column;
-  background-color: var(--color-bg-surface);
-  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.2);
-  border: 1px solid var(--color-border-subtle);
+
+  background-color: var(--color-panel-bg);
+  box-shadow: var(--shadow-panel);
+  border-left: 1px solid var(--color-panel-border);
   border-top-left-radius: 1rem;
   border-bottom-left-radius: 1rem;
-  z-index: 100;
+
   pointer-events: auto;
   padding: 1.5rem 1.25rem;
   overflow-y: auto;
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-  transform: translateX(0);
 }
 
 .rightPanelEnter {
@@ -94,4 +126,76 @@
 
 .rightPanelExit {
   transform: translateX(100%);
+}
+
+/*** 사이드바 컨텐츠 탭 (패널 전용) ***/
+
+/* 패널 좌측에 붙는 탭 전체 컨테이너 */
+.panelTabsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  align-items: flex-end;
+}
+
+/* 개별 탭 버튼 */
+.panelTabItem {
+  display: flex;
+  align-items: center;
+
+  padding: 0.45rem;
+  border-radius: 0.75rem 0 0 0.75rem;
+
+  /* 기본: 아이콘만 딱 보이는 너비 */
+  width: 2.1rem;
+  gap: 0;
+  overflow: hidden;
+
+  margin-left: 0;
+
+  background-color: var(--color-panel-bg);
+  color: var(--color-text-main);
+  border: 1px solid var(--color-panel-border);
+  border-right: none;
+
+  box-shadow: var(--shadow-panel);
+
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+
+  transition:
+          width 0.25s ease-out,
+          background-color 0.2s ease-out,
+          gap 0.2s ease-out,
+          box-shadow 0.2s ease-out,
+          transform 0.15s ease-out;
+}
+
+/* hover 시: 텍스트 영역만큼 가로로 확장 */
+.panelTabItem:hover {
+  width: 6.5rem;
+  gap: 0.5rem;
+
+  background-color: var(--color-accent-soft-weak);
+  transform: translateX(-1px);
+}
+
+/* 아이콘 */
+.panelTabIcon {
+  font-size: var(--font-size-md);
+  flex-shrink: 0;
+  min-width: 1.25rem;
+  text-align: center;
+}
+
+/* 라벨: 기본은 숨김, hover 시만 나타남 */
+.panelTabLabel {
+  white-space: nowrap;
+  opacity: 0;
+  font-size: var(--font-size-xs);
+  transition: opacity 0.15s ease-out;
+}
+
+.panelTabItem:hover .panelTabLabel {
+  opacity: 1;
 }
