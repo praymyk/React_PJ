@@ -44,8 +44,18 @@ export default function Sidebar({ items }: SidebarProps) {
 }
 
 export function SidebarPanelTabs({ items }: SidebarProps) {
-    const { setSelectedPage } = useSidebar();
+    const { selectedPage, setSelectedPage } = useSidebar();
 
+    const handleClick = (item: SidebarItem) => {
+        // 이미 열려있는 패널을 다시 클릭한 경우 → 닫기
+        if (selectedPage === item) {
+            setSelectedPage(null);
+            return;
+        }
+
+        // 다른 패널 클릭 → 해당 패널 열기
+        setSelectedPage(item);
+    };
     return (
         <div className={styles.panelTabsContainer}>
             {items.map((item, index) => (
@@ -53,7 +63,7 @@ export function SidebarPanelTabs({ items }: SidebarProps) {
                     key={index}
                     type="button"
                     className={styles.panelTabItem}
-                    onClick={() => setSelectedPage(item)}
+                    onClick={() => handleClick(item)}
                 >
                     <item.icon className={styles.panelTabIcon} />
                     <span className={styles.panelTabLabel}>{item.label}</span>
@@ -80,6 +90,7 @@ export function Panel({ items }: SidebarProps) {
             window.addEventListener('keydown', handleKeyDown);
             return () => window.removeEventListener('keydown', handleKeyDown);
         }
+
     }, [selectedPage, setSelectedPage]);
 
     useEffect(() => {
