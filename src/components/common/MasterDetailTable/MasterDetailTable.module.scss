@@ -1,0 +1,70 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* 상단 상세 영역 */
+.detailArea {
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background-color: var(--color-bg-surface);
+  box-shadow: var(--shadow-elevated);
+  min-height: 80px; /* 상세 내용이 없을 때도 일정 높이 확보 */
+
+  transition:
+          background-color var(--transition-theme),
+          color            var(--transition-theme),
+          border-color     var(--transition-theme),
+          box-shadow       var(--transition-theme);
+}
+
+/* 하단 테이블 영역 */
+.tableArea {
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background-color: var(--color-bg-surface);
+  box-shadow: var(--shadow-elevated);
+
+  transition:
+          background-color var(--transition-theme),
+          color            var(--transition-theme),
+          border-color     var(--transition-theme),
+          box-shadow       var(--transition-theme);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.table thead {
+  background-color: rgba(148, 163, 184, 0.16);
+}
+
+.table th,
+.table td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.table tbody tr {
+  cursor: pointer;
+  transition: background-color 160ms ease-out;
+}
+
+.table tbody tr:hover {
+  background-color: rgba(148, 163, 184, 0.12);
+}
+
+/* 선택된 row 강조 */
+.rowActive {
+  background-color: var(--color-accent-soft);
+}
+
+.emptyCell {
+  text-align: center;
+  padding: 1.5rem 0.75rem;
+  color: var(--color-text-muted);
+}

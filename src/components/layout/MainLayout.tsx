@@ -3,8 +3,8 @@
 import React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import Header from '@components/layout/Header';
-import footerStyles from '@styles/layout/Footer.module.scss';
-import headerStyles from '@styles/layout/Header.module.scss';
+import footerStyles from '@components/layout/Footer.module.scss';
+import headerStyles from '@components/layout/Header.module.scss';
 
 import { LayoutSpaceContext } from '@/contexts/layoutSpace.context';
 import { LayoutSidebarProvider } from '@/contexts/layoutSidebar.context';

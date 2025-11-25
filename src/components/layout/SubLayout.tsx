@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLayoutSidebar } from '@/contexts/layoutSidebar.context';
-import styles from '@styles/layout/SubLayout.module.scss';
+import styles from '@components/layout/SubLayout.module.scss';
 
 import {MenuItem} from "@/data/menuItems";
 

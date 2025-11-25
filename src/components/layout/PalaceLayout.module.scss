@@ -7,8 +7,10 @@
   color: var(--color-text-main);
 
   transition:
-          background-color 280ms ease-in-out,
-          color 280ms ease-in-out
+          background-color var(--transition-theme),
+          color            var(--transition-theme),
+          border-color     var(--transition-theme),
+          box-shadow       var(--transition-theme);
 }
 
 .mainContent {
@@ -45,10 +47,10 @@
   box-shadow: var(--shadow-elevated);
 
   transition:
-          background-color 280ms ease-in-out,
-          color 280ms ease-in-out,
-          border-color 280ms ease-in-out,
-          box-shadow 280ms ease-in-out;
+          background-color var(--transition-theme),
+          color            var(--transition-theme),
+          border-color     var(--transition-theme),
+          box-shadow       var(--transition-theme);
 }
 
 /* 좌측 메뉴 영역 */
@@ -57,8 +59,10 @@
   color: var(--color-text-main);
 
   transition:
-          background-color 280ms ease-in-out,
-          color 280ms ease-in-out;
+          background-color var(--transition-theme),
+          color            var(--transition-theme),
+          border-color     var(--transition-theme),
+          box-shadow       var(--transition-theme);
 }
 
 /* 우측 플로팅 사이드바 (리본 같은 영역 가정) */

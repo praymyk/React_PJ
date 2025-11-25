@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import styles from '@/styles/page//Home.module.scss';
+import styles from '@styles/index//Home.module.scss';
 
 export default function Home() {
     const router = useRouter();

@@ -27,10 +27,10 @@
   font-size: var(--font-size-base);
   color: var(--color-text-main);
   transition:
-          background-color 280ms ease-in-out,
-          color 280ms ease-in-out,
-          border-color 280ms ease-in-out,
-          box-shadow 280ms ease-in-out;
+          background-color var(--transition-theme),
+          color            var(--transition-theme),
+          border-color     var(--transition-theme),
+          box-shadow       var(--transition-theme);
 
   &:focus {
     border-color: var(--color-accent);

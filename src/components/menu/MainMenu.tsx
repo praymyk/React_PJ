@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState, type MouseEvent, useRef } from 'react';
-import styles from '@/styles/components/menu/MainMenu.module.scss';
+import styles from '@components/menu/MainMenu.module.scss';
 
 import { MenuItem, submenuRegistry, type SubMenuItem } from '@/data/menuItems';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import styles from '@styles/layout/PalaceLayout.module.scss';
+import styles from '@components/layout/PalaceLayout.module.scss';
 
 export default function PalaceDefaultContent() {
     return (

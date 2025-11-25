@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import styles from '@/styles/components/menu/SubMenu.module.scss';
+import styles from '@components/menu/SubMenu.module.scss';
 import type { MenuItem } from '@/data/menuItems';
 
 export default function SubMenu({ items }: { items: MenuItem[] }) {

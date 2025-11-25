@@ -1,5 +1,13 @@
 // src/data/menuItems.ts
-import { FaHome, FaFlask, FaChartPie, FaCogs, FaRegCircle, FaRegDotCircle } from 'react-icons/fa'
+import {
+    FaHome,
+    FaFlask,
+    FaChartPie,
+    FaCogs,
+    FaRegCircle,
+    FaRegDotCircle,
+    FaUserCircle
+} from 'react-icons/fa'
 import type { IconType } from 'react-icons';
 
 export interface MenuItem {
@@ -23,6 +31,7 @@ export type SubMenuGroup = '/palace/test' | '/palace/stats' | '/palace/settings'
 export const menuRegistry: Record<MenuGroup, MenuItem[]> = {
     palace: [
         { label: '대시보드', icon: FaHome, path: '/palace' },
+        { label: '내 정보',     icon: FaUserCircle, path: '/palace/profile' },
         { label: '테스트',   icon: FaFlask, path: '/palace/test' },
         { label: '통계',     icon: FaChartPie, path: '/palace/stats' },
         { label: '설정',     icon: FaCogs, path: '/palace/settings' },

@@ -1,0 +1,35 @@
+.profileLayout {
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+  gap: 1rem;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* 왼쪽 컬럼: 프로필 + 활동 현황 */
+.mainColumn {
+  flex: 2 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+/* 오른쪽 컬럼 래퍼 */
+.detailColumn {
+  flex: 1 1 260px;
+}
+
+/* 반응형: 좁은 화면에서는 세로 스택 */
+@media (max-width: 960px) {
+  .profileLayout {
+    flex-direction: column;
+  }
+
+  .mainColumn,
+  .detailColumn {
+    flex: none;
+    width: 100%;
+  }
+}

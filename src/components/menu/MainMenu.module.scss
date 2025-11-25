@@ -17,10 +17,10 @@
   box-shadow: var(--shadow-elevated);
 
   transition:
-          background-color 280ms ease-in-out,
-          color 280ms ease-in-out,
-          border-color 280ms ease-in-out,
-          box-shadow 280ms ease-in-out;
+          background-color var(--transition-theme),
+          color            var(--transition-theme),
+          border-color     var(--transition-theme),
+          box-shadow       var(--transition-theme);
 }
 
 /* ========================= */
@@ -72,8 +72,10 @@
   text-decoration: none;
 
   transition:
-          background-color 280ms ease-in-out,
-          color 280ms ease-in-out,
+          background-color var(--transition-theme),
+          color            var(--transition-theme),
+          border-color     var(--transition-theme),
+          box-shadow       var(--transition-theme),
           transform 0.15s ease;
 }
 
@@ -115,9 +117,10 @@
   pointer-events: none;
 
   transition:
-          max-width 220ms ease-out,
-          opacity 220ms ease-out,
-          background-color 160ms ease-out;
+          background-color var(--transition-theme),
+          color            var(--transition-theme),
+          border-color     var(--transition-theme),
+          box-shadow       var(--transition-theme);
 }
 
 /* 패널 열릴 때: 서브메뉴 영역만 자연스럽게 확장 */
