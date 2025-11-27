@@ -1,20 +1,19 @@
-// src/app/palace/test/TestDefaultContent.tsx
 'use client';
 
-import { MasterDetailTable, Column } from '@components/common/MasterDetailTable/MasterDetailTable';
+import { useRouter } from 'next/navigation';
+import {
+    MasterTable,
+    type Column,
+} from '@components/common/MasterDetailTable/MasterTable';
+import type { Row } from '@/app/palace/test/a/data';
 
-type Row = {
-    id: string;
-    name: string;
-    email: string;
-    status: 'active' | 'inactive';
+type Mode = 'list' | 'detail';
+
+type Props = {
+    rows: Row[];
+    mode?: Mode;
+    selectedIndex?: number | null;
 };
-
-const mockRows: Row[] = [
-    { id: 'u-001', name: '홍냐냐', email: 'hong@example.com', status: 'active' },
-    { id: 'u-002', name: '김냐냐', email: 'kim@example.com', status: 'inactive' },
-    { id: 'u-003', name: '이냐냐', email: 'lee@example.com', status: 'active' },
-];
 
 const columns: Column<Row>[] = [
     {
@@ -37,24 +36,30 @@ const columns: Column<Row>[] = [
     },
 ];
 
-export default function TestDefaultContent() {
+export default function TestDefaultContent({
+                                               rows,
+                                               mode = 'list',
+                                               selectedIndex = null}: Props) {
+    const router = useRouter();
+
+    const handleRowClick = (row: Row) => {
+        if (mode === 'list') {
+            // 목록 → 상세 페이지로 이동
+            router.push(`/palace/test/a/${row.id}`);
+        } else {
+            // mode === 'detail' 인 경우
+            // 원하면 여기서도 다른 상세로 이동하게 해도 되고, 아무 것도 안 해도 됨
+            router.push(`/palace/test/a/${row.id}`);
+        }
+    };
+
     return (
-        <MasterDetailTable<Row>
-            rows={mockRows}
+        <MasterTable<Row>
+            rows={rows}
             columns={columns}
             getRowKey={(row) => row.id}
-            renderDetail={(row) =>
-                row ? (
-                    <div>
-                        <h2>{row.name} 상세 정보</h2>
-                        <p>ID: {row.id}</p>
-                        <p>이메일: {row.email}</p>
-                        <p>상태: {row.status === 'active' ? '활성' : '비활성'}</p>
-                    </div>
-                ) : (
-                    <div>행을 선택하면 상세 정보가 표시됩니다.</div>
-                )
-            }
+            onRowClick={handleRowClick}
+            initialSelectedIndex={selectedIndex}
         />
     );
 }

@@ -1,50 +1,43 @@
 'use client';
 
-import { useState, ReactNode } from 'react';
-import styles from './MasterDetailTable.module.scss';
+import {useState, ReactNode, useEffect} from 'react';
+import styles from './MasterTable.module.scss';
 
 export type Column<T> = {
     header: string;
-    // row 하나를 받아서 셀에 렌더링할 내용
     render: (row: T) => ReactNode;
     width?: string;
 };
 
-type MasterDetailTableProps<T> = {
+type MasterTableProps<T> = {
     rows: T[];
     columns: Column<T>[];
-
     /** 각 row의 고유 key (React key로 사용) */
     getRowKey: (row: T, index: number) => string;
 
-    /** 상단 상세 영역 렌더링 */
-    renderDetail: (row: T | null) => ReactNode;
+    /** row 클릭 시 추가 동작 */
+    onRowClick?: (row: T, index: number) => void;
 
-    /** 초기 선택 row (없으면 null) */
-    initialSelectedIndex?: number;
+    /** row 클릭 indec */
+    initialSelectedIndex?: number | null;
 };
 
-export function MasterDetailTable<T>({
-                                         rows,
-                                         columns,
-                                         getRowKey,
-                                         renderDetail,
-                                         initialSelectedIndex = 0,
-                                     }: MasterDetailTableProps<T>) {
-    const [selectedIndex, setSelectedIndex] = useState<number | null>(
-        rows.length > 0 ? initialSelectedIndex : null,
-    );
+export function MasterTable<T>({
+                                   rows,
+                                   columns,
+                                   getRowKey,
+                                   onRowClick,
+                                   initialSelectedIndex = null,
+                               }: MasterTableProps<T>) {
+    const [selectedIndex, setSelectedIndex] = useState<number | null>(initialSelectedIndex);
 
-    const selectedRow = selectedIndex != null ? rows[selectedIndex] : null;
+    useEffect(() => {
+        setSelectedIndex(initialSelectedIndex ?? null);
+    }, [initialSelectedIndex]);
 
     return (
         <div className={styles.root}>
-            {/* 상단: 상세 정보 영역 */}
-            <div className={styles.detailArea}>
-                {renderDetail(selectedRow)}
-            </div>
-
-            {/* 하단: 리스트 테이블 영역 */}
+            {/* 리스트 테이블 영역 */}
             <div className={styles.tableArea}>
                 <table className={styles.table}>
                     <thead>
@@ -69,15 +62,16 @@ export function MasterDetailTable<T>({
                         return (
                             <tr
                                 key={getRowKey(row, rowIndex)}
-                                className={
-                                    isActive ? styles.rowActive : ''
-                                }
-                                onClick={() => setSelectedIndex(rowIndex)}
+                                className={isActive ? styles.rowActive : ''}
+                                onClick={() => {
+                                    setSelectedIndex(rowIndex); // 목록 안에서만 하이라이트
+                                    if (onRowClick) {
+                                        onRowClick(row, rowIndex); // 상세 페이지 이동 등
+                                    }
+                                }}
                             >
                                 {columns.map((col, colIndex) => (
-                                    <td key={colIndex}>
-                                        {col.render(row)}
-                                    </td>
+                                    <td key={colIndex}>{col.render(row)}</td>
                                 ))}
                             </tr>
                         );
