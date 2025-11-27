@@ -1,5 +1,5 @@
 import { useState, ChangeEvent } from 'react';
-import styles from '@components/profile/ProfileMainCard.module.scss';
+import styles from '@components/palace/profile/ProfileMainCard.module.scss';
 
 type Profile = {
     id: string;

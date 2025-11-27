@@ -1,7 +1,7 @@
 'use client';
 
 import {useState, ReactNode, useEffect} from 'react';
-import styles from './MasterTable.module.scss';
+import styles from './Table.module.scss';
 
 export type Column<T> = {
     header: string;
@@ -22,7 +22,7 @@ type MasterTableProps<T> = {
     initialSelectedIndex?: number | null;
 };
 
-export function MasterTable<T>({
+export function Table<T>({
                                    rows,
                                    columns,
                                    getRowKey,

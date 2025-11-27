@@ -2,6 +2,7 @@
 
 :root {
   --font-family-default: "Roboto Mono", monospace;
+  --font-size-xxs: 0.65rem;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.85rem;
   --font-size-base: 0.95rem;
@@ -16,4 +17,14 @@
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-bold: 600;
+
+  /* === 라벨 전용 폰트 토큰 === */
+  --font-size-mini-label:   var(--font-size-xxs);
+
+  /* === 버튼 전용 폰트 토큰 === */
+  --font-button-family: "Roboto Mono", monospace;
+  --font-button-size-sm: 0.65rem;
+  --font-button-size:  0.75rem;
+  --font-button-size-lg:  0.85rem;
+  --font-button-weight: 400
 }

@@ -1,9 +1,9 @@
 'use client';
 
-import styles from '@components/profile/Profile.module.scss';
-import { ProfileMainCard } from '@components/profile/ProfileMainCard';
-import { ProfileActivityCard } from '@components/profile/ProfileActivityCard';
-import { ProfileDetailPanel } from '@components/profile/ProfileDetailPanel';
+import styles from '@components/palace/profile/Profile.module.scss';
+import { ProfileMainCard } from '@components/palace/profile/ProfileMainCard';
+import { ProfileActivityCard } from '@components/palace/profile/ProfileActivityCard';
+import { ProfileDetailPanel } from '@components/palace/profile/ProfileDetailPanel';
 
 export default function ProfileDefaultContent() {
     return (

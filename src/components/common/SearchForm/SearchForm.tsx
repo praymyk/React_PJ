@@ -1,0 +1,147 @@
+'use client';
+
+import { useState, ChangeEvent, FormEvent } from 'react';
+import styles from './SearchForm.module.scss';
+import type { SearchField } from './searchTypes';
+
+export type SearchValues = Record<string, string>;
+
+type SearchFormProps = {
+    fields: SearchField[];
+    /** 검색 버튼 눌렀을 때 값 전달 */
+    onSearch: (values: SearchValues) => void;
+    /** 초기값 (없으면 전부 '') */
+    initialValues?: SearchValues;
+    /** 오른쪽에 추가로 넣고 싶은 버튼들 (예: "추가", "엑셀다운" 등) */
+    extraActions?: React.ReactNode;
+};
+
+export default function SearchForm({
+                                       fields,
+                                       onSearch,
+                                       initialValues = {},
+                                       extraActions,
+                                   }: SearchFormProps) {
+    // 모든 필드 값을 하나의 객체로 관리
+    const [values, setValues] = useState<SearchValues>(() => {
+        const base: SearchValues = {};
+        for (const f of fields) {
+            base[f.name] = initialValues[f.name] ?? '';
+        }
+        return base;
+    });
+
+    const handleChange =
+        (name: string) =>
+            (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+                const value = e.target.value;
+                setValues(prev => ({ ...prev, [name]: value }));
+            };
+
+    const handleSubmit = (e: FormEvent) => {
+        e.preventDefault();
+        onSearch(values);
+    };
+
+    const handleReset = () => {
+        const empty: SearchValues = {};
+        for (const f of fields) {
+            empty[f.name] = '';
+        }
+        setValues(empty);
+        onSearch(empty);
+    };
+
+    return (
+        <form className={styles.searchForm} onSubmit={handleSubmit}>
+            <div className={styles.fieldsRow}>
+                {fields.map(field => {
+                    const value = values[field.name] ?? '';
+                    const commonProps = {
+                        id: field.name,
+                        name: field.name,
+                        value,
+                        onChange: handleChange(field.name),
+                    };
+
+                    return (
+                        <div
+                            key={field.name}
+                            className={styles.field}
+                            style={field.width ? { width: field.width } : undefined}
+                        >
+                            <label htmlFor={field.name} className={styles.label}>
+                                {field.label}
+                            </label>
+
+                            {field.type === 'text' && (
+                                <input
+                                    type="text"
+                                    className={styles.input}
+                                    placeholder={field.placeholder}
+                                    {...commonProps}
+                                />
+                            )}
+
+                            {field.type === 'select' && (
+                                <select className={styles.select} {...commonProps}>
+                                    {(field.options ?? []).map(opt => (
+                                        <option key={opt.value} value={opt.value}>
+                                            {opt.label}
+                                        </option>
+                                    ))}
+                                </select>
+                            )}
+
+                            {field.type === 'date' && (
+                                <input
+                                    type="date"
+                                    className={styles.input}
+                                    {...commonProps}
+                                />
+                            )}
+
+                            {field.type === 'dateRange' && (
+                                <div className={styles.dateRange}>
+                                    <input
+                                        type="date"
+                                        className={styles.input}
+                                        value={values[`${field.name}_from`] ?? ''}
+                                        onChange={e =>
+                                            setValues(prev => ({
+                                                ...prev,
+                                                [`${field.name}_from`]: e.target.value,
+                                            }))
+                                        }
+                                    />
+                                    <span className={styles.rangeSeparator}>~</span>
+                                    <input
+                                        type="date"
+                                        className={styles.input}
+                                        value={values[`${field.name}_to`] ?? ''}
+                                        onChange={e =>
+                                            setValues(prev => ({
+                                                ...prev,
+                                                [`${field.name}_to`]: e.target.value,
+                                            }))
+                                        }
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
+
+            <div className={styles.actionsRow}>
+                <button type="button" onClick={handleReset} className={styles.resetBtn}>
+                    초기화
+                </button>
+                <button type="submit" className={styles.searchBtn}>
+                    검색
+                </button>
+                {extraActions && <div className={styles.extra}>{extraActions}</div>}
+            </div>
+        </form>
+    );
+}

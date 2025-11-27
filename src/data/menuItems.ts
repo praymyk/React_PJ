@@ -1,4 +1,3 @@
-// src/data/menuItems.ts
 import {
     FaHome,
     FaFlask,

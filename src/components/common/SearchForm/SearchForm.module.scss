@@ -1,0 +1,111 @@
+.searchForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--color-bg-surface);
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow-elevated);
+
+  transition:
+          background-color var(--transition-theme),
+          color var(--transition-theme),
+          border-color var(--transition-theme),
+          box-shadow var(--transition-theme);
+}
+
+.fieldsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 140px;
+}
+
+.label {
+  font-size: var(--font-size-mini-label);
+  color: var(--color-text-muted);
+
+  transition:
+          background-color var(--transition-theme),
+          color var(--transition-theme),
+          border-color var(--transition-theme),
+          box-shadow var(--transition-theme);
+}
+
+.input,
+.select {
+  height: 2.25rem;
+  padding: 0 0.5rem;
+  border-radius: 0.375rem;
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-bg-input);
+  color: var(--color-text-main);
+
+  transition:
+          background-color var(--transition-theme),
+          color var(--transition-theme),
+          border-color var(--transition-theme),
+          box-shadow var(--transition-theme);
+}
+
+.dateRange {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.rangeSeparator {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.actionsRow {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.searchBtn,
+.resetBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+
+  font-family: var(--font-button-family);
+  font-size: var(--font-button-size);
+  font-weight: var(--font-button-weight);
+
+  cursor: pointer;
+  transition:
+          background-color var(--transition-theme),
+          color var(--transition-theme),
+          border-color var(--transition-theme),
+          box-shadow var(--transition-theme);
+}
+
+.searchBtn {
+  background: var(--color-accent);
+  color: white;
+}
+
+.resetBtn {
+  background: transparent;
+  color: var(--color-text-muted);
+  border-color: var(--color-border-subtle);
+}
+
+.extra {
+  margin-left: auto;
+}

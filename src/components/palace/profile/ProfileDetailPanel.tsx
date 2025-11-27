@@ -1,4 +1,4 @@
-import styles from '@components/profile/ProfileDetailPanel.module.scss';
+import styles from '@components/palace/profile/ProfileDetailPanel.module.scss';
 
 export function ProfileDetailPanel() {
     return (

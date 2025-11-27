@@ -18,17 +18,17 @@
 }
 
 .detailHeader h2 {
-  font-size: 0.9rem;
+  font-size: var(--font-size-base);
   margin: 0;
 }
 
 .detailSub {
-  font-size: 0.78rem;
+  font-size: var(--font-size-sm);
   color: var(--color-text-muted);
 }
 
 .detailBody {
   margin-top: 0.4rem;
-  font-size: 0.8rem;
+  font-size: var(--font-size-xs);
   color: var(--color-text-main);
 }

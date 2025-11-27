@@ -1,4 +1,4 @@
-import styles from '@components/profile/ProfileActivityCard.module.scss';
+import styles from '@components/palace/profile/ProfileActivityCard.module.scss';
 
 export function ProfileActivityCard() {
     return (
