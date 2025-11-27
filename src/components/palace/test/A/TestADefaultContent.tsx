@@ -18,7 +18,7 @@ export default function TestADefaultContent() {
 
     return (
         <div className={styles.root}>
-            <h1>테스트 / a 목록</h1>
+            테스트 / a 목록
 
             <SearchForm fields={fields} onSearch={handleSearch} />
 

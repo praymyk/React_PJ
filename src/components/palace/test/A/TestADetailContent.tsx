@@ -3,12 +3,18 @@
 
 import { useParams } from 'next/navigation';
 import { notFound } from 'next/navigation';
+
+import styles from '@components/palace/test/A/TestA.module.scss';
+
+
+import TestADetailSection from "@components/palace/test/A/DetailSection";
+import SearchForm from "@components/common/SearchForm/SearchForm";
+import TableSection from '@components/palace/test/A/TableSection';
+
+import {searchRegistry} from "@/app/palace/test/a/searchFields";
 import { tableColumns } from '@/app/palace/test/a/tableColumns';
 import { mockRows, type Row} from '@/app/palace/test/a/data';
-import styles from '@components/palace/test/A/TestA.module.scss';
-import TableSection from '@components/palace/test/A/TableSection';
-import SearchForm from "@components/common/SearchForm/SearchForm";
-import {searchRegistry} from "@/app/palace/test/a/searchFields";
+
 
 export default function DetailPage() {
     // URL 파라미터 읽기
@@ -33,17 +39,11 @@ export default function DetailPage() {
 
     return (
         <div className={styles.root}>
-            테스트/a 경로 페이지 전용 내용
+            테스트/a 상세보기
 
-            <div className={styles.detailRoot}>
-                <h2>{row.name} 상세 정보</h2>
-                <p><strong>ID:</strong> {row.id}</p>
-                <p><strong>이메일:</strong> {row.email}</p>
-                <p>
-                    <strong>상태:</strong>{' '}
-                    {row.status === 'active' ? '활성' : '비활성'}
-                </p>
-            </div>
+            <TestADetailSection
+                row={row}
+            />
 
             <SearchForm fields={fields} onSearch={handleSearch} />
 
