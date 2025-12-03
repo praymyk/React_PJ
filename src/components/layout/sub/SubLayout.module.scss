@@ -1,0 +1,17 @@
+@use '@/styles/base/mixins.scss' as *;
+
+/* 서브 메뉴 진입 > mainContent를 대체 */
+.subLayout {
+  display: flex;
+  flex: 1;
+  padding: 0.3rem 0.75rem;
+}
+
+.subContents {
+  display: flex;
+  flex: 1;
+  background-color: var(--color-bg-body);
+  color: var(--color-text-main);
+
+  @extend %themeTransition;
+}

@@ -1,17 +1,16 @@
+@use '@/styles/base/mixins.scss' as *;
+
 .searchForm {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
   background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
   border-radius: 0.5rem;
   box-shadow: var(--shadow-elevated);
 
-  transition:
-          background-color var(--transition-theme),
-          color var(--transition-theme),
-          border-color var(--transition-theme),
-          box-shadow var(--transition-theme);
+  @extend %themeTransition;
 }
 
 .fieldsRow {
@@ -31,11 +30,7 @@
   font-size: var(--font-size-mini-label);
   color: var(--color-text-muted);
 
-  transition:
-          background-color var(--transition-theme),
-          color var(--transition-theme),
-          border-color var(--transition-theme),
-          box-shadow var(--transition-theme);
+  @extend %themeTransition;
 }
 
 .input,
@@ -47,11 +42,7 @@
   background: var(--color-bg-input);
   color: var(--color-text-main);
 
-  transition:
-          background-color var(--transition-theme),
-          color var(--transition-theme),
-          border-color var(--transition-theme),
-          box-shadow var(--transition-theme);
+  @extend %themeTransition;
 }
 
 .dateRange {
@@ -74,25 +65,7 @@
 
 .searchBtn,
 .resetBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-
-  padding: 0.4rem 0.9rem;
-  border-radius: 999px;
-  border: 1px solid transparent;
-
-  font-family: var(--font-button-family);
-  font-size: var(--font-button-size);
-  font-weight: var(--font-button-weight);
-
-  cursor: pointer;
-  transition:
-          background-color var(--transition-theme),
-          color var(--transition-theme),
-          border-color var(--transition-theme),
-          box-shadow var(--transition-theme);
+  @extend %buttonBase;
 }
 
 .searchBtn {

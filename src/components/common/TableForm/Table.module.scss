@@ -1,14 +1,12 @@
+@use '@/styles/base/mixins.scss' as *;
+
 .tableArea {
   border-radius: 0.75rem;
   overflow: hidden;
   background-color: var(--color-bg-surface);
   box-shadow: var(--shadow-elevated);
 
-  transition:
-          background-color var(--transition-theme),
-          color            var(--transition-theme),
-          border-color     var(--transition-theme),
-          box-shadow       var(--transition-theme);
+  @extend %themeTransition;
 }
 
 .table {

@@ -1,0 +1,132 @@
+.detailHeaderLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.detailTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.detailTitle {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.detailSub {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.detailBody {
+  padding: 0.75rem 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.detailSection {
+  padding: 0.75rem 0.8rem;
+  border-radius: 0.5rem;
+  background-color: var(--color-bg-body);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.description {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-main);
+}
+
+/* 이벤트 영역 placeholder */
+.timelinePlaceholder {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.emptyDetail {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/*** 추가 ***/
+.detailMain {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem 1rem;
+}
+
+/* 가운데 요약 카드 */
+.summaryCard {
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.6rem;
+  background-color: var(--color-bg-subtle);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.summaryText {
+  margin-top: 0.3rem;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-main);
+}
+
+/* 탭 전체 */
+.tabSection {
+  margin-top: 0.25rem;
+}
+
+/* 탭 버튼 줄 */
+.tabNav {
+  display: flex;
+  gap: 0.75rem;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+/* 탭 버튼 */
+.tabButton {
+  position: relative;
+  padding: 0.4rem 0.1rem;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.tabButton::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 0;
+  height: 2px;
+  background-color: var(--color-accent);
+  transition: width 0.15s ease-out;
+}
+
+/* 활성 탭 */
+.tabButtonActive {
+  color: var(--color-text-main);
+  font-weight: 600;
+}
+
+.tabButtonActive::after {
+  width: 100%;
+}
+
+/* 탭 내용 영역 */
+.tabPanel {
+  padding-top: 0.6rem;
+}

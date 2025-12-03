@@ -1,0 +1,43 @@
+@use '@/styles/base/mixins.scss' as *;
+
+.loginContainer {
+  min-height: 100vh;
+  padding: 2rem;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  /* 라이트/다크 공통 – body 톤 사용 */
+  background-color: var(--color-bg-body);
+  color: var(--color-text-main);
+
+  @extend %themeTransition;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 360px;
+}
+
+.loginInput {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 0.5rem;
+  background-color: var(--color-bg-body);
+  color: var(--color-text-main);
+  font-size: var(--font-size-base);
+  box-sizing: border-box;
+
+  @extend %themeTransition;
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 1px var(--color-accent-soft);
+  }
+}

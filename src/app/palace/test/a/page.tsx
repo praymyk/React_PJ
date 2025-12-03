@@ -1,7 +1,7 @@
 'use client';
 
-import TestADefaultContent from '@components/palace/test/A/TestADefaultContent';
+import DefaultContent from '@components/palace/test/A/DefaultContent';
 
 export default function Page() {
-    return <TestADefaultContent />;
+    return <DefaultContent />;
 }

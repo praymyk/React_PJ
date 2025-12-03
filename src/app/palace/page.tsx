@@ -1,9 +1,9 @@
 'use client';
 
-import PalaceDefaultContent from '@components/palace/PalaceDefaultContent';
+import DefaultContent from '@components/palace/DefaultContent';
 
 export default function PalacePage() {
     return (
-        <PalaceDefaultContent />
+        <DefaultContent />
     );
 }

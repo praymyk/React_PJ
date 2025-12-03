@@ -1,0 +1,19 @@
+.sideBody {
+  padding: 0.75rem 0.9rem;
+}
+
+.sidePlaceholder {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* 반응형(옵션): 좁은 화면에서는 세로로 쌓기 */
+@media (max-width: 1024px) {
+  .ticketLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidePane {
+    order: 3;
+  }
+}

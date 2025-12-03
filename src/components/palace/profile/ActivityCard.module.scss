@@ -1,0 +1,44 @@
+@use '@/styles/base/mixins.scss' as *;
+
+.activityCard {
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  background-color: var(--color-bg-surface);
+  box-shadow: var(--shadow-elevated);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+
+  @extend %themeTransition;
+}
+
+.activityHeader h2 {
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+.activitySub {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.activityBody {
+  margin-top: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.activityRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-xs);
+}
+
+.activityLabel {
+  color: var(--color-text-muted);
+}
+
+.activityValue {
+  font-family: 'Menlo', 'SF Mono', ui-monospace, monospace;
+}

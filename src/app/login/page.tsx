@@ -1,6 +1,6 @@
 'use client';
 
-import styles from '@styles/index/Login.module.scss';
+import styles from '@/app/login/Login.module.scss';
 import { useLogin } from '@hooks/useLogin/useLogin';
 
 export default function LoginPage() {

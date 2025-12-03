@@ -1,0 +1,26 @@
+/* 테마 변경 */
+%themeTransition {
+  transition:
+          background-color var(--transition-theme),
+          color            var(--transition-theme),
+          border-color     var(--transition-theme),
+          box-shadow       var(--transition-theme);
+}
+
+/* 공통 버튼 베이스 */
+%buttonBase {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: var(--font-button-family);
+  font-size: var(--font-button-size);
+  line-height: 1;
+
+  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  cursor: pointer;
+
+  @extend %themeTransition;
+}

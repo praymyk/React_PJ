@@ -1,0 +1,61 @@
+@use '@/styles/base/mixins.scss' as *;
+
+.bottomPanel {
+  margin-top: 0.25rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: var(--shadow-elevated);
+  @extend %themeTransition;
+}
+
+.bottomPanelTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.bottomPanelEmpty {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* 이력 리스트 예시 */
+.historyList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.historyItem {
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 0.5rem;
+  background-color: rgba(148, 163, 184, 0.08);
+}
+
+.historyRowTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.15rem;
+}
+
+.historyDate {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.historyStatus {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: #059669;
+}
+
+.historyTitle {
+  font-size: var(--font-size-sm);
+}

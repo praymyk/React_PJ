@@ -1,0 +1,80 @@
+@use '@/styles/base/mixins.scss' as *;
+
+/* 전체 레이아웃 */
+.detailSectionRoot {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.detailLayout {
+  display: flex;
+  padding: 1rem 1.25rem;
+  gap: 1rem;
+  align-items: flex-start;
+
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow-elevated);
+
+  @extend %themeTransition;
+}
+
+/* 왼쪽 상세 카드 영역 */
+.detailRoot {
+  flex: 1;
+  border-radius: 0.75rem;
+}
+
+.detailRoot h2 {
+  font-size: var(--font-size-md);
+  margin-bottom: 0.75rem;
+  color: var(--color-text-main);
+
+  @extend %themeTransition;
+}
+
+.detailRoot p {
+  margin: 0.25rem 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-main);
+
+  @extend %themeTransition;
+}
+
+/* 오른쪽 세로 버튼 / 추가 정보 영역 */
+.detailSide {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 160px;
+}
+
+/* 세로 버튼 스타일 */
+.sideActionBtn {
+  @extend %buttonBase;
+
+  justify-content: flex-start;
+  width: 100%;
+  padding-inline: 0.75rem;
+
+  border-color: var(--color-border-subtle);
+  background-color: transparent;
+  color: var(--color-text-main);
+}
+
+.sideActionBtn:hover {
+  background-color: var(--color-accent-soft);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  transform: translateY(-1px);
+}
+
+.sideActionBtn--active {
+  background-color: var(--color-accent-soft-strong);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  box-shadow: 0 0 0 1px rgba(88, 101, 242, 0.25);
+}
+

@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import '@/styles/theme/tokens.scss'; // 토큰 먼저
-import '@/styles/globals.scss';      // 나머지 전역 스타일
+import '@styles/theme/globals.scss';      // 나머지 전역 스타일
 
-import MainLayout from '@components/layout/MainLayout';
+import MainLayout from '@components/layout/main/MainLayout';
 
 export const metadata: Metadata = {
     title: 'IPCC React',
