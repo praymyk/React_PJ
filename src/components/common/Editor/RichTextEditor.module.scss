@@ -1,0 +1,60 @@
+@use '@/styles/base/mixins.scss' as *;
+@import '@styles/theme/tokens';
+
+.editorRoot {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1;
+}
+
+.editorLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* ReactQuill에 className={styles.editor}로 붙는 래퍼 */
+.editor {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  /* 툴바 영역 */
+  :global(.ql-toolbar.ql-snow) {
+    border-radius: 0.5rem 0.5rem 0 0;
+    border-color: var(--color-border-subtle);
+    background-color: var(--color-bg-body);
+    @extend %themeTransition;
+  }
+
+  /* 에디터 컨테이너 영역 */
+  :global(.ql-container.ql-snow) {
+    border-radius: 0 0 0.5rem 0.5rem;
+    border-color: var(--color-border-subtle);
+    background-color: var(--color-bg-surface);
+    @extend %themeTransition;
+  }
+
+  /* 실제 입력 텍스트 영역 */
+  :global(.ql-editor) {
+    color: var(--color-text-main);
+    font-size: var(--font-size-sm);
+  }
+
+  /* placeholder 텍스트 색상 */
+  :global(.ql-editor.ql-blank::before) {
+    color: var(--color-text-muted);
+  }
+
+  /* 툴바 아이콘/텍스트 색상 (다크모드 대응) */
+  :global(.ql-snow .ql-stroke) {
+    stroke: var(--color-text-muted);
+  }
+  :global(.ql-snow .ql-fill) {
+    fill: var(--color-text-muted);
+  }
+  :global(.ql-snow .ql-picker-label),
+  :global(.ql-snow .ql-picker-item) {
+    color: var(--color-text-muted);
+  }
+}

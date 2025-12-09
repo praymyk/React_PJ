@@ -40,43 +40,42 @@ export default function ListSection({
                 <SearchForm fields={fields} onSearch={handleSearch} />
             </header>
 
-            <ul className={styles.ticketList}>
-                {rows.map((row) => {
-                    const isActive = row.id === selectedId;
-                    return (
-                        <li
-                            key={row.id}
-                            className={
-                                isActive
-                                    ? `${styles.ticketItem} ${styles.ticketItemActive}`
-                                    : styles.ticketItem
-                            }
-                            onClick={() => onSelect(row.id)}
-                        >
-                            <div className={styles.ticketItemHeader}>
-                                <span className={styles.ticketId}>
-                                    {row.id}
-                                </span>
-                                <span
-                                    className={`${common.statusBadge} ${statusClassOf(
-                                        row.status,
-                                    )}`}
-                                >
-                                    {row.status}
-                                </span>
-                            </div>
-                            <div className={styles.ticketTitle}>
-                                {row.title}
-                            </div>
-                            <div className={styles.ticketMeta}>
-                                <span className={styles.ticketAssignee}>
-                                    담당: {row.assignee}
-                                </span>
-                            </div>
-                        </li>
-                    );
-                })}
-            </ul>
+            {/* 목록 전용 스크롤 영역 */}
+            <div className={styles.listBody}>
+                <ul className={styles.ticketList}>
+                    {rows.map((row) => {
+                        const isActive = row.id === selectedId;
+                        return (
+                            <li
+                                key={row.id}
+                                className={
+                                    isActive
+                                        ? `${styles.ticketItem} ${styles.ticketItemActive}`
+                                        : styles.ticketItem
+                                }
+                                onClick={() => onSelect(row.id)}
+                            >
+                                <div className={styles.ticketItemHeader}>
+                                    <span className={styles.ticketId}>{row.id}</span>
+                                    <span
+                                        className={`${common.statusBadge} ${statusClassOf(
+                                            row.status,
+                                        )}`}
+                                    >
+                                {row.status}
+                            </span>
+                                </div>
+                                <div className={styles.ticketTitle}>{row.title}</div>
+                                <div className={styles.ticketMeta}>
+                            <span className={styles.ticketAssignee}>
+                                담당: {row.assignee}
+                            </span>
+                                </div>
+                            </li>
+                        );
+                    })}
+                </ul>
+            </div>
         </section>
     );
 }

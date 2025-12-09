@@ -1,25 +1,36 @@
 @use '@/styles/base/mixins' as *;
 
-/* 전체 레이아웃: 좌측 리스트 / 중앙 상세 / 우측 사이드 */
+/* 레이아웃: 좌측 리스트 / 중앙 상세 / 우측 사이드 */
 .ticketLayout {
+  /* 헤더 높이 */
+  --height-pane-header: 5.2rem;
+
+  /* 티켓 레이아웃 고정 폭 */
+  --width-ticket-list: 320px;
+  --width-ticket-detail: 640px;
+  --width-ticket-side: 260px;
+
   display: grid;
-  grid-template-columns: 320px minmax(0, 2fr) 260px;
+  grid-template-columns:
+    var(--width-ticket-list)
+    var(--width-ticket-detail)
+    var(--width-ticket-side);
   gap: 0.75rem;
   height: 100%;
   min-height: 0;
 }
 
-/* 모바일: 1열 (위에서 아래로 리스트 → 상세 → 사이드) */
+/* 모바일: 1열 */
 @media (max-width: 768px) {
   .ticketLayout {
     grid-template-columns: 1fr;
   }
 }
 
-/* 데스크탑: 3열 */
+/* 데스크탑: 3열, 각 칸 최소 340px */
 @media (min-width: 769px) {
   .ticketLayout {
-    grid-template-columns: 340px minmax(0, 2fr) minmax(0, 2fr);
+    grid-template-columns: repeat(3, minmax(340px, 1fr));
   }
 }
 
@@ -30,11 +41,31 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
+}
+
+/* 상세보기 영역 */
+.detailPane {
+  /* 세로로 카드 두 개(상단/하단)를 배치 */
+  gap: 0.5rem;
+}
+
+.paneCard {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+
   background-color: var(--color-bg-surface);
   border-radius: 0.75rem;
   border: 1px solid var(--color-border-subtle);
   box-shadow: var(--shadow-elevated);
+
   @extend %themeTransition;
+}
+
+/* list / side > 카드 스타일 상속 */
+.listPane,
+.sidePane {
+  @extend .paneCard;
 }
 
 /* 공통 헤더 */
@@ -44,6 +75,10 @@
   justify-content: space-between;
   padding: 0.6rem 0.9rem;
   border-bottom: 1px solid var(--color-border-subtle);
+  min-height: var(--height-pane-header);
+  box-sizing: border-box;
+
+  @extend %themeTransition;
 }
 
 .paneTitleRow {
@@ -56,11 +91,15 @@
   font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--color-text-main);
+
+  @extend %themeTransition;
 }
 
 .paneMeta {
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
+
+  @extend %themeTransition;
 }
 
 /* 상태 뱃지 공통 + 상태별 색상 */
@@ -90,4 +129,20 @@
 .statusCanceled {
   background-color: rgba(148, 163, 184, 0.18);
   color: #6b7280;
+}
+
+
+/* 모바일에서는 내부 스크롤 없애기 */
+@media (max-width: 768px) {
+  .ticketLayout {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 0;
+  }
+
+  .listPane,
+  .detailPane,
+  .sidePane {
+    min-height: auto;
+  }
 }

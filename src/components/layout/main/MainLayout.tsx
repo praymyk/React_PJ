@@ -1,7 +1,7 @@
+// src/components/layout/main/MainLayout.tsx
 'use client';
 
-import React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, type CSSProperties } from 'react';
 import Header from '@components/layout/header/Header';
 import footerStyles from '@components/layout/footer/Footer.module.scss';
 import headerStyles from '@components/layout/header/Header.module.scss';
@@ -14,7 +14,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     const footerRef = useRef<HTMLElement>(null);
     const [layoutSpace, setLayoutSpace] = useState({ top: 0, bottom: 0 });
 
-    /*** 메뉴+사이드바 스크롤 고정을 위한 헤더 공간 계산 ***/
+    /*** 메뉴+사이드바 스크롤 고정을 위한 헤더/푸터 공간 계산 ***/
     useEffect(() => {
         const updateSpace = () => {
             const headerHeight = headerRef.current?.offsetHeight ?? 0;
@@ -38,13 +38,15 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                     <Header />
                 </header>
 
-                <main style={{
-                        paddingTop: layoutSpace.top,
-                        paddingBottom: layoutSpace.bottom,
-                        minHeight: `calc(100vh)`,
-                        maxHeight: `calc(100vh)`,
-                        display: 'flex'
-                }}>
+                <main
+                    style={
+                        {
+                            // CSS 커스텀 프로퍼티로 헤더/푸터 높이 전달
+                            '--layout-header-height': `${layoutSpace.top}px`,
+                            '--layout-footer-height': `${layoutSpace.bottom}px`,
+                        } as CSSProperties
+                    }
+                >
                     {children}
                 </main>
 

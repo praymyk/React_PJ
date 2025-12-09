@@ -1,0 +1,38 @@
+@use '@/styles/base/mixins.scss' as *;
+
+.editorWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.actionsRow {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.4rem;
+}
+
+.saveButton,
+.resetButton {
+  @extend %buttonBase;
+  font-size: var(--font-size-xs);
+  padding-inline: 0.8rem;
+}
+
+.saveButton {
+  background-color: var(--color-accent);
+  color: #f9fafb;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.saveButton:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.resetButton {
+  background-color: transparent;
+  border-color: var(--color-border-subtle);
+  color: var(--color-text-muted);
+}

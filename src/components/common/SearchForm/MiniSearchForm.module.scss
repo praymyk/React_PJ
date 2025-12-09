@@ -25,6 +25,8 @@
 .label {
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
+
+  @extend %themeTransition;
 }
 
 /* 인풋/셀렉트 공통 */
