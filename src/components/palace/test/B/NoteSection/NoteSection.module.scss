@@ -1,6 +1,6 @@
 @use '@/styles/base/mixins.scss' as *;
 
-.sideBody {
+.noteBody {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -9,23 +9,23 @@
 }
 
 /* 위쪽 카드 */
-.inquiryCard {
+.noteCard {
   @extend %themeTransition;
 }
 
 /* 티켓 선택된 상태 헤더 */
-.inquiryHeader {
+.noteHeader {
   margin-bottom: 0.6rem;
 }
 
-.inquiryTitleRow {
+.noteTitleRow {
   display: flex;
   align-items: center;
   gap: 0.4rem;
   margin-bottom: 0.25rem;
 }
 
-.inquiryTitle {
+.noteTitle {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-main);
@@ -34,7 +34,7 @@
   @extend %themeTransition;
 }
 
-.inquiryId {
+.noteTicketId {
   padding: 0.05rem 0.4rem;
   border-radius: 999px;
   font-size: var(--font-size-xxs);
@@ -42,13 +42,13 @@
   color: var(--color-accent);
 }
 
-.inquirySubtitle {
+.noteSubtitle {
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
 }
 
 /* 필드 영역: 위 캡처처럼 폼 느낌 */
-.inquiryFields {
+.noteFields {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
@@ -84,14 +84,14 @@
 }
 
 /* 티켓 미선택 상태 */
-.inquiryEmpty {
+.noteEmpty {
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
   line-height: 1.5;
 }
 
 /* 아래쪽 에디터 영역 */
-.sideEditorArea {
+.noteEditorArea {
   flex: 1 1 auto;
   min-height: 0;
   display: flex;

@@ -18,7 +18,8 @@ const statusClassOf = (status: Row['status']) => STATUS_CLASS[status];
 // === 섹션 컴포넌트 import ===
 import ListSection from '@components/palace/test/B/ListSection/ListSection';
 import DetailSection from '@components/palace/test/B/DetailSection/DetailSection';
-import SideSection from '@components/palace/test/B/SideSection/SideSection';
+import NoteSection from '@components/palace/test/B/NoteSection/NoteSection';
+import InquirySection from '@components/palace/test/B/InquirySection/InquirySection';
 
 export default function DefaultContent() {
     // 기본 선택 티켓: 첫 번째 티켓 (없으면 null)
@@ -45,8 +46,12 @@ export default function DefaultContent() {
                 statusClassOf={statusClassOf}
             />
 
-            {/* 3) 우측: 문의 목록 영역 */}
-            <SideSection ticket={selectedTicket} />
+            {/* 3) 우측: 티켓 작성 영역 */}
+            <NoteSection ticket={selectedTicket} />
+
+            {/* 4) 우측2: 티켓 내 문의 */}
+            <InquirySection ticket={selectedTicket} />
+
         </div>
     );
 }

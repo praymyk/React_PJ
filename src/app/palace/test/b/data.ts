@@ -49,3 +49,79 @@ export const mockRows: Row[] = [
         status: '진행중',
     },
 ];
+
+
+/** 티켓과 연결된 문의 정보 타입 */
+export type InquiryRow = {
+    id: string;            // 문의 ID
+    ticketId: string;      // 어떤 티켓(Q-0001…)에 연결된 문의인지
+    type: '통화' | '접수' | '기타'; // 문의 타입
+    name: string;          // 이름
+    receivedAt: string;    // 접수 일시 (YYYY-MM-DD HH:mm)
+    content: string;       // 문의 내용 요약
+};
+
+/** 목업 데이터 */
+export const mockInquiries: InquiryRow[] = [
+    // Q-0001 관련 문의
+    {
+        id: 'INQ-0001',
+        ticketId: 'Q-0001',
+        type: '통화',
+        name: '홍나나',
+        receivedAt: '2023-06-02 17:31',
+        content: '교환 접수 문의 드립니다.',
+    },
+    {
+        id: 'INQ-0002',
+        ticketId: 'Q-0001',
+        type: '통화',
+        name: '이나나',
+        receivedAt: '2023-05-25 16:48',
+        content: '배송 확인 요청드립니다.',
+    },
+    {
+        id: 'INQ-0003',
+        ticketId: 'Q-0001',
+        type: '통화',
+        name: '큐나나',
+        receivedAt: '2023-05-25 14:27',
+        content: '배송 문의드립니다. 택배 조회가 되지 않습니다.',
+    },
+    {
+        id: 'INQ-0004',
+        ticketId: 'Q-0001',
+        type: '통화',
+        name: '임나나',
+        receivedAt: '2023-05-25 14:12',
+        content: '결제가 안 됩니다. 카드 오류 문의.',
+    },
+
+    // Q-0002 관련 문의
+    {
+        id: 'INQ-0005',
+        ticketId: 'Q-0002',
+        type: '접수',
+        name: '김나나',
+        receivedAt: '2023-07-01 10:12',
+        content: '통계 데이터가 실제 통화 수와 다릅니다.',
+    },
+    {
+        id: 'INQ-0006',
+        ticketId: 'Q-0002',
+        type: '통화',
+        name: '박나나',
+        receivedAt: '2023-07-02 09:45',
+        content: '일별 통계 기준 시간이 어떻게 되나요?',
+    },
+
+    // Q-0003 관련 문의
+    {
+        id: 'INQ-0007',
+        ticketId: 'Q-0003',
+        type: '통화',
+        name: '최나나',
+        receivedAt: '2023-08-10 15:20',
+        content: '다크 모드에서 화면이 깜빡이는 현상이 있습니다.',
+    },
+];

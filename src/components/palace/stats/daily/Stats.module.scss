@@ -21,7 +21,7 @@
 
 .headerTitle h1 {
   font-size: var(--font-size-lg);
-  font-weight: 600;
+  font-weight: var(--font-weight-bold);
   color: var(--color-text-main);
 }
 
@@ -111,7 +111,7 @@
   align-items: center;
   justify-content: center;
   font-size: var(--font-size-lg);
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   color: #fff;
 }
 
@@ -129,7 +129,7 @@
 
 .name {
   font-size: var(--font-size-md);
-  font-weight: 600;
+  font-weight: var(--font-weight-bold);
   color: var(--color-text-main);
 }
 

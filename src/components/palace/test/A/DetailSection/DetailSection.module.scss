@@ -5,13 +5,6 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-}
-
-.detailLayout {
-  display: flex;
-  padding: 1rem 1.25rem;
-  gap: 1rem;
-  align-items: flex-start;
 
   background-color: var(--color-bg-surface);
   border: 1px solid var(--color-border-subtle);
@@ -21,7 +14,19 @@
   @extend %themeTransition;
 }
 
-/* 왼쪽 상세 카드 영역 */
+/* 상단 프로필 + 버튼 */
+.detailLayout{
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+}
+
+/* 아래 이력 섹션 */
+.historySection {
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+/* 상세 카드 영역 */
 .detailRoot {
   flex: 1;
   border-radius: 0.75rem;
@@ -43,7 +48,7 @@
   @extend %themeTransition;
 }
 
-/* 오른쪽 세로 버튼 / 추가 정보 영역 */
+/* 세로 버튼 / 추가 정보 영역 */
 .detailSide {
   display: flex;
   flex-direction: column;

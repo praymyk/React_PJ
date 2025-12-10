@@ -14,7 +14,7 @@
 
 .detailTitle {
   font-size: var(--font-size-md);
-  font-weight: 600;
+  font-weight: var(--font-weight-bold);
   color: var(--color-text-main);
 
   @extend %themeTransition;
@@ -42,7 +42,7 @@
 
 .sectionTitle {
   font-size: var(--font-size-sm);
-  font-weight: 600;
+  font-weight: var(--font-weight-bold);
   margin-bottom: 0.4rem;
 }
 
@@ -144,7 +144,7 @@
 /* 활성 탭 */
 .tabButtonActive {
   color: var(--color-text-main);
-  font-weight: 600;
+  font-weight: var(--font-weight-bold);
 
   @extend %themeTransition;
 }

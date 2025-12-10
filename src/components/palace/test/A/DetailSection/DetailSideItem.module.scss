@@ -1,18 +1,15 @@
 @use '@/styles/base/mixins.scss' as *;
 
 .bottomPanel {
-  margin-top: 0.25rem;
-  padding: 0.75rem 1rem;
-  border-radius: 0.75rem;
-  background-color: var(--color-bg-surface);
-  border: 1px solid var(--color-border-subtle);
-  box-shadow: var(--shadow-elevated);
-  @extend %themeTransition;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
 }
 
 .bottomPanelTitle {
   font-size: var(--font-size-sm);
-  font-weight: 600;
+  font-weight: var(--font-weight-bold);
   margin-bottom: 0.5rem;
 }
 
@@ -29,6 +26,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+  max-height: 220px;
+  overflow-y: auto;
 }
 
 .historyItem {
@@ -36,6 +35,12 @@
   border: 1px solid var(--color-border-subtle);
   border-radius: 0.5rem;
   background-color: rgba(148, 163, 184, 0.08);
+
+  @extend %themeTransition;
+}
+
+.historyItem:hover {
+  background: var(--color-accent-soft);
 }
 
 .historyRowTop {
@@ -48,11 +53,13 @@
 .historyDate {
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
+
+  @extend %themeTransition;
 }
 
 .historyStatus {
   font-size: var(--font-size-xs);
-  font-weight: 600;
+  font-weight: var(--font-weight-bold);
   color: #059669;
 }
 

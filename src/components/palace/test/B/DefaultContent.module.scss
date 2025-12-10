@@ -2,22 +2,14 @@
 
 /* 레이아웃: 좌측 리스트 / 중앙 상세 / 우측 사이드 */
 .ticketLayout {
-  /* 헤더 높이 */
   --height-pane-header: 5.2rem;
 
-  /* 티켓 레이아웃 고정 폭 */
-  --width-ticket-list: 320px;
-  --width-ticket-detail: 640px;
-  --width-ticket-side: 260px;
-
   display: grid;
-  grid-template-columns:
-    var(--width-ticket-list)
-    var(--width-ticket-detail)
-    var(--width-ticket-side);
   gap: 0.75rem;
-  height: 100%;
   min-height: 0;
+
+  width: 100%;
+  margin: 0 auto;
 }
 
 /* 모바일: 1열 */
@@ -27,17 +19,18 @@
   }
 }
 
-/* 데스크탑: 3열, 각 칸 최소 340px */
+/* 데스크탑: 가로 배치, 각 칸 최소 340px */
 @media (min-width: 769px) {
   .ticketLayout {
-    grid-template-columns: repeat(3, minmax(340px, 1fr));
+    grid-template-columns: repeat(4, minmax(340px, 1fr));
   }
 }
 
 /* 공통 패널 스타일 */
 .listPane,
 .detailPane,
-.sidePane {
+.notePane,
+.inquiryPane {
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -45,7 +38,6 @@
 
 /* 상세보기 영역 */
 .detailPane {
-  /* 세로로 카드 두 개(상단/하단)를 배치 */
   gap: 0.5rem;
 }
 
@@ -62,9 +54,10 @@
   @extend %themeTransition;
 }
 
-/* list / side > 카드 스타일 상속 */
+/* 카드 스타일 상속 */
 .listPane,
-.sidePane {
+.notePane,
+.inquiryPane {
   @extend .paneCard;
 }
 
@@ -89,7 +82,7 @@
 
 .paneTitle {
   font-size: var(--font-size-sm);
-  font-weight: 600;
+  font-weight: var(--font-weight-bold);
   color: var(--color-text-main);
 
   @extend %themeTransition;
@@ -132,7 +125,7 @@
 }
 
 
-/* 모바일에서는 내부 스크롤 없애기 */
+/* 모바일 > 내부 스크롤 없애기 */
 @media (max-width: 768px) {
   .ticketLayout {
     grid-template-columns: 1fr;
@@ -142,7 +135,7 @@
 
   .listPane,
   .detailPane,
-  .sidePane {
+  .notePane {
     min-height: auto;
   }
 }
