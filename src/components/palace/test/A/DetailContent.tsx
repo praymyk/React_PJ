@@ -14,8 +14,15 @@ import {searchRegistry} from "@/app/palace/test/a/searchFields";
 import { tableColumns } from '@/app/palace/test/a/tableColumns';
 import { mockRows, type Row} from '@/app/palace/test/a/data';
 
+import type { UserRow } from '@/lib/db/reactpj';
 
-export default function DetailPage() {
+type Props = {
+    user: UserRow;
+}
+
+
+
+export default function DetailPage({ user } : Props) {
     // URL 파라미터 읽기
     const params = useParams<{ id: string }>();
 
@@ -42,7 +49,7 @@ export default function DetailPage() {
             테스트/a 상세보기
 
             <DetailSection
-                row={row}
+                row={user}
             />
 
             <SearchForm fields={fields} onSearch={handleSearch} />

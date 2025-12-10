@@ -1,7 +1,6 @@
-// src/app/api/common/companies/route.ts
 import { NextResponse } from 'next/server';
 import type { Name } from '@/app/palace/stats/daily/data';
-import { pool } from '@/lib/db';
+import { pool } from '@lib/db/aicc';
 
 export async function GET() {
     const conn = await pool.getConnection();

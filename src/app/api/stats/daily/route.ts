@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { pool } from '@lib/db';
+import { pool } from '@lib/db/aicc';
 import type { Row } from '@/app/palace/stats/daily/data';
 
 function getMonthRange(month: string) {

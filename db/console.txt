@@ -1,0 +1,17 @@
+// 로컬 개발 환경 초기 세팅용
+
+docker stop mysql-reactpj
+docker rm mysql-reactpj
+docker volume rm mysql-reactpj-data
+
+docker run --name mysql-reactpj \
+  -e MYSQL_ROOT_PASSWORD=rootpass \
+  -e MYSQL_DATABASE=reactpj \
+  -e MYSQL_USER=appuser \
+  -e MYSQL_PASSWORD=apppass \
+  -v "$(pwd)/db/init.sql":/docker-entrypoint-initdb.d/init.sql \
+  -v mysql-reactpj-data:/var/lib/mysql \
+  -p 3307:3306 \
+  -d mysql:8.0 \
+  --character-set-server=utf8mb4 \
+  --collation-server=utf8mb4_unicode_ci

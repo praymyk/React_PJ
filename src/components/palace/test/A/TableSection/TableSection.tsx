@@ -29,7 +29,7 @@ export default function TableSection({
             // 첫 리스트 → 'detail' 페이지로 이동
             router.push(`/palace/test/a/${row.id}`);
         } else {
-            // mode === 'detail' 인 경우
+            // TODO mode === 'detail' 인 경우 사용 예정
             router.push(`/palace/test/a/${row.id}`);
         }
     };
