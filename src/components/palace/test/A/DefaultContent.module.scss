@@ -4,3 +4,30 @@
   flex-direction: column;
   gap: 1rem;
 }
+
+.paginationBar {
+  margin-top: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.paginationInfo {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.paginationBar button {
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-subtle);
+  background-color: var(--color-bg-surface);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}

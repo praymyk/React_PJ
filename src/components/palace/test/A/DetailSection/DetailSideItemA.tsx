@@ -3,15 +3,15 @@
 import styles from './DetailSideItem.module.scss';
 import { useEffect, useState } from 'react';
 
-import type { UserRow } from '@/lib/db/reactpj';
-import type { UserHistoryRow } from '@/lib/db/reactpj';
+import type { UserRow } from '@/lib/db/reactpj/users';
+import type { UserTicketEventsRow } from '@/lib/db/reactpj/tickets';
 
 type Props = {
     row: UserRow;
 };
 
 export default function DetailSideItemA({ row }: Props) {
-    const [historyItems, setHistoryItems] = useState<UserHistoryRow[]>([]);
+    const [historyItems, setHistoryItems] = useState<UserTicketEventsRow[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -29,13 +29,13 @@ export default function DetailSideItemA({ row }: Props) {
 
             try {
                 const res = await fetch(
-                    `/api/common/users/${encodeURIComponent(row.id)}/histories`,
+                    `/api/common/users/${encodeURIComponent(row.id)}/ticketEvents`,
                 );
                 if (!res.ok) {
                     throw new Error(`HTTP ${res.status}`);
                 }
 
-                const data: UserHistoryRow[] = await res.json();
+                const data: UserTicketEventsRow[] = await res.json();
                 if (!cancelled) {
                     setHistoryItems(data);
                 }

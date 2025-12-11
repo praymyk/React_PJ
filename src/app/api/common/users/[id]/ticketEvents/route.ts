@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserHistories } from '@lib/db/reactpj';
+import { getUserTicketEvents } from '@/lib/db/reactpj/tickets';
 
 type RouteContext = {
     params: { id: string };
@@ -10,11 +10,11 @@ export async function GET(
     { params }: RouteContext,
 ) {
     try {
-        const histories = await getUserHistories(params.id);
+        const ticketEvents = await getUserTicketEvents(params.id);
 
-        return NextResponse.json(histories);
+        return NextResponse.json(ticketEvents);
     } catch (error) {
-        console.error('[GET /api/common/users/[id]/histories] error:', error);
+        console.error('[GET /api/common/users/[id]/ticketEvents] error:', error);
         return NextResponse.json(
             { message: '유저 이력 목록을 가져오는데 실패했습니다.' },
             { status: 500 },

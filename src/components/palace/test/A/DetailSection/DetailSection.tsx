@@ -2,7 +2,7 @@
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import styles from './DetailSection.module.scss';
-import type { UserRow } from '@/lib/db/reactpj';
+import type { UserRow } from '@/lib/db/reactpj/users';
 
 import DetailSideActions, {
     type DetailSideAction,
@@ -18,11 +18,16 @@ type Props = {
 }
 
 export default function DetailSection({ row }: Props) {
+
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
-    const activePanel = (searchParams.get('panel') as ActivePanel) ?? null;
+    // TODO : 쿼리 URL에 선택 user 의 사이드 메뉴 선택 값 활용 용도
+    const rawPanel = searchParams.get('panel') as ActivePanel | null;
+
+    // 쿼리가 비어 있으면 'history(이력 조회)'를 기본값으로 사용
+    const activePanel: ActivePanel = rawPanel ?? 'history';
 
     const setPanel = (panel: ActivePanel) => {
         const sp = new URLSearchParams(searchParams.toString());
@@ -37,17 +42,20 @@ export default function DetailSection({ row }: Props) {
         {
             key: 'history',
             label: '이력 조회',
-            onClick: () => setPanel(activePanel === 'history' ? null : 'history'),
+            onClick: () =>
+                setPanel(rawPanel === 'history' ? null : 'history'),
         },
         {
             key: 'logs',
             label: '로그 보기',
-            onClick: () => setPanel(activePanel === 'logs' ? null : 'logs'),
+            onClick: () =>
+                setPanel(rawPanel === 'logs' ? null : 'logs'),
         },
         {
             key: 'extra',
             label: '기타 액션',
-            onClick: () => setPanel(activePanel === 'extra' ? null : 'extra'),
+            onClick: () =>
+                setPanel(rawPanel === 'extra' ? null : 'extra'),
         },
     ];
 
@@ -95,12 +103,6 @@ export default function DetailSection({ row }: Props) {
                     </div>
                 )}
 
-                {/* 아무 패널도 선택 안 됐을 때 안내 */}
-                {!activePanel && (
-                    <div className={styles.bottomPanelEmpty}>
-                        오른쪽 버튼에서 조회할 항목을 선택하세요.
-                    </div>
-                )}
             </section>
         </div>
     );

@@ -26,7 +26,7 @@ INSERT INTO users (id, name, email, status) VALUES
 
 
 -- 고객 이력 테이블
-CREATE TABLE IF NOT EXISTS user_histories (
+CREATE TABLE IF NOT EXISTS ticket_events (
     id         BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id    VARCHAR(20)  NOT NULL,
     event_date DATE         NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS user_histories (
     status     VARCHAR(50)  NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT fk_user_histories_user
+    CONSTRAINT fk_ticket_events_user
     FOREIGN KEY (user_id) REFERENCES users(id)
     ON DELETE CASCADE
     ) ENGINE=InnoDB
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS user_histories (
     COLLATE=utf8mb4_unicode_ci;
 
 -- 기본 목업 이력 데이터
-INSERT INTO user_histories (user_id, event_date, title, content, status) VALUES
+INSERT INTO ticket_events (user_id, event_date, title, content, status) VALUES
     ('u-001', '2025-03-01', '문의 접수',       '웹 문의 폼을 통해 접수된 상담입니다.', '진행중'),
     ('u-001', '2025-03-03', '추가 자료 요청',  '필요 서류 안내 후 고객이 자료를 업로드했습니다.', '완료'),
     ('u-002', '2025-02-11', '회원 정보 수정',  '연락처 및 주소 정보가 최신 정보로 수정되었습니다.', '완료');

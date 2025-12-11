@@ -1,5 +1,8 @@
 'use client';
 
+import { useMemo } from 'react';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+
 import styles from '@components/palace/test/A/DefaultContent.module.scss';
 
 import DetailSection from '@components/palace/test/A/DetailSection/DetailSection';
@@ -9,22 +12,67 @@ import TableSection from '@components/palace/test/A/TableSection/TableSection';
 import { searchRegistry } from '@/app/palace/test/a/searchFields';
 import { tableColumns } from '@/app/palace/test/a/tableColumns';
 
-import type { UserRow } from '@/lib/db/reactpj';
+import type { UserRow } from '@/lib/db/reactpj/users';
 
 type Props = {
     user: UserRow;
     userList: UserRow[];
+    page: number;
+    pageSize: number;
+    total: number;
 };
 
-export default function DetailContent({ user, userList }: Props) {
-    // 선택된 유저 id는 props로 이미 들어옴
+export default function DetailContent({
+    user,
+    userList,
+    page,
+    pageSize,
+    total,
+}: Props) {
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+
+    // 선택된 유저 id > props
     const selectedId = user.id;
 
-    // 리스트에서 몇 번째 행인지 찾아서 하이라이트용 인덱스 계산
+    // 리스트에서 하이라이트용 인덱스
     const selectedIndex = userList.findIndex((u) => u.id === selectedId);
     const safeSelectedIndex = selectedIndex >= 0 ? selectedIndex : null;
 
     const fields = searchRegistry.searchItems;
+
+    const currentPage = useMemo(() => {
+        const fromUrl = Number(searchParams.get('page') ?? page) || page || 1;
+        return fromUrl;
+    }, [searchParams, page]);
+
+    const totalPages = useMemo(
+        () => Math.max(1, Math.ceil(total / pageSize)),
+        [total, pageSize],
+    );
+
+    const goToPage = (nextPage: number) => {
+        const safePage = Math.min(Math.max(nextPage, 1), totalPages);
+
+        const sp = new URLSearchParams(searchParams.toString());
+        if (safePage === 1) {
+            sp.delete('page');
+        } else {
+            sp.set('page', String(safePage));
+        }
+        sp.set('pageSize', String(pageSize));
+
+        router.push(`${pathname}?${sp.toString()}`, { scroll: false });
+    };
+
+    const handlePrevPage = () => {
+        goToPage(currentPage - 1);
+    };
+
+    const handleNextPage = () => {
+        goToPage(currentPage + 1);
+    };
 
     const handleSearch = (values: Record<string, string>) => {
         console.log('검색 값:', values);
@@ -45,7 +93,32 @@ export default function DetailContent({ user, userList }: Props) {
                 columns={tableColumns}
                 mode="detail"
                 selectedIndex={safeSelectedIndex}
+                currentPage={currentPage}
+                pageSize={pageSize}
             />
+
+            <div className={styles.paginationBar}>
+                <button
+                    type="button"
+                    onClick={handlePrevPage}
+                    disabled={currentPage <= 1}
+                >
+                    이전
+                </button>
+
+                <span className={styles.paginationInfo}>
+                    {currentPage} / {totalPages} 페이지
+                    <span> (총 {total}건)</span>
+                </span>
+
+                <button
+                    type="button"
+                    onClick={handleNextPage}
+                    disabled={currentPage >= totalPages}
+                >
+                    다음
+                </button>
+            </div>
         </div>
     );
 }

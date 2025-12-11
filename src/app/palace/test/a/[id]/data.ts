@@ -1,15 +1,29 @@
-import { getUserById, getUsers } from '@/lib/db/reactpj';
-import type { UserRow } from '@/lib/db/reactpj';
+import { getUserById, getUsersPaged } from '@/lib/db/reactpj/users';
+import type { UserRow } from '@/lib/db/reactpj/users';
 
 export type DetailPageData = {
-    user: UserRow;
-    userList: UserRow[];
+  user: UserRow;
+  userList: UserRow[];
+  total: number;
+  page: number;
+  pageSize: number;
 };
 
-export async function getDetailPageData(id: string): Promise<DetailPageData | null> {
-    const user = await getUserById(id);
-    if (!user) return null;
+export async function getDetailPageData(
+  id: string,
+  page: number,
+  pageSize: number,
+): Promise<DetailPageData | null> {
+  const user = await getUserById(id);
+  if (!user) return null;
 
-    const userList = await getUsers();
-    return { user, userList };
+  const { rows, total } = await getUsersPaged(page, pageSize);
+
+  return {
+    user,
+    userList: rows,
+    total,
+    page,
+    pageSize,
+  };
 }
