@@ -66,3 +66,62 @@
 .historyTitle {
   font-size: var(--font-size-sm);
 }
+
+.bottomPanelLoading {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+
+  @extend %themeTransition;
+}
+
+.loadingLabel {
+  /* 필요하면 여기서도 폰트/색 조정 가능 */
+}
+
+.typingDots {
+  display: inline-flex;
+  gap: 0.18rem;
+}
+
+.typingDots span {
+  width: 0.38rem;
+  height: 0.38rem;
+  border-radius: 999px;
+  background-color: var(--color-text-muted);
+  opacity: 0.4;
+  animation: typingDot 1s infinite ease-in-out;
+
+  @extend %themeTransition;
+}
+
+.typingDots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.typingDots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes typingDot {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-0.18rem);
+    opacity: 1;
+  }
+}
+
+.bottomPanelInfo {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.bottomPanelError {
+  font-size: var(--font-size-xs);
+  color: #dc2626; // Tailwind red-600 느낌
+}

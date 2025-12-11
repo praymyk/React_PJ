@@ -5,15 +5,15 @@ import {
     Table,
     type Column,
 } from '@components/common/TableForm/Table';
-import type { Row } from '@/app/palace/test/a/data';
+import type { UserRow } from '@/lib/db/reactpj';
 
 type Mode = 'list' | 'detail';
 
 type Props = {
-    rows: Row[];
+    rows: UserRow[];
     mode?: Mode;
     selectedIndex?: number | null;
-    columns: Column<Row>[];
+    columns: Column<UserRow>[];
 };
 
 export default function TableSection({
@@ -24,7 +24,7 @@ export default function TableSection({
 }: Props) {
     const router = useRouter();
 
-    const handleRowClick = (row: Row) => {
+    const handleRowClick = (row: UserRow) => {
         if (mode === 'list') {
             // 첫 리스트 → 'detail' 페이지로 이동
             router.push(`/palace/test/a/${row.id}`);
@@ -35,7 +35,7 @@ export default function TableSection({
     };
 
     return (
-        <Table<Row>
+        <Table<UserRow>
             rows={rows}
             columns={columns}
             getRowKey={(row) => row.id}

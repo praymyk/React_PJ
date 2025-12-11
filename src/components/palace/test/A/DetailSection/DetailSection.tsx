@@ -2,7 +2,7 @@
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import styles from './DetailSection.module.scss';
-import type { Row } from '@/app/palace/test/a/data';
+import type { UserRow } from '@/lib/db/reactpj';
 
 import DetailSideActions, {
     type DetailSideAction,
@@ -14,7 +14,7 @@ import DetailSideItemA from '@components/palace/test/A/DetailSection/DetailSideI
 type ActivePanel = 'history' | 'logs' | 'extra' | null;
 
 type Props = {
-    row: Row;
+    row: UserRow;
 }
 
 export default function DetailSection({ row }: Props) {

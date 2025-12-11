@@ -6,7 +6,7 @@ import SearchForm from '@components/common/SearchForm/SearchForm';
 import TableSection from '@components/palace/test/A/TableSection/TableSection';
 import { searchRegistry } from '@/app/palace/test/a/searchFields';
 import { tableColumns } from '@/app/palace/test/a/tableColumns';
-import type { UserRow } from '@/lib/db/reactpj'; // DB 타입 재사용 추천
+import type { UserRow } from '@/lib/db/reactpj';
 import styles from '@components/palace/test/A/DefaultContent.module.scss';
 
 type Props = {

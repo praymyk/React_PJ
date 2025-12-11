@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS user_histories (
     user_id    VARCHAR(20)  NOT NULL,
     event_date DATE         NOT NULL,
     title      VARCHAR(255) NOT NULL,
+    content    TEXT         NOT NULL,
     status     VARCHAR(50)  NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
@@ -42,7 +43,7 @@ CREATE TABLE IF NOT EXISTS user_histories (
     COLLATE=utf8mb4_unicode_ci;
 
 -- 기본 목업 이력 데이터
-INSERT INTO user_histories (user_id, event_date, title, status) VALUES
-    ('u-001', '2025-03-01', '문의 접수',       '진행중'),
-    ('u-001', '2025-03-03', '추가 자료 요청',  '완료'),
-    ('u-002', '2025-02-11', '회원 정보 수정',  '완료');
+INSERT INTO user_histories (user_id, event_date, title, content, status) VALUES
+    ('u-001', '2025-03-01', '문의 접수',       '웹 문의 폼을 통해 접수된 상담입니다.', '진행중'),
+    ('u-001', '2025-03-03', '추가 자료 요청',  '필요 서류 안내 후 고객이 자료를 업로드했습니다.', '완료'),
+    ('u-002', '2025-02-11', '회원 정보 수정',  '연락처 및 주소 정보가 최신 정보로 수정되었습니다.', '완료');
