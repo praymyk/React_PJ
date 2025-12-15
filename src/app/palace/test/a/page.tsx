@@ -1,17 +1,27 @@
 import DefaultContent from '@components/palace/test/A/DefaultContent';
 import { getDefaultPageData } from './data';
 
-type PageProps = { searchParams: { page?: number } };
+type RawSearchParams = {
+    page?: string;
+    pageSize?: string;
+    keyword?: string;
+    status?: string;
+};
+
+type PageProps = {
+    searchParams: Promise<RawSearchParams>;
+};
 
 export default async function Page({ searchParams }: PageProps) {
-    const page = Number(searchParams.page ?? '1') || 1;
-    const pageSize = 2;
 
-    const { userList, total } = await getDefaultPageData(page, pageSize);
+    const resolved = await searchParams;
+
+    const { rows, total, page, pageSize } =
+        await getDefaultPageData(resolved);
 
     return (
         <DefaultContent
-            initialRows={userList}
+            initialRows={rows}
             page={page}
             total={total}
             pageSize={pageSize}

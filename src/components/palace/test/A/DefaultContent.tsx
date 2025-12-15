@@ -51,11 +51,24 @@ export default function DefaultContent({
 
     const handleSearch = (values: Record<string, string>) => {
         console.log('검색 값:', values);
-        // TODO: 검색값으로 /api 호출해서 새 데이터 받아오거나
-        // rows 필터링 로직 추가 예정
+        // TODO: 검색값으로 API 호출
+        const sp = new URLSearchParams(searchParams.toString());
+
+        Object.entries(values).forEach(([key, val]) => {
+            const v = (val ?? '').trim();
+            if (v) {
+                sp.set(key, v);
+            } else {
+                sp.delete(key);
+            }
+        });
+
+        // 검색하면 항상 1페이지로 초기화
+        sp.delete('page');
+
+        router.push(`${pathname}?${sp.toString()}`, { scroll: false });
     };
 
-    /** page 쿼리만 바꿔서 서버에 새 페이지 요청 */
     const goToPage = (nextPage: number) => {
         const safePage = Math.min(Math.max(nextPage, 1), totalPages);
 

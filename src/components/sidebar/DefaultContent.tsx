@@ -13,7 +13,7 @@ interface SidebarProps {
 
 export default function DefaultContent({ items }: SidebarProps) {
     const [isMobile, setIsMobile] = useState(false);
-    const { setSelectedPage } = useSidebar();
+    const { setSelectedPanel } = useSidebar();
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -31,7 +31,7 @@ export default function DefaultContent({ items }: SidebarProps) {
                         className={styles.ribbonItem}
                         onClick={(e) => {
                             e.preventDefault();
-                            setSelectedPage(item);
+                            setSelectedPanel(item);
                         }}
                     >
                         <item.icon className={styles.ribbonIcon} />
@@ -44,17 +44,17 @@ export default function DefaultContent({ items }: SidebarProps) {
 }
 
 export function SidebarPanelTabs({ items }: SidebarProps) {
-    const { selectedPage, setSelectedPage } = useSidebar();
+    const { selectedPanel, setSelectedPanel } = useSidebar();
 
     const handleClick = (item: SidebarItem) => {
         // 이미 열려있는 패널을 다시 클릭한 경우 → 닫기
-        if (selectedPage === item) {
-            setSelectedPage(null);
+        if (selectedPanel === item) {
+            setSelectedPanel(null);
             return;
         }
 
         // 다른 패널 클릭 → 해당 패널 열기
-        setSelectedPage(item);
+        setSelectedPanel(item);
     };
     return (
         <div className={styles.panelTabsContainer}>
@@ -76,7 +76,7 @@ export function SidebarPanelTabs({ items }: SidebarProps) {
 
 /*** 사이드 바 패널 ***/
 export function Panel({ items }: SidebarProps) {
-    const { selectedPage, setSelectedPage } = useSidebar();
+    const { selectedPanel, setSelectedPanel } = useSidebar();
     const [isVisible, setIsVisible] = useState(false);
     const [shouldRender, setShouldRender] = useState(false);
 
@@ -84,17 +84,17 @@ export function Panel({ items }: SidebarProps) {
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') setSelectedPage(null);
+            if (e.key === 'Escape') setSelectedPanel(null);
         };
-        if (selectedPage) {
+        if (selectedPanel) {
             window.addEventListener('keydown', handleKeyDown);
             return () => window.removeEventListener('keydown', handleKeyDown);
         }
 
-    }, [selectedPage, setSelectedPage]);
+    }, [selectedPanel, setSelectedPanel]);
 
     useEffect(() => {
-        if (selectedPage) {
+        if (selectedPanel) {
             setShouldRender(true);
             setTimeout(() => setIsVisible(true), 20);
         } else if (shouldRender) {
@@ -102,11 +102,11 @@ export function Panel({ items }: SidebarProps) {
             const timeout = setTimeout(() => setShouldRender(false), 300);
             return () => clearTimeout(timeout);
         }
-    }, [selectedPage, shouldRender]);
+    }, [selectedPanel, shouldRender]);
 
-    if (!shouldRender || !selectedPage) return null;
+    if (!shouldRender || !selectedPanel) return null;
 
-    const Component = selectedPage.component;
+    const Component = selectedPanel.component;
 
     return (
         <div
@@ -127,7 +127,7 @@ export function Panel({ items }: SidebarProps) {
                     <Component />
                 </div>
 
-                <button onClick={() => setSelectedPage(null)}>닫기</button>
+                <button onClick={() => setSelectedPanel(null)}>닫기</button>
             </div>
         </div>
     );

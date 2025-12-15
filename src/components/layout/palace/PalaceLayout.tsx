@@ -6,8 +6,6 @@ import { SidebarProvider, useSidebar } from '@/contexts/sidebar.context';
 import { useLayoutSidebar } from '@/contexts/layoutSidebar.context';
 import SubMenuContent, { Panel as SidebarPanel } from '@components/sidebar/DefaultContent';
 import { sidebarRegistry } from '@/data/sidebarItems';
-import {useEffect} from "react";
-import { usePathname } from 'next/navigation';
 
 export default function PalaceLayout({ children }: { children: React.ReactNode }) {
     return (
@@ -18,28 +16,34 @@ export default function PalaceLayout({ children }: { children: React.ReactNode }
 }
 
 function PalaceLayoutContent({ children }: { children: React.ReactNode }) {
-    const { showRightSidebar } = useLayoutSidebar();
-    const { selectedPage, setSelectedPage } = useSidebar();
-    const pathname = usePathname();
-
+    const { showRightSidebar, setShowRightSidebar } = useLayoutSidebar();
     const { top, bottom } = useLayoutSpace();
 
-    useEffect(() => {
-        setSelectedPage(null);
-    }, [pathname, setSelectedPage]);
+    /** sidebar Panel 선택 **/
+    const { selectedPanel } = useSidebar();
+
+    console.log('[PalaceLayout] showRightSidebar=', showRightSidebar, 'selectedPanel=', selectedPanel)
 
     return (
         <div className={styles.palaceLayout}>
             <aside className={styles.menu}>
                 <MainMenuContent items={menuRegistry.palace} offsetTop={top} />
+
+                <button
+                    type="button"
+                    className={styles.sidebarToggleButton}
+                    onClick={() => setShowRightSidebar(!showRightSidebar)}
+                >
+                    {showRightSidebar ? '우측 숨김' : '우측 보임'}
+                </button>
             </aside>
 
             <section className={styles.mainContent}>
                 {children}
             </section>
 
-            {/* selectedPage가 없을 때만 리본 사이드바 표시 */}
-            {showRightSidebar && !selectedPage && (
+            {/* 패널이 열려있을 땐 리본 사이드바 숨김 */}
+            {showRightSidebar && !selectedPanel && (
                 <aside className={styles.sidebar}>
                     <SubMenuContent items={sidebarRegistry.A} />
                 </aside>

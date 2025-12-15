@@ -1,29 +1,74 @@
-import { getUserById, getUsersPaged } from '@/lib/db/reactpj/users';
-import type { UserRow } from '@/lib/db/reactpj/users';
+import {
+    getUserById,
+    getUsersPaged,
+    type UserRow,
+    type UserSearchParams,
+} from '@/lib/db/reactpj/users';
 
+/**
+ * 상세 페이지 사용하는 최종 데이터
+ */
 export type DetailPageData = {
-  user: UserRow;
-  userList: UserRow[];
-  total: number;
-  page: number;
-  pageSize: number;
+    user: UserRow;
+    userList: UserRow[];
+    total: number;
+    page: number;
+    pageSize: number;
+
+    keyword?: string;
+    status?: string;
+};
+
+/**
+ * URL 쿼리(raw) 검색조건 데이터 형태
+ */
+export type DetailRawSearchParams = {
+    page?: string;
+    pageSize?: string;
+    keyword?: string;
+    status?: string;
 };
 
 export async function getDetailPageData(
-  id: string,
-  page: number,
-  pageSize: number,
+    id: string,
+    raw: DetailRawSearchParams,
 ): Promise<DetailPageData | null> {
-  const user = await getUserById(id);
-  if (!user) return null;
+    // 1) 유저 ID
+    const user = await getUserById(id);
+    if (!user) return null;
 
-  const { rows, total } = await getUsersPaged(page, pageSize);
+    // 2) page / pageSize 숫자로 변환 + 기본값
+    const page = Number(raw.page ?? '1') || 1;
+    const pageSize = Number(raw.pageSize ?? '10') || 10;
 
-  return {
-    user,
-    userList: rows,
-    total,
-    page,
-    pageSize,
-  };
+    // 3) status 필터
+    const rawStatus = raw.status?.trim();
+
+    // DB 쿼리용 검색 파라미터 생성
+    const filters: UserSearchParams = {
+        // keyword: 빈 문자열 > undefined
+        keyword: raw.keyword?.trim() || undefined,
+        // status: 'active' or 'inactive'
+        status:
+            rawStatus === 'active' || rawStatus === 'inactive'
+                ? (rawStatus as 'active' | 'inactive')
+                : undefined,
+    };
+
+    const { rows, total, page: resolvedPage, pageSize: resolvedPageSize } =
+        await getUsersPaged({
+            page,
+            pageSize,
+            ...filters,
+        });
+
+    return {
+        user,
+        userList: rows,
+        total,
+        page: resolvedPage,
+        pageSize: resolvedPageSize,
+        keyword: filters.keyword,
+        status: filters.status,
+    };
 }

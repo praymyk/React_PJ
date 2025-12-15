@@ -3,18 +3,18 @@
 import {createContext, useContext, useEffect, useState} from 'react';
 import type { SidebarItem } from '@/data/sidebarItems';
 
-type SidebarContextType = {
-    selectedPage: SidebarItem | null;
-    setSelectedPage: (item: SidebarItem | null) => void;
+type SidebarContextValue = {
+    selectedPanel: SidebarItem | null;
+    setSelectedPanel: (item: SidebarItem | null) => void;
 };
 
-const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
+const SidebarContext = createContext<SidebarContextValue | undefined>(undefined);
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
-    const [selectedPage, setSelectedPage] = useState<SidebarItem | null>(null);
+    const [selectedPanel, setSelectedPanel] = useState<SidebarItem | null>(null)
 
     return (
-        <SidebarContext.Provider value={{ selectedPage, setSelectedPage }}>
+        <SidebarContext.Provider value={{ selectedPanel, setSelectedPanel }}>
             {children}
         </SidebarContext.Provider>
     );

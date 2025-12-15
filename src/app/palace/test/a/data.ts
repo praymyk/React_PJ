@@ -1,6 +1,30 @@
-import { getUsersPaged } from '@/lib/db/reactpj/users';
+import { getUsersPaged, type UserSearchParams } from '@/lib/db/reactpj/users';
 
-export async function getDefaultPageData(page: number, pageSize: number) {
-    const result = await getUsersPaged(page, pageSize);
-    return { userList: result.rows, total: result.total };
+type RawSearchParams = {
+    page?: string;
+    pageSize?: string;
+
+    keyword?: string;
+    status?: string;
+};
+
+export async function getDefaultPageData(raw: RawSearchParams) {
+    const page = Number(raw.page ?? '1') || 1;
+    const pageSize = Number(raw.pageSize ?? '10') || 10;
+
+    const rawStatus = raw.status?.trim(); // ★ 공백 제거
+
+    const filters: UserSearchParams = {
+        keyword: raw.keyword?.trim() || undefined,
+        status:
+            rawStatus === 'active' || rawStatus === 'inactive'
+                ? (rawStatus as 'active' | 'inactive')
+                : undefined,
+    };
+
+    return getUsersPaged({
+        page,
+        pageSize,
+        ...filters,
+    });
 }

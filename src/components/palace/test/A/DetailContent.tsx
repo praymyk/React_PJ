@@ -42,6 +42,14 @@ export default function DetailContent({
 
     const fields = searchRegistry.searchItems;
 
+    const initialSearchValues = useMemo(
+        () => ({
+            keyword: searchParams.get('keyword') ?? '',
+            status: searchParams.get('status') ?? '',
+        }),
+        [searchParams],
+    );
+
     const currentPage = useMemo(() => {
         const fromUrl = Number(searchParams.get('page') ?? page) || page || 1;
         return fromUrl;
@@ -76,7 +84,22 @@ export default function DetailContent({
 
     const handleSearch = (values: Record<string, string>) => {
         console.log('검색 값:', values);
-        // TODO: values 기반으로 userList 필터링 or API 호출
+        // TODO: 검색값으로 API 호출
+        const sp = new URLSearchParams(searchParams.toString());
+
+        Object.entries(values).forEach(([key, val]) => {
+            const v = (val ?? '').trim();
+            if (v) {
+                sp.set(key, v);
+            } else {
+                sp.delete(key);
+            }
+        });
+
+        // 검색하면 항상 1페이지로 초기화
+        sp.delete('page');
+
+        router.push(`${pathname}?${sp.toString()}`, { scroll: false });
     };
 
     return (
@@ -85,7 +108,11 @@ export default function DetailContent({
             <DetailSection row={user} />
 
             {/* 중간: 검색 폼 */}
-            <SearchForm fields={fields} onSearch={handleSearch} />
+            <SearchForm
+                fields={fields}
+                onSearch={handleSearch}
+                initialValues={initialSearchValues}
+            />
 
             {/* 하단: 유저 리스트 테이블 (선택된 행 하이라이트) */}
             <TableSection

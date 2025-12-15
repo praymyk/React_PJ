@@ -17,47 +17,81 @@ export type PagedResult<T> = {
     pageSize: number;
 };
 
-export async function getUsers(): Promise<UserRow[]> {
-    const [rows] = await reactpjPool.query<UserRow[]>(
-        `
-      SELECT id, name, email, status, created_at
-      FROM users
-      ORDER BY id
-    `,
-    );
-    return rows;
-}
+/** 검색 조건 **/
+export type UserSearchParams = {
+    keyword?: string;
+    status?: 'active' | 'inactive';
+};
 
 /**
- * (신규) DB 레벨에서 LIMIT/OFFSET으로 잘라오는 페이징 전용 함수
+ * USER 조회 페이징 전용 함수
  */
 export async function getUsersPaged(
-    page: number,
-    pageSize: number,
+    params: {
+        page: number;
+        pageSize: number;
+    } & UserSearchParams,
 ): Promise<PagedResult<UserRow>> {
+    const { page, pageSize, keyword, status } = params;
+
     const safePage = page > 0 ? page : 1;
     const safePageSize = pageSize > 0 ? pageSize : 10;
     const offset = (safePage - 1) * safePageSize;
 
-    // 1) 실제 목록
-    const [rows] = await reactpjPool.query<UserRow[]>(
-        `
+    const where: string[] = [];
+    const queryParams: (string | number)[] = [];
+
+    // 1) 들어온 값 먼저 확인
+    console.log('[getUsersPaged] incoming params =', {
+        page,
+        pageSize,
+        keyword,
+        status,
+    });
+
+    if (keyword && keyword.trim() !== '') {
+        where.push('(name LIKE ? OR email LIKE ?)');
+        const like = `%${keyword.trim()}%`;
+        queryParams.push(like, like);
+    }
+
+    // console.log('[getUsersPaged] status before where check =', JSON.stringify(status));
+
+    // 타입 'active' | 'inactive' | undefined
+    if (status) {
+        where.push('status = ?');
+        queryParams.push(status);
+    }
+
+    const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
+
+    // 최종 SQL + 바인딩 파라미터 로그
+    const sql = `
         SELECT id, name, email, status, created_at
         FROM users
+        ${whereSql}
         ORDER BY id
         LIMIT ? OFFSET ?
-        `,
-        [safePageSize, offset],
-    );
+    `;
 
-    // 2) 전체 개수 (페이지 수 계산용)
+    // console.log('[getUsersPaged] final SQL =', sql);
+    // console.log('[getUsersPaged] final params =', [...queryParams, safePageSize, offset]);
+
+    const [rows] = await reactpjPool.query<UserRow[]>(sql, [
+        ...queryParams,
+        safePageSize,
+        offset,
+    ]);
+
     const [countRows] = await reactpjPool.query<
         (RowDataPacket & { total: number })[]
     >(
         `
-        SELECT COUNT(*) AS total
-        FROM users
+            SELECT COUNT(*) AS total
+            FROM users
+                     ${whereSql}
         `,
+        queryParams,
     );
 
     const total = countRows[0]?.total ?? 0;
