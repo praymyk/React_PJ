@@ -72,7 +72,6 @@
   position: fixed;
   top: var(--top-offset);
   right: 0;
-  height: calc(100vh - var(--top-offset) - var(--top-offset) - var(--bottom-offset));
   z-index: 100;
 
   display: flex;
@@ -102,9 +101,7 @@
 }
 
 .rightPanel {
-  width: 400px;
   height: 100%;
-  max-height: none;
   display: flex;
   flex-direction: column;
 
@@ -116,7 +113,6 @@
 
   pointer-events: auto;
   padding: 1.5rem 1.25rem;
-  overflow-y: auto;
 }
 
 .rightPanelEnter {

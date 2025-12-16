@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useSidebar } from '@/contexts/sidebar.context';
-import styles from '@components/sidebar/DefaultContent.module.scss';
+import styles from '@components/layout/sidebar/DefaultContent.module.scss';
 import { SidebarItem } from '@/data/sidebarItems';
 import { useLayoutSpace } from '@/contexts/layoutSpace.context';
 

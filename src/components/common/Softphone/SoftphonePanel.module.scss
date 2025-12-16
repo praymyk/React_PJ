@@ -1,0 +1,132 @@
+@use '@/styles/base/mixins.scss' as *;
+
+.softphoneRoot {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  height: 100%;
+  color: var(--color-text-main);
+  font-size: var(--font-size-sm);
+}
+
+.leftColumn {
+  flex: 0 0 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* 카드 공통 스타일 */
+.card {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-panel-border, var(--color-border-subtle));
+  background: var(--color-panel-bg, var(--color-bg-surface));
+  box-shadow: var(--shadow-elevated);
+}
+
+.cardTitle {
+  margin-bottom: 0.5rem;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+}
+
+/* 필드/인풋 */
+.field {
+  display: block;
+  margin-bottom: 0.5rem;
+
+  > div {
+    margin-bottom: 0.25rem;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+  }
+}
+
+.textInput {
+  width: 100%;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.375rem;
+  border: 1px solid var(--color-border, var(--color-border-subtle));
+  font-size: var(--font-size-sm);
+  outline: none;
+  background: var(--color-bg-input);
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 1px var(--color-accent-soft);
+  }
+}
+
+/* 버튼 줄 */
+.buttonRow {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+
+  button {
+    @extend %buttonBase; // 공통 버튼 베이스 적용
+
+    flex: 1 0 auto;
+    padding: 0.4rem 0.6rem; // 이 컴포넌트 전용으로 살짝 컴팩트하게
+    background: var(--color-accent-soft);
+    color: var(--color-text-main);
+
+    &:hover {
+      background: var(--color-accent);
+      color: #ffffff;
+    }
+  }
+}
+
+/* 상태 텍스트 + 뱃지 */
+.statusText {
+  margin-top: 0.5rem;
+  font-size: var(--font-size-xxs);
+  color: var(--color-text-muted);
+
+  strong {
+    margin-left: 0.25rem;
+  }
+}
+
+.statusDisconnected {
+  color: var(--color-text-muted);
+}
+
+/* 연결 중 상태(예: SIP REGISTER 진행 중) */
+.statusConnecting {
+  color: var(--color-status-connecting);
+}
+
+/* 정상 등록 상태(예: SIP REGISTER 완료) */
+.statusRegistered {
+  color: var(--color-status-registered);
+}
+
+/* 로그 영역 */
+.logSection {
+  flex: 1;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-panel-border, var(--color-border-subtle));
+  background: var(--color-panel-bg, var(--color-bg-surface));
+  display: flex;
+  flex-direction: column;
+}
+
+.logBody {
+  flex: 1;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background: var(--color-bg-surface);
+  font-size: var(--font-size-xxs);
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.logEmpty {
+  color: var(--color-text-muted);
+}

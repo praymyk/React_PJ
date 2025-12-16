@@ -4,7 +4,7 @@ import { menuRegistry } from '@/data/menuItems';
 import { useLayoutSpace } from '@/contexts/layoutSpace.context';
 import { SidebarProvider, useSidebar } from '@/contexts/sidebar.context';
 import { useLayoutSidebar } from '@/contexts/layoutSidebar.context';
-import SubMenuContent, { Panel as SidebarPanel } from '@components/sidebar/DefaultContent';
+import SubMenuContent, { Panel as SidebarPanel } from '@components/layout/sidebar/DefaultContent';
 import { sidebarRegistry } from '@/data/sidebarItems';
 
 export default function PalaceLayout({ children }: { children: React.ReactNode }) {
@@ -21,8 +21,6 @@ function PalaceLayoutContent({ children }: { children: React.ReactNode }) {
 
     /** sidebar Panel 선택 **/
     const { selectedPanel } = useSidebar();
-
-    console.log('[PalaceLayout] showRightSidebar=', showRightSidebar, 'selectedPanel=', selectedPanel)
 
     return (
         <div className={styles.palaceLayout}>

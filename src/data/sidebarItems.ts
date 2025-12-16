@@ -1,8 +1,8 @@
 import { FaBell, FaEnvelope, FaUser } from 'react-icons/fa';
 import type { IconType } from 'react-icons';
-import APanel from '@/components/sidebar-panels/A-Panel';
-import BPanel from '@/components/sidebar-panels/B-Panel';
-import CPanel from '@/components/sidebar-panels/C-Panel';
+import APanel from '@components/layout/sidebar/sidebar-panels/A-Panel';
+import BPanel from '@components/layout/sidebar/sidebar-panels/B-Panel';
+import CPanel from '@components/layout/sidebar/sidebar-panels/C-Panel';
 
 export interface SidebarItem {
     label: string;
