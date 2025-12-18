@@ -1,16 +1,63 @@
-.dashboardTitle {
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
-  margin-bottom: 1rem;
+@use '@/styles/base/mixins.scss' as *;
+
+/* 메인 컨텐츠 영역 그리드 */
+.contentGrid {
+  display: grid;
+  flex: 1;
+  height: 100%;
+  box-sizing: border-box;
+  gap: 0.3rem;
+  padding: 0.3rem;
+
+  /* 메인(좌) + 사이드(우) 2컬럼 레이아웃 */
+  grid-template-columns: minmax(0, 3fr) minmax(260px, 1.4fr);
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-areas: "mainColumn sideColumn";
 }
 
-.dashboardContent {
-  background-color: var(--color-bg-surface);
-  color: var(--color-text-main);
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-sizing: border-box;
+.mainColumn {
+  grid-area: mainColumn;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0; // 내부 카드가 줄바꿈 되도록
+}
 
-  border: 1px solid var(--color-border-subtle);
-  box-shadow: var(--shadow-elevated);
+/* 상단 요약 2개 카드 (오늘 요약 / 채널 요약) */
+.summaryRow {
+  display: grid;
+  gap: 0.3rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  min-width: 0;
+}
+
+/* 우측 공지/지식 사이드 컬럼 */
+.sideColumn {
+  grid-area: sideColumn;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 260px;
+  height: 100%;
+}
+
+/* 반응형: 좁아지면 세로 스택 */
+@media (max-width: 1200px) {
+  .contentGrid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    grid-template-areas:
+      "mainColumn"
+      "sideColumn";
+  }
+
+  .sideColumn {
+    min-width: 0;
+    max-width: none;
+  }
+
+  .summaryRow {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }

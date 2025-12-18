@@ -4,9 +4,14 @@
   display: flex;
   gap: 1rem;
   padding: 1rem;
-  height: 100%;
   color: var(--color-text-main);
   font-size: var(--font-size-sm);
+
+  /* 패널 높이에 맞게 채우기, 스크롤은 내부에서만 */
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
 }
 
 .leftColumn {
@@ -14,6 +19,9 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
+
+  overflow-y: auto;
+  min-height: 0;
 }
 
 /* 카드 공통 스타일 */
@@ -22,7 +30,8 @@
   border-radius: 0.5rem;
   border: 1px solid var(--color-panel-border, var(--color-border-subtle));
   background: var(--color-panel-bg, var(--color-bg-surface));
-  box-shadow: var(--shadow-elevated);
+
+  @extend %themeTransition;
 }
 
 .cardTitle {
@@ -39,23 +48,39 @@
   > div {
     margin-bottom: 0.25rem;
     font-size: var(--font-size-xs);
-    color: var(--color-text-muted);
+    color: var(--color-text-sub); // ← 토큰 사용 (라벨/서브텍스트)
   }
 }
 
 .textInput {
+  @extend %themeTransition;
+
   width: 100%;
   padding: 0.35rem 0.5rem;
   border-radius: 0.375rem;
+
+  /* 입력 폼 토큰 사용 */
   border: 1px solid var(--color-border, var(--color-border-subtle));
+  background: var(--color-bg-input);
+  color: var(--color-text-main);
+
   font-size: var(--font-size-sm);
   outline: none;
-  background: var(--color-bg-input);
   box-sizing: border-box;
+
+  &::placeholder {
+    color: var(--color-text-sub); // placeholder도 토큰 사용
+    opacity: 0.85;
+  }
 
   &:focus {
     border-color: var(--color-accent);
     box-shadow: 0 0 0 1px var(--color-accent-soft);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
   }
 }
 
@@ -107,13 +132,16 @@
 
 /* 로그 영역 */
 .logSection {
-  flex: 1;
+  flex: 0 0 300px;
   padding: 1rem;
   border-radius: 0.5rem;
   border: 1px solid var(--color-panel-border, var(--color-border-subtle));
   background: var(--color-panel-bg, var(--color-bg-surface));
   display: flex;
   flex-direction: column;
+  min-height: 0;
+
+  @extend %themeTransition;
 }
 
 .logBody {
@@ -125,6 +153,7 @@
   font-size: var(--font-size-xxs);
   overflow-y: auto;
   white-space: pre-wrap;
+  min-height: 0;
 }
 
 .logEmpty {

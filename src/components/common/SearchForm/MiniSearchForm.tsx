@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import styles from './MiniSearchForm.module.scss';
 import type { SearchField } from './searchTypes';
 
@@ -35,21 +35,31 @@ export default function MiniSearchForm({
         (name: string) =>
             (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
                 const value = e.target.value;
-                setValues(prev => {
-                    const next = { ...prev, [name]: value };
-                    onSearch(next);          // 값 바뀔 때마다 바로 검색 호출
-                    return next;
-                });
+
+                // 1) 현재 values 기준으로 next 만들고
+                const next: SearchValues = {
+                    ...values,
+                    [name]: value,
+                };
+
+                // 2) 상태 업데이트
+                setValues(next);
+
+                // 3) 그다음 상위 onSearch 호출 (여기서 router.push 실행됨)
+                onSearch(next);
             };
+
 
     const handleReset = () => {
         const empty: SearchValues = {};
         for (const f of fields) {
             empty[f.name] = '';
         }
+
         setValues(empty);
-        onSearch(empty);                 // 필요시 초기화 사용
+        onSearch(empty); // 리셋도 상위 전달 > 다시 검색
     };
+
 
     return (
         <form

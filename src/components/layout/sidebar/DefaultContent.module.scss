@@ -72,16 +72,16 @@
   position: fixed;
   top: var(--top-offset);
   right: 0;
+  bottom: var(--bottom-offset);
   z-index: 100;
 
   display: flex;
-  align-items: stretch;  // 높이 맞추기(패널탭 + 패널)
+  flex: 1 1 auto;
+  align-items: stretch;
 
-  /* 슬라이드 애니메이션 */
   transform: translateX(0);
   @extend %themeTransition;
-  transition:
-          transform 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out;
 }
 
 .panelTab {
@@ -100,10 +100,15 @@
   transform: translateX(100%);
 }
 
+/* 실제 우측 패널 박스 */
 .rightPanel {
-  height: 100%;
   display: flex;
   flex-direction: column;
+
+  /* 패널 높이를 고정 */
+  height: calc(100vh - var(--top-offset) - var(--bottom-offset));
+  min-height: 0;
+  box-sizing: border-box;
 
   background-color: var(--color-panel-bg);
   box-shadow: var(--shadow-panel);
@@ -112,7 +117,6 @@
   border-bottom-left-radius: 1rem;
 
   pointer-events: auto;
-  padding: 1.5rem 1.25rem;
 }
 
 .rightPanelEnter {
@@ -125,6 +129,15 @@
 }
 
 /*** 사이드바 컨텐츠 탭 (패널 전용) ***/
+/* 패널 본문 영역 */
+.panelBody {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  box-sizing: border-box;
+  padding: 1.5rem 1.25rem;
+}
 
 /* 패널 좌측에 붙는 탭 전체 컨테이너 */
 .panelTabsContainer {

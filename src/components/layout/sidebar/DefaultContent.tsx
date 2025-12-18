@@ -108,6 +108,8 @@ export function Panel({ items }: SidebarProps) {
 
     const Component = selectedPanel.component;
 
+    console.log("bottom-offset :", bottom);
+
     return (
         <div
             className={`${styles.rightPanelWrapper} ${!isVisible ? styles.rightPanelExit : ''}`}
@@ -125,9 +127,9 @@ export function Panel({ items }: SidebarProps) {
 
                 <div className={styles.panelBody}>
                     <Component />
-                </div>
 
-                <button onClick={() => setSelectedPanel(null)}>닫기</button>
+                    <button onClick={() => setSelectedPanel(null)}>닫기</button>
+                </div>
             </div>
         </div>
     );

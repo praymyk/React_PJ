@@ -1,0 +1,116 @@
+@use '@/styles/base/mixins.scss' as *;
+
+.listBody {
+  flex: 1;
+  min-height: 0;
+  overflow-y: scroll;
+}
+
+.listLoading,
+.listError,
+.listEmpty {
+  padding: 0.75rem 1rem;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.listError {
+  color: var(--color-status-error, #ff4d4f);
+}
+
+.listEmpty {
+  font-style: italic;
+}
+
+.ticketList {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.ticketItem {
+  @extend %themeTransition;
+
+  padding: 0.45rem 0.55rem;
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  background-color: transparent;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+
+  &:hover {
+    background-color: var(--color-accent-soft);
+  }
+}
+
+.ticketItemActive {
+  @extend %themeTransition;
+
+  background-color: var(--color-accent-soft);
+  border-color: var(--color-accent);
+}
+
+.ticketItemHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ticketId {
+  font-size: var(--font-size-xs);
+  font-family: 'Menlo', 'SF Mono', ui-monospace, monospace;
+  color: var(--color-text-muted);
+
+  @extend %themeTransition;
+}
+
+.ticketTitle {
+  @extend %themeTransition;
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-main);
+}
+
+.ticketMeta {
+  font-size: var(--font-size-xxs);
+  color: var(--color-text-muted);
+}
+
+.ticketAssignee {
+  white-space: nowrap;
+
+  @extend %themeTransition;
+}
+
+.paginationBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  border-top: 1px solid var(--color-panel-border, var(--color-border-subtle));
+  font-size: var(--font-size-xxs);
+  color: var(--color-text-muted);
+}
+
+.pageButton {
+  @extend %buttonBase;
+
+  padding: 0.25rem 0.6rem;
+  font-size: var(--font-size-xxs);
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.paginationInfo {
+  font-size: var(--font-size-xxs);
+}

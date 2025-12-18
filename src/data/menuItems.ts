@@ -5,8 +5,9 @@ import {
     FaCogs,
     FaRegCircle,
     FaRegDotCircle,
-    FaUserCircle
-} from 'react-icons/fa'
+    FaUserCircle,
+    FaTicketAlt,
+} from 'react-icons/fa';
 import type { IconType } from 'react-icons';
 
 export interface MenuItem {
@@ -30,12 +31,12 @@ export type SubMenuGroup = '/palace/test' | '/palace/stats' | '/palace/settings'
 export const menuRegistry: Record<MenuGroup, MenuItem[]> = {
     palace: [
         { label: '대시보드', icon: FaHome, path: '/palace' },
-        { label: '내 정보',     icon: FaUserCircle, path: '/palace/profile' },
+        { label: '티켓',     icon: FaTicketAlt, path: '/palace/ticket' },
         { label: '테스트',   icon: FaFlask, path: '/palace/test' },
         { label: '통계',     icon: FaChartPie, path: '/palace/stats' },
+        { label: '내 정보',   icon: FaUserCircle, path: '/palace/profile' },
         { label: '설정',     icon: FaCogs, path: '/palace/settings' },
     ],
-    // 필요 시 다른 그룹도 추가
     settings: [],
     stats: [],
     test: [],
@@ -45,7 +46,7 @@ export const menuRegistry: Record<MenuGroup, MenuItem[]> = {
 // 테스트 섹션(그룹) 하위 메뉴 레지스트리
 export const submenuRegistry: Record<SubMenuGroup, SubMenuItem[]> = {
     '/palace/test': [
-        { label: '가', icon: FaRegCircle, path: '/palace/test/a' },
+        { label: '고객 관리', icon: FaRegCircle, path: '/palace/test/users' },
         { label: '나', icon: FaRegCircle, path: '/palace/test/b' },
         { label: '다', icon: FaRegCircle, path: '/palace/test/c' },
     ],

@@ -1,0 +1,324 @@
+@use '@/styles/base/mixins.scss' as *;
+
+/* === SummaryCard 전용 스타일 === */
+
+/* 공통 카드 스타일 */
+.card {
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-main);
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: var(--shadow-elevated);
+  padding: 0.9rem 1rem;
+  box-sizing: border-box;
+  flex: 1;
+
+  @extend %themeTransition;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.cardTitle {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+}
+
+.cardBody {
+  font-size: var(--font-size-sm);
+}
+
+.summaryTitleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.summaryTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.summaryTag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: var(--font-size-xxs);
+  font-weight: var(--font-weight-medium);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+
+  @extend %themeTransition;
+}
+
+.summarySub {
+  margin: 0;
+  margin-top: 0.15rem;
+  font-size: var(--font-size-xxs);
+  color: var(--color-text-muted);
+}
+
+.summaryTotal {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+}
+
+.summaryTotalLabel {
+  font-size: var(--font-size-xxs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.summaryTotalValue {
+  font-size: var(--font-size-2xl-md);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.summaryTotalUnit {
+  margin-left: 0.15rem;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-muted);
+}
+
+/* 채널별 줄들 */
+.summaryChannels {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.summaryChannelRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.summaryChannelLabel {
+  flex: 0 0 48px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.summaryChannelCount {
+  flex: 0 0 96px;
+  text-align: right;
+  font-size: var(--font-size-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.summaryChannelPercent {
+  margin-left: 0.3rem;
+  font-size: var(--font-size-xxs);
+  color: var(--color-text-muted);
+}
+
+.summaryChannelBarTrack {
+  flex: 1 1 auto;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: var(--color-bg-body);
+  overflow: hidden;
+}
+
+.summaryChannelBarFill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-accent-soft-strong);
+  transform-origin: left center;
+  transition: width 0.25s ease-out;
+}
+
+/* 하단 뱃지 영역 */
+.summaryFooter {
+  margin-top: 0.9rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.summaryFooterLabel {
+  font-size: var(--font-size-xxs);
+  color: var(--color-text-muted);
+}
+
+.summaryFooterBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.summaryBadgePrimary,
+.summaryBadgeMuted {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.18rem 0.6rem;
+  border-radius: 999px;
+  font-size: var(--font-size-xxs);
+  font-weight: var(--font-weight-medium);
+  border: 1px solid transparent;
+
+  @extend %themeTransition;
+}
+
+.summaryBadgePrimary {
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent-soft-strong);
+  color: var(--color-accent);
+}
+
+.summaryBadgeMuted {
+  background: transparent;
+  border-color: var(--color-border-subtle);
+  color: var(--color-text-muted);
+}
+
+/* === Summary table 스타일 공통 === */
+.summaryTableWrapper {
+  margin-top: 0.4rem;
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* 테이블 베이스 */
+.summaryTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-xs);
+  white-space: nowrap;
+}
+
+.summaryTable thead th {
+  padding: 0.35rem 0.4rem;
+  text-align: right;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-border-subtle);
+  white-space: nowrap;
+}
+
+.summaryTable thead th:first-child {
+  text-align: left;
+}
+
+/* 본문 셀 */
+.summaryTable tbody td {
+  padding: 0.3rem 0.4rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+  font-variant-numeric: tabular-nums;
+}
+
+.summaryTableCellLabel {
+  text-align: left;
+}
+
+.summaryTableCellNumber {
+  text-align: right;
+}
+
+.summaryTable tbody tr:nth-child(even) {
+  background-color: rgba(148, 163, 184, 0.04);
+}
+
+.summaryTableTotalRow td {
+  padding-top: 0.4rem;
+  border-top: 1px solid var(--color-border-subtle);
+  font-weight: var(--font-weight-bold);
+}
+
+.summaryTableTotalLabel {
+  text-align: left;
+  padding: 0.3rem 0.4rem;
+}
+
+.summaryTableTotalNumber {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  padding: 0.3rem 0.4rem;
+}
+
+.summaryTableCellCenter {
+  text-align: center;
+}
+
+/* === 탭 전환 공통 스타일 === */
+.summaryTabSwitcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.12rem;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.15);
+
+  @extend %themeTransition;
+}
+
+.summaryTabButton {
+  border: none;
+  background: transparent;
+  padding: 0.18rem 0.6rem;
+  border-radius: 999px;
+  font-size: var(--font-size-xxs);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+
+  @extend %themeTransition;
+}
+
+.summaryTabButtonActive {
+  background: var(--color-bg-surface);
+  color: var(--color-text-main);
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.6);
+}
+
+.summaryTabCount {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 인/아웃 구분용 Pill */
+.summaryDirectionPill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.3rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: var(--font-size-xxs);
+  font-weight: var(--font-weight-medium);
+  border: 1px solid rgba(148, 163, 184, 0.45);
+
+  @extend %themeTransition;
+}
+
+.summaryDirectionIn {
+  background: rgba(16, 185, 129, 0.08);
+  color: #059669;
+  border-color: rgba(16, 185, 129, 0.35);
+}
+
+.summaryDirectionOut {
+  background: rgba(59, 130, 246, 0.08);
+  color: #2563eb;
+  border-color: rgba(59, 130, 246, 0.35);
+}

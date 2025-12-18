@@ -41,21 +41,11 @@ export async function getUsersPaged(
     const where: string[] = [];
     const queryParams: (string | number)[] = [];
 
-    // 1) 들어온 값 먼저 확인
-    console.log('[getUsersPaged] incoming params =', {
-        page,
-        pageSize,
-        keyword,
-        status,
-    });
-
     if (keyword && keyword.trim() !== '') {
         where.push('(name LIKE ? OR email LIKE ?)');
         const like = `%${keyword.trim()}%`;
         queryParams.push(like, like);
     }
-
-    // console.log('[getUsersPaged] status before where check =', JSON.stringify(status));
 
     // 타입 'active' | 'inactive' | undefined
     if (status) {
@@ -73,9 +63,6 @@ export async function getUsersPaged(
         ORDER BY id
         LIMIT ? OFFSET ?
     `;
-
-    // console.log('[getUsersPaged] final SQL =', sql);
-    // console.log('[getUsersPaged] final params =', [...queryParams, safePageSize, offset]);
 
     const [rows] = await reactpjPool.query<UserRow[]>(sql, [
         ...queryParams,

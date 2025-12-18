@@ -1,0 +1,95 @@
+@use '@/styles/base/mixins.scss' as *;
+
+/* 카드 안에 들어가는 리스트 공통 래퍼 */
+.sideListWrapper {
+  margin-top: 0.35rem;
+  width: 100%;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+/* 테이블 베이스 */
+.sideListTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-xs);
+  table-layout: fixed; /* 제목 컬럼 ellipsis 용 */
+}
+
+.sideListTable thead th {
+  padding: 0.35rem 0.4rem;
+  text-align: left;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-border-subtle);
+  white-space: nowrap;
+}
+
+.sideListTable thead th:last-child {
+  text-align: right;
+}
+
+/* 본문 셀 */
+.sideListTable tbody td {
+  padding: 0.3rem 0.4rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  vertical-align: middle;
+}
+
+.sideListRow {
+  cursor: pointer;
+
+  @extend %themeTransition;
+}
+
+.sideListRow:hover {
+  background-color: rgba(148, 163, 184, 0.08);
+}
+
+/* 중요 공지 (상단 고정) 강조 */
+.sideListRowPinned {
+  background: rgba(88, 101, 242, 0.06);
+}
+
+.sideListRowPinned:hover {
+  background: rgba(88, 101, 242, 0.12);
+}
+
+/* 카테고리 Pill */
+.sideListCategoryPill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: var(--font-size-xxs);
+  font-weight: var(--font-weight-medium);
+  background: rgba(148, 163, 184, 0.16);
+  color: var(--color-text-main);
+
+  @extend %themeTransition;
+}
+
+/* 제목: 한 줄만 보여주고 말줄임 처리 */
+.sideListTitle {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 작성일: 우측 정렬 */
+.sideListDate {
+  text-align: right;
+  font-size: var(--font-size-xxs);
+  color: var(--color-text-muted);
+}
+
+/* 상단에 “더보기” 같은 액션 영역이 필요하면 쓸 수 있는 래퍼 */
+.sideListHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: var(--font-size-xxs);
+  color: var(--color-text-muted);
+}

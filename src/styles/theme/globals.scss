@@ -1,4 +1,4 @@
-@import '@styles/base/fonts'; // ← 폰트 관련 설정은 fonts.scss로 분리
+@import '@styles/base/fonts'; // 폰트 관련 설정은 fonts.scss로 분리
 @import '@styles/theme/tokens';
 
 $font-sans: var(--font-geist-sans);
