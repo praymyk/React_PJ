@@ -7,14 +7,20 @@ import { type TicketDetailApiResponse, TicketEventRow } from '@/app/palace/ticke
 type Props = {
     ticket: TicketDetailApiResponse | null;
     events: TicketEventRow[];
+    page: number;
+    totalPages: number;
+    totalEvents: number;
+    onPageChange: (page: number) => void;
 };
 
-export default function InquirySection({ ticket, events }: Props) {
-
+export default function InquirySection(
+    { ticket, events, page, totalPages, totalEvents, onPageChange }: Props) {
     const hasTicket = !!ticket;
-    const eventCount = hasTicket ? events.length : 0;
+    const eventCount = hasTicket ? totalEvents : 0;
+    const hasPrev = page > 1;
+    const hasNext = page < totalPages;
 
-    /* TODO : 추후 티켓 연관 문의 타입별 클래스 부여용 (css) */
+    /* TODO : 티켓 연관 문의 타입별 클래스 부여용 (css) */
     const eventTypeClassOf = (eventType: TicketEventRow['eventType']) => {
         switch (eventType) {
             case '문의접수':
@@ -62,6 +68,7 @@ export default function InquirySection({ ticket, events }: Props) {
                         티켓 <strong>{ticket!.id}</strong> 에 연결된 이벤트가 없습니다.
                     </div>
                 ) : (
+                    <>
                     <ul className={styles.ticketList}>
                         {events.map((ev) => (
                             <li
@@ -112,6 +119,32 @@ export default function InquirySection({ ticket, events }: Props) {
                             </li>
                         ))}
                     </ul>
+
+                    {/* 이벤트 타임라인 하단 페이징 컨트롤 */}
+                    {totalPages > 1 && (
+                        <div className={styles.pagination}>
+                            <button
+                                type="button"
+                                className={styles.pageButton}
+                                disabled={!hasPrev}
+                                onClick={() => hasPrev && onPageChange(page - 1)}
+                            >
+                                이전
+                            </button>
+                            <span className={styles.pageInfo}>
+                            {page} / {totalPages}
+                        </span>
+                            <button
+                                type="button"
+                                className={styles.pageButton}
+                                disabled={!hasNext}
+                                onClick={() => hasNext && onPageChange(page + 1)}
+                            >
+                                다음
+                            </button>
+                        </div>
+                    )}
+                    </>
                 )}
             </div>
         </section>

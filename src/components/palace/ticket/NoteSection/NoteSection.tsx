@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import common from '@components/palace/ticket/DefaultContent.module.scss';
 import styles from '@components/palace/ticket/NoteSection/NoteSection.module.scss';
 import type { TicketDetailApiResponse } from '@/app/palace/ticket/data';
@@ -7,9 +8,14 @@ import TicketNoteEditor from '@components/palace/ticket/NoteSection/TicketNoteEd
 
 type Props = {
     ticket: TicketDetailApiResponse | null;
+    onEventsReload?: () => void;
 };
 
-export default function NoteSection({ ticket }: Props) {
+export default function NoteSection({ ticket, onEventsReload }: Props) {
+    // 상단 입력 필드 상태 추가
+    const [inquiryNo, setInquiryNo] = useState('');
+    const [customerName, setCustomerName] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
 
     if (!ticket) {
         return (
@@ -25,6 +31,13 @@ export default function NoteSection({ ticket }: Props) {
     const assigneeLabel = ticket.assignee_id
         ? `담당 ${ticket.assignee_id}`
         : '미배정';
+
+    // TicketNoteEditor 전달 (티켓 편집)
+    const noteMeta = {
+        inquiryNo,
+        customerName,
+        phoneNumber,
+    };
 
     return (
         <section className={common.notePane}>
@@ -65,7 +78,8 @@ export default function NoteSection({ ticket }: Props) {
                                         className={styles.fieldInput}
                                         type="text"
                                         placeholder="문의 선택 시 자동으로 채워집니다."
-                                        disabled
+                                        value={inquiryNo}
+                                        onChange={(e) => setInquiryNo(e.target.value)}
                                     />
                                 </div>
 
@@ -77,7 +91,8 @@ export default function NoteSection({ ticket }: Props) {
                                         className={styles.fieldInput}
                                         type="text"
                                         placeholder="예) 홍길동"
-                                        disabled
+                                        value={customerName}
+                                        onChange={(e) => setCustomerName(e.target.value)}
                                     />
                                 </div>
 
@@ -89,7 +104,8 @@ export default function NoteSection({ ticket }: Props) {
                                         className={styles.fieldInput}
                                         type="text"
                                         placeholder="예) 010-0000-0000 / MEM-0001"
-                                        disabled
+                                        value={phoneNumber}
+                                        onChange={(e) => setPhoneNumber(e.target.value)}
                                     />
                                 </div>
                             </div>
@@ -107,6 +123,8 @@ export default function NoteSection({ ticket }: Props) {
                 <div className={styles.noteEditorArea}>
                     <TicketNoteEditor
                         ticketId={ticket?.id ?? null}
+                        onSaved={onEventsReload}   // 저장 후 콜백 호출
+                        meta={noteMeta}
                     />
                 </div>
             </div>

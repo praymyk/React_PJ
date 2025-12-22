@@ -30,13 +30,15 @@ const statusClassOf = (status: Row['status']) => STATUS_CLASS[status];
 
 // ======================================================
 // 첫 방문 기본 검색값 (MiniSearchForm 과 동기화 필요)
-//  - at       : 정렬 기준
-//  - pageSize : 1페이지당 티켓 수
 // ======================================================
 const DEFAULT_SEARCH_VALUES: Record<string, string> = {
     at: 'receivedAt:desc',
     pageSize: '1',
 };
+// ======================================================
+// 티켓 이벤트 (InquirySection) 페이지 사이즈
+// ======================================================
+const EVENTS_PAGE_SIZE = 3;
 
 export default function DefaultContent() {
     const router = useRouter();
@@ -215,6 +217,22 @@ export default function DefaultContent() {
     const [events, setEvents] =
         useState<TicketEventListApiResponse | null>(null);
 
+    const [eventsPage, setEventsPage] = useState(1);
+
+    // 티켓 이벤트 리로드용 키
+    const [eventReloadKey, setEventReloadKey] =
+        useState(0);
+
+    // NoteSection / TicketNoteEditor에서 호출할 리로드 함수
+    const handleEventsReload = () => {
+        setEventReloadKey((prev) => prev + 1);
+    };
+
+    // 선택 티켓이 바뀔 떄마다 페이징 초기화
+    useEffect(() => {
+        setEventsPage(1);
+    }, [selectedId]);
+
     useEffect(() => {
         if (!selectedId) {
             setDetail(null);
@@ -231,7 +249,7 @@ export default function DefaultContent() {
                     fetch(
                         `/api/common/tickets/${encodeURIComponent(
                             selectedId,
-                        )}/events`,
+                        )}/events?page=${eventsPage}&pageSize=${EVENTS_PAGE_SIZE}`,
                     ),
                 ]);
 
@@ -257,7 +275,7 @@ export default function DefaultContent() {
         return () => {
             aborted = true;
         };
-    }, [selectedId]);
+    }, [selectedId, eventsPage, eventReloadKey]);
 
     // --------------------------------------------------
     // 레이아웃 렌더링
@@ -284,10 +302,22 @@ export default function DefaultContent() {
 
             <DetailSection ticket={detail} statusClassOf={statusClassOf} />
 
-            <NoteSection ticket={detail} />
+            <NoteSection
+                ticket={detail}
+                onEventsReload={handleEventsReload}
+            />
+
             <InquirySection
                 ticket={detail}
                 events={events?.events ?? []}
+                page={events?.page ?? 1}
+                totalPages={
+                    events
+                        ? Math.max(1, Math.ceil(events.total / events.pageSize))
+                        : 1
+                }
+                totalEvents={events?.total ?? 0}
+                onPageChange={setEventsPage}
             />
         </div>
     );

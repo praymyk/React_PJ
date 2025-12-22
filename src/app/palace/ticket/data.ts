@@ -31,7 +31,7 @@ export type TicketDetailApiResponse = {
     customer_id: string;
     assignee_id: string | null;
     channel: '전화' | '채팅' | '이메일' | '기타';
-    submitted_at: string;  // JSON으로 오면 ISO 문자열이라 string으로 두는 게 편함
+    submitted_at: string;  // TODO : 등록 정보 JSON 타입 저장 대비
     closed_at: string | null;
     created_at: string;
     updated_at: string;
@@ -54,11 +54,14 @@ export type TicketEventRow = {
     authorUserId: string | null;
     customerId: string | null;
     content: string;
-    createdAt: string; // ISO 문자열
+    createdAt: string;
 };
 
 /** 특정 티켓(+병합된 서브 티켓 포함)의 이벤트 리스트 응답 */
 export type TicketEventListApiResponse = {
     ticketId: string;          // 기준 티켓 ID (요청한 id)
-    events: TicketEventRow[];  // 타임라인 이벤트 목록
+    events: TicketEventRow[];  // 이벤트 목록
+    page: number;
+    pageSize: number;
+    total: number;
 };

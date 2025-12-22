@@ -1,4 +1,4 @@
-import type { RowDataPacket } from 'mysql2/promise';
+import type { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
 import { reactpjPool } from './pool';
 
 /** 고객 티켓 리스트 Row */
@@ -216,6 +216,20 @@ export type TicketEventRow = RowDataPacket & {
     created_at: Date;
 };
 
+//  티켓 이벤트 페이징 옵션 / 결과 타입
+export type GetTicketEventsOptions = {
+    page?: number;
+    pageSize?: number;
+};
+
+export type TicketEventListResult = {
+    rows: TicketEventRow[];
+    total: number;
+    page: number;
+    pageSize: number;
+};
+
+
 /**
  * 특정 티켓 + 병합된 서브 티켓들의 이벤트 타임라인 조회
  *  - 기준 티켓 ID = ticketId
@@ -224,27 +238,123 @@ export type TicketEventRow = RowDataPacket & {
  */
 export async function getTicketEventsForTicketCluster(
     ticketId: string,
-): Promise<TicketEventRow[]> {
-    const [rows] = await reactpjPool.query<TicketEventRow[]>(
+    options?: GetTicketEventsOptions,
+): Promise<TicketEventListResult> {
+    const {
+        page = 1,
+        pageSize = 20,
+    } = options ?? {};
+
+    const safePage = page > 0 ? page : 1;
+    const safePageSize = pageSize > 0 ? pageSize : 20;
+    const offset = (safePage - 1) * safePageSize;
+
+    // 1) total 카운트
+    const [countRows] = await reactpjPool.query<RowDataPacket[]>(
         `
-        SELECT
-          e.id,
-          e.ticket_id,
-          e.company_id,
-          e.event_type,
-          e.channel,
-          e.author_user_id,
-          e.customer_id,
-          e.content,
-          e.meta,
-          e.created_at
+        SELECT COUNT(*) AS cnt
         FROM ticket_events e
         JOIN tickets t ON e.ticket_id = t.id
         WHERE t.id = ? OR t.merged_into_ticket_id = ?
-        ORDER BY e.created_at DESC, e.id DESC
         `,
         [ticketId, ticketId],
     );
 
-    return rows;
+    const total = Number((countRows[0] as any)?.cnt ?? 0);
+
+    // 2) 실제 이벤트 목록 조회 (최신순 + 페이징)
+    const [rows] = await reactpjPool.query<TicketEventRow[]>(
+        `
+            SELECT
+                e.id,
+                e.ticket_id,
+                e.company_id,
+                e.event_type,
+                e.channel,
+                e.author_user_id,
+                e.customer_id,
+                e.content,
+                e.meta,
+                e.created_at
+            FROM ticket_events e
+                     JOIN tickets t ON e.ticket_id = t.id
+            WHERE t.id = ? OR t.merged_into_ticket_id = ?
+            ORDER BY e.created_at DESC, e.id DESC
+                LIMIT ? OFFSET ?
+        `,
+        [ticketId, ticketId, safePageSize, offset],
+    );
+
+    return {
+        rows,
+        total,
+        page: safePage,
+        pageSize: safePageSize,
+    };
+}
+
+/** 티켓 이벤트 등록용 DTO **/
+export type CreateTicketEventInput = {
+    ticketId: string;
+    companyId: number;
+    eventType:
+        | '문의접수'
+        | '상담기록'
+        | '상담사메모'
+        | '고객메모'
+        | '상태변경'
+        | '티켓병합'
+        | '티켓분리'
+        | '시스템';
+    channel?: '전화' | '채팅' | '이메일' | '기타' | null;
+    authorUserId?: string | null;
+    customerId?: string | null;
+    content: string;
+    meta?: any | null;
+};
+
+/**
+ * 티켓 이벤트 1건 생성
+ */
+export async function createTicketEvent(
+    input: CreateTicketEventInput,
+): Promise<number> {
+    const {
+        ticketId,
+        companyId,
+        eventType,
+        channel = null,
+        authorUserId = null,
+        customerId = null,
+        content,
+        meta = null,
+    } = input;
+
+    const [result] = await reactpjPool.query<ResultSetHeader>(
+        `
+        INSERT INTO ticket_events (
+            ticket_id,
+            company_id,
+            event_type,
+            channel,
+            author_user_id,
+            customer_id,
+            content,
+            meta
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `,
+        [
+            ticketId,
+            companyId,
+            eventType,
+            channel,
+            authorUserId,
+            customerId,
+            content,
+            meta ? JSON.stringify(meta) : null,
+        ],
+    );
+
+    return result.insertId;
 }
