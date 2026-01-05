@@ -43,7 +43,10 @@ export default function TicketNoteEditor({ ticketId, value, onChange, onSaved, m
     const disabled = !ticketId;
 
     const handleSave = async () => {
-        if (!ticketId) return;
+        if (!ticketId) {
+            alert('티켓을 먼저 선택해 주세요.');
+            return;
+        }
 
         const trimmed = currentValue.trim();
         if (!trimmed) {

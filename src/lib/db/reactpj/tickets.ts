@@ -2,7 +2,7 @@ import type { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
 import { reactpjPool } from './pool';
 
 /** 고객 티켓 리스트 Row */
-export type UserTicketRow = RowDataPacket & {
+export type CustomerTicketRow = RowDataPacket & {
     id: number;
     customer_id: string;
     submitted_at: Date;
@@ -15,8 +15,8 @@ export type UserTicketRow = RowDataPacket & {
 /**
  * 고객별 티켓 Row
  */
-export async function getUserTicket(userId: string): Promise<UserTicketRow[]> {
-    const [rows] = await reactpjPool.query<UserTicketRow[]>(
+export async function getCustomerTicket(customerId: string): Promise<CustomerTicketRow[]> {
+    const [rows] = await reactpjPool.query<CustomerTicketRow[]>(
         `
             SELECT
                 id,
@@ -30,7 +30,7 @@ export async function getUserTicket(userId: string): Promise<UserTicketRow[]> {
             WHERE customer_id = ?
             ORDER BY submitted_at DESC, id DESC
         `,
-        [userId],
+        [customerId],
     );
 
     return rows;

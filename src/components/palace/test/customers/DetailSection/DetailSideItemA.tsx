@@ -29,7 +29,7 @@ export default function DetailSideItemA({ row }: Props) {
 
             try {
                 const res = await fetch(
-                    `/api/common/users/${encodeURIComponent(row.id)}/tickets`,
+                    `/api/common/customers/${encodeURIComponent(row.id)}/tickets`,
                 );
                 if (!res.ok) {
                     throw new Error(`HTTP ${res.status}`);

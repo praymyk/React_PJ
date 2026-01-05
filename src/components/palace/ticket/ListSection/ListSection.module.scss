@@ -1,11 +1,5 @@
 @use '@/styles/base/mixins.scss' as *;
 
-.listBody {
-  flex: 1;
-  min-height: 0;
-  overflow-y: scroll;
-}
-
 .listLoading,
 .listError,
 .listEmpty {
@@ -25,7 +19,7 @@
 .ticketList {
   list-style: none;
   margin: 0;
-  padding: 0.5rem;
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
@@ -89,28 +83,4 @@
   @extend %themeTransition;
 }
 
-.paginationBar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem 0.75rem;
-  border-top: 1px solid var(--color-panel-border, var(--color-border-subtle));
-  font-size: var(--font-size-xxs);
-  color: var(--color-text-muted);
-}
 
-.pageButton {
-  @extend %buttonBase;
-
-  padding: 0.25rem 0.6rem;
-  font-size: var(--font-size-xxs);
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-}
-
-.paginationInfo {
-  font-size: var(--font-size-xxs);
-}

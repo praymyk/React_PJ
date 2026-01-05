@@ -1,0 +1,203 @@
+@use '@/styles/base/mixins.scss' as *;
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  box-sizing: border-box;
+  color: var(--color-text-main);
+}
+
+.pageTitle {
+  font-size: var(--font-size-lg, 1.1rem);
+  font-weight: var(--font-weight-bold, 600);
+  margin-bottom: 0.25rem;
+}
+
+.pageSub {
+  font-size: var(--font-size-xs, 0.8rem);
+  color: var(--color-text-muted);
+}
+
+.sectionGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr);
+  gap: 1rem;
+  align-items: flex-start;
+
+  @media (max-width: 960px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.card {
+  padding: 1rem 1.1rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-panel-border, var(--color-border-subtle));
+  background: var(--color-panel-bg, var(--color-bg-surface));
+  box-shadow: var(--shadow-elevated);
+  box-sizing: border-box;
+
+  @extend %themeTransition;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  gap: 0.5rem;
+}
+
+.cardTitle {
+  font-size: var(--font-size-sm, 0.9rem);
+  font-weight: var(--font-weight-semibold, 600);
+}
+
+.cardSub {
+  margin-top: 0.15rem;
+  font-size: var(--font-size-xxs, 0.75rem);
+  color: var(--color-text-muted);
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.fieldRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.fieldLabel {
+  font-size: var(--font-size-xs, 0.8rem);
+  color: var(--color-text-muted);
+}
+
+/* 토글 행 */
+.toggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.toggleLabelBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.toggleTitle {
+  font-size: var(--font-size-sm, 0.9rem);
+  font-weight: var(--font-weight-medium, 500);
+}
+
+.toggleDescription {
+  font-size: var(--font-size-xxs, 0.75rem);
+  color: var(--color-text-muted);
+}
+
+/* 스위치 */
+.switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-bg-surface);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+  box-sizing: border-box;
+
+  @extend %themeTransition;
+}
+
+.switchThumb {
+  position: relative;
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-text-muted);
+  transform: translateX(0);
+  transition:
+          transform 0.18s ease-out,
+          background-color var(--transition-theme);
+}
+
+.switch[data-active='true'] {
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent-soft-strong);
+
+  .switchThumb {
+    background: var(--color-accent);
+    transform: translateX(18px);
+  }
+}
+
+/* 셀렉트 */
+.select {
+  min-width: 140px;
+  max-width: 220px;
+  padding: 0.35rem 0.6rem;
+  border-radius: 0.45rem;
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-bg-input);
+  color: var(--color-text-main);
+  font-size: var(--font-size-sm, 0.9rem);
+  box-sizing: border-box;
+  outline: none;
+
+  @extend %themeTransition;
+
+  &:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 1px var(--color-accent-soft);
+  }
+}
+
+.footerRow {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.saveButton {
+  @extend %buttonBase;
+  padding-inline: 0.9rem;
+  background: var(--color-accent-soft);
+  color: var(--color-text-main);
+  border-color: transparent;
+
+  &[data-variant='primary'] {
+    background: var(--color-accent);
+    color: #ffffff;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+}
+
+.statusText {
+  margin-top: 0.35rem;
+  font-size: var(--font-size-xxs, 0.75rem);
+  color: var(--color-text-muted);
+}
+
+.statusOk {
+  color: #16a34a;
+}
+
+.statusError {
+  color: #dc2626;
+}

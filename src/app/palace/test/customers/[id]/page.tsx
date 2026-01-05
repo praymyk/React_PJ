@@ -19,8 +19,8 @@ export default async function Page({ params, searchParams }: PageProps) {
 
     return (
         <DetailContent
-            user={data.user}
-            userList={data.userList}
+            customer={data.customer}
+            customerList={data.customerList}
             page={data.page}
             pageSize={data.pageSize}
             total={data.total}

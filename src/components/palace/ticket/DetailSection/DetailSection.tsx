@@ -17,20 +17,12 @@ type TabKey = 'conversation' | 'customer' | 'events';
 export default function DetailSection({ ticket, statusClassOf }: Props) {
     const [activeTab, setActiveTab] = useState<TabKey>('events');
 
-    if (!ticket) {
-        return (
-            <section className={`${common.detailPane} ${styles.detailEmptyPane}`}>
-                <div className={styles.emptyDetail}>
-                    왼쪽에서 티켓을 선택하면 상세 정보가 여기에 표시됩니다.
-                </div>
-            </section>
-        );
-    }
-
-    // 담당자 할당 구분 라벨
-    const assigneeLabel = ticket.assignee_id
+    // 담당자 라벨 (티켓 없을 때도 안전하게)
+    const assigneeLabel = ticket?.assignee_id
         ? `담당 ${ticket.assignee_id}`
         : '미배정';
+
+    const hasTicket = !!ticket;
 
     return (
         <section className={common.detailPane}>
@@ -39,15 +31,28 @@ export default function DetailSection({ ticket, statusClassOf }: Props) {
                 <header className={common.paneHeader}>
                     <div className={styles.detailHeaderLeft}>
                         <div className={styles.detailTitleRow}>
-                            <h2 className={styles.detailTitle}>{ticket.title}</h2>
-                            <span
-                                className={`${common.statusBadge} ${statusClassOf(ticket.status)}`}
-                            >
-                                {ticket.status}
-                            </span>
+                            <h2 className={styles.detailTitle}>
+                                {hasTicket ? ticket!.title : '티켓 상세'}
+                            </h2>
+
+                            {hasTicket && (
+                                <span
+                                    className={`${common.statusBadge} ${statusClassOf(ticket!.status)}`}
+                                >
+                                    {ticket!.status}
+                                </span>
+                            )}
                         </div>
+
                         <div className={styles.detailSub}>
-                            티켓 번호 {ticket.id} · <strong>{assigneeLabel}</strong>
+                            {hasTicket ? (
+                                <>
+                                    티켓 번호 {ticket!.id} ·{' '}
+                                    <strong>{assigneeLabel}</strong>
+                                </>
+                            ) : (
+                                <>티켓 목록에서 하나를 선택하면 상세 정보가 여기에 표시됩니다.</>
+                            )}
                         </div>
                     </div>
                 </header>
@@ -55,7 +60,11 @@ export default function DetailSection({ ticket, statusClassOf }: Props) {
                 <div className={styles.detailMain}>
                     <section className={styles.summaryCard}>
                         <h3 className={styles.sectionTitle}>상담 처리 내역</h3>
-                        <p className={styles.summaryText}>{ticket.description}</p>
+                        <p className={styles.summaryText}>
+                            {hasTicket
+                                ? ticket!.description
+                                : '티켓을 선택하면 초기 문의 내용과 처리 내역이 이 영역에 표시됩니다.'}
+                        </p>
                     </section>
                 </div>
             </section>
@@ -64,6 +73,7 @@ export default function DetailSection({ ticket, statusClassOf }: Props) {
             <section className={`${common.paneCard} ${styles.detailBottomPane}`}>
                 <div className={styles.detailMain}>
                     <section className={styles.tabSection}>
+                        {/* 탭 버튼은 항상 표시 */}
                         <nav className={styles.tabNav}>
                             <button
                                 type="button"
@@ -101,28 +111,39 @@ export default function DetailSection({ ticket, statusClassOf }: Props) {
                         </nav>
 
                         <div className={styles.tabPanel}>
-                            {activeTab === 'conversation' && (
+                            {!hasTicket ? (
+                                // 티켓이 없을 때는 탭과 상관없이 공통 안내만
                                 <div className={styles.timelinePlaceholder}>
-                                    A 내역 탭입니다.
+                                    상담 내역, 고객 정보, 이벤트 이력은
                                     <br />
-                                    나중에 A 내용 여기로
+                                    티켓을 선택하면 이 영역에 표시됩니다.
                                 </div>
-                            )}
+                            ) : (
+                                <>
+                                    {activeTab === 'conversation' && (
+                                        <div className={styles.timelinePlaceholder}>
+                                            A 내역 탭입니다.
+                                            <br />
+                                            나중에 A 내용 여기로
+                                        </div>
+                                    )}
 
-                            {activeTab === 'customer' && (
-                                <div className={styles.timelinePlaceholder}>
-                                    B 정보 탭입니다.
-                                    <br />
-                                    B 정보 추가영역.
-                                </div>
-                            )}
+                                    {activeTab === 'customer' && (
+                                        <div className={styles.timelinePlaceholder}>
+                                            B 정보 탭입니다.
+                                            <br />
+                                            B 정보 추가영역.
+                                        </div>
+                                    )}
 
-                            {activeTab === 'events' && (
-                                <div className={styles.timelinePlaceholder}>
-                                    C 이벤트 이력.
-                                    <br />
-                                    나중에 여기에 표시하면 됩니다.
-                                </div>
+                                    {activeTab === 'events' && (
+                                        <div className={styles.timelinePlaceholder}>
+                                            C 이벤트 이력.
+                                            <br />
+                                            나중에 여기에 표시하면 됩니다.
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </div>
                     </section>

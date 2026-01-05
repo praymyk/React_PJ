@@ -56,7 +56,7 @@ export default function InquirySection(
             </header>
 
             {/* 본문 영역 */}
-            <div className={styles.listBody}>
+            <div className={common.listBody}>
                 {!hasTicket ? (
                     <div className={styles.emptyMessage}>
                         왼쪽에서 티켓을 선택하면
@@ -119,34 +119,35 @@ export default function InquirySection(
                             </li>
                         ))}
                     </ul>
-
-                    {/* 이벤트 타임라인 하단 페이징 컨트롤 */}
-                    {totalPages > 1 && (
-                        <div className={styles.pagination}>
-                            <button
-                                type="button"
-                                className={styles.pageButton}
-                                disabled={!hasPrev}
-                                onClick={() => hasPrev && onPageChange(page - 1)}
-                            >
-                                이전
-                            </button>
-                            <span className={styles.pageInfo}>
-                            {page} / {totalPages}
-                        </span>
-                            <button
-                                type="button"
-                                className={styles.pageButton}
-                                disabled={!hasNext}
-                                onClick={() => hasNext && onPageChange(page + 1)}
-                            >
-                                다음
-                            </button>
-                        </div>
-                    )}
                     </>
                 )}
             </div>
+            {/* 이벤트 타임라인 하단 페이징 컨트롤 */}
+            {totalPages > 1 && (
+                <div className={common.paginationBar}>
+                    <button
+                        type="button"
+                        className={common.pageButton}
+                        disabled={!hasPrev}
+                        onClick={() => hasPrev && onPageChange(page - 1)}
+                    >
+                        이전
+                    </button>
+
+                    <span className={common.pageInfo}>
+                                {page} / {totalPages}
+                            </span>
+
+                    <button
+                        type="button"
+                        className={common.pageButton}
+                        disabled={!hasNext}
+                        onClick={() => hasNext && onPageChange(page + 1)}
+                    >
+                        다음
+                    </button>
+                </div>
+            )}
         </section>
     );
 }

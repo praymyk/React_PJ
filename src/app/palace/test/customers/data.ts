@@ -1,6 +1,6 @@
-import { getUsersPaged, type UserSearchParams, type UserRow } from '@/lib/db/reactpj/users';
+import { getCustomersPaged, type CustomerSearchParams, type CustomerRow } from '@/lib/db/reactpj/customers';
 
-export type Row = UserRow;
+export type Row = CustomerRow;
 
 type RawSearchParams = {
     page?: string;
@@ -16,7 +16,7 @@ export async function getDefaultPageData(raw: RawSearchParams) {
 
     const rawStatus = raw.status?.trim(); // ★ 공백 제거
 
-    const filters: UserSearchParams = {
+    const filters: CustomerSearchParams = {
         keyword: raw.keyword?.trim() || undefined,
         status:
             rawStatus === 'active' || rawStatus === 'inactive'
@@ -24,7 +24,7 @@ export async function getDefaultPageData(raw: RawSearchParams) {
                 : undefined,
     };
 
-    return getUsersPaged({
+    return getCustomersPaged({
         page,
         pageSize,
         ...filters,

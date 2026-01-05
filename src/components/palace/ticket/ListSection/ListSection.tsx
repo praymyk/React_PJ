@@ -61,7 +61,7 @@ export default function ListSection({
             </header>
 
             {/* 목록 전용 스크롤 영역 */}
-            <div className={styles.listBody}>
+            <div className={common.listBody}>
                 {loading ? (
                     <div className={styles.listLoading}>
                         티켓 목록을 불러오는 중입니다...
@@ -108,23 +108,23 @@ export default function ListSection({
                     </ul>
                 )}
             </div>
-            <div className={styles.paginationBar}>
+            <div className={common.paginationBar}>
                 <button
                     type="button"
-                    className={styles.pageButton}
+                    className={common.pageButton}
                     onClick={() => onPageChange(page - 1)}
                     disabled={page <= 1}
                 >
                     이전
                 </button>
 
-                <span className={styles.paginationInfo}>
+                <span className={common.paginationInfo}>
                     {page} / {totalPages} 페이지
                 </span>
 
                 <button
                     type="button"
-                    className={styles.pageButton}
+                    className={common.pageButton}
                     onClick={() => onPageChange(page + 1)}
                     disabled={page >= totalPages}
                 >

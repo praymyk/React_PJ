@@ -95,6 +95,14 @@
   @extend %themeTransition;
 }
 
+.listBody {
+  flex: 1;
+  min-height: 0;
+  overflow-y: scroll;
+  padding: 0.5rem;
+}
+
+
 /* 상태 뱃지 공통 + 상태별 색상 */
 .statusBadge {
   display: inline-flex;
@@ -124,6 +132,32 @@
   color: #6b7280;
 }
 
+/* 페이장 스타일 */
+.paginationBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  border-top: 1px solid var(--color-panel-border, var(--color-border-subtle));
+  font-size: var(--font-size-xxs);
+  color: var(--color-text-muted);
+}
+
+.pageButton {
+  @extend %buttonBase;
+
+  padding: 0.25rem 0.6rem;
+  font-size: var(--font-size-xxs);
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.paginationInfo {
+  font-size: var(--font-size-xxs);
+}
 
 /* 모바일 > 내부 스크롤 없애기 */
 @media (max-width: 768px) {

@@ -8,7 +8,7 @@ CREATE DATABASE IF NOT EXISTS reactpj
 USE reactpj;
 
 -- 고객 정보 테이블
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS customers (
     id        VARCHAR(20)  NOT NULL PRIMARY KEY,   -- 'u-001'
     name      VARCHAR(100) NOT NULL,
     email     VARCHAR(255) NOT NULL,
@@ -19,16 +19,16 @@ CREATE TABLE IF NOT EXISTS users (
     COLLATE=utf8mb4_unicode_ci;
 
 -- 기본 목업 데이터
-INSERT INTO users (id, name, email, status) VALUES
-    ('u-001', '홍냐냐', 'hong@example.com', 'active'),
-    ('u-002', '김냐냐', 'kim@example.com',  'inactive'),
-    ('u-003', '이냐냐', 'lee@example.com',  'active');
+INSERT INTO customers (id, name, email, status) VALUES
+    ('c-001', '홍냐냐', 'hong@example.com', 'active'),
+    ('c-002', '김냐냐', 'kim@example.com',  'inactive'),
+    ('c-003', '이냐냐', 'lee@example.com',  'active');
 
 -- 티켓 테이블 (이슈/문의 단위)
 CREATE TABLE IF NOT EXISTS tickets (
                                        id           VARCHAR(20)  NOT NULL PRIMARY KEY,  -- 'T-0001'
     company_id   INT          NOT NULL,              -- 업체 ID
-    customer_id  VARCHAR(20)  NOT NULL,              -- 문의한 고객 (users.id)
+    customer_id  VARCHAR(20)  NOT NULL,              -- 문의한 고객 (customers.id)
     assignee_id  VARCHAR(20)      NULL,              -- 담당자
     status       ENUM('접수','진행중','종료','취소') NOT NULL DEFAULT '접수', -- 처리 상태
 
@@ -47,12 +47,12 @@ CREATE TABLE IF NOT EXISTS tickets (
     updated_at   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_tickets_customer
-    FOREIGN KEY (customer_id) REFERENCES users(id)
+    FOREIGN KEY (customer_id) REFERENCES customers(id)
                                                                  ON DELETE RESTRICT,
 
     -- 필요 시 assignee FK 연결
     -- CONSTRAINT fk_tickets_assignee
-    --   FOREIGN KEY (assignee_id) REFERENCES users(id)
+    --   FOREIGN KEY (assignee_id) REFERENCES customers(id)
     --     ON DELETE SET NULL,
 
     INDEX idx_tickets_company  (company_id),
@@ -127,7 +127,7 @@ INSERT INTO tickets (
       (
           'T-0001',
           1,
-          'u-001',
+          'c-001',
           NULL,
           '접수',
           NULL,
@@ -140,7 +140,7 @@ INSERT INTO tickets (
       (
           'T-0002',
           1,
-          'u-002',
+          'c-002',
           NULL,
           '진행중',
           NULL,
@@ -153,7 +153,7 @@ INSERT INTO tickets (
       (
           'T-0003',
           1,
-          'u-003',
+          'c-003',
           NULL,
           '종료',
           NULL,
@@ -166,7 +166,7 @@ INSERT INTO tickets (
       (
           'T-0004',
           1,
-          'u-001',
+          'c-001',
           NULL,
           '접수',
           'T-0002',  -- T-0002에 병합된 서브 티켓
@@ -179,7 +179,7 @@ INSERT INTO tickets (
       (
           'T-0005',
           1,
-          'u-002',
+          'c-002',
           NULL,
           '취소',
           NULL,
@@ -208,7 +208,7 @@ INSERT INTO ticket_events (
           '문의접수',
           '전화',
           NULL,
-          'u-001',
+          'c-001',
           '고객이 상담 이력 엑셀 다운로드 중 오류 발생을 최초로 신고했습니다.',
           NULL
       ),
@@ -218,7 +218,7 @@ INSERT INTO ticket_events (
           '상담기록',
           '전화',
           'agent-001',
-          'u-001',
+          'c-001',
           '재현 절차 확인 및 브라우저 종류, OS 정보 안내받음.',
           NULL
       ),
@@ -228,7 +228,7 @@ INSERT INTO ticket_events (
           '문의접수',
           '이메일',
           NULL,
-          'u-002',
+          'c-002',
           '내선 사용량 통계가 실제 통화 수와 다르다는 문의가 접수되었습니다.',
           NULL
       ),
@@ -238,7 +238,7 @@ INSERT INTO ticket_events (
           '티켓병합',
           NULL,
           'agent-002',
-          'u-001',
+          'c-001',
           '유사 이슈로 등록된 T-0004 티켓을 본 티켓으로 병합했습니다.',
           JSON_OBJECT(
                   'from_ticket', 'T-0004',
@@ -251,10 +251,34 @@ INSERT INTO ticket_events (
           '상태변경',
           '채팅',
           'agent-003',
-          'u-003',
+          'c-003',
           '패치 적용 후 고객 확인 완료되어 티켓 상태를 종료로 변경했습니다.',
           JSON_OBJECT(
                   'from_status', '진행중',
                   'to_status',   '종료'
           )
       );
+
+-- 사용자 환경설정 테이블
+CREATE TABLE IF NOT EXISTS user_preferences (
+                                                user_id           VARCHAR(20) NOT NULL PRIMARY KEY,            -- users.id
+    dark_mode         TINYINT(1)  NOT NULL DEFAULT 0,              -- 0: 라이트, 1: 다크
+    default_page_size INT         NOT NULL DEFAULT 20,             -- 기본 목록 페이지 사이즈
+
+    created_at        TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at        TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_user_preferences_user
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE CASCADE
+    ) ENGINE=InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci;
+
+-- 테스트용 기본값 (u-001)
+INSERT INTO user_preferences (user_id, dark_mode, default_page_size)
+VALUES ('u-001', 0, 20)
+    ON DUPLICATE KEY UPDATE
+                         dark_mode = VALUES(dark_mode),
+                         default_page_size = VALUES(default_page_size);

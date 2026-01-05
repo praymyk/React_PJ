@@ -1,16 +1,16 @@
 import {
-    getUserById,
-    getUsersPaged,
-    type UserRow,
-    type UserSearchParams,
-} from '@/lib/db/reactpj/users';
+    getCustomerById,
+    getCustomersPaged,
+    type CustomerRow,
+    type CustomerSearchParams,
+} from '@/lib/db/reactpj/customers';
 
 /**
  * 상세 페이지 사용하는 최종 데이터
  */
 export type DetailPageData = {
-    user: UserRow;
-    userList: UserRow[];
+    customer: CustomerRow;
+    customerList: CustomerRow[];
     total: number;
     page: number;
     pageSize: number;
@@ -34,8 +34,8 @@ export async function getDetailPageData(
     raw: DetailRawSearchParams,
 ): Promise<DetailPageData | null> {
     // 1) 유저 ID
-    const user = await getUserById(id);
-    if (!user) return null;
+    const customer = await getCustomerById(id);
+    if (!customer) return null;
 
     // 2) page / pageSize 숫자로 변환 + 기본값
     const page = Number(raw.page ?? '1') || 1;
@@ -45,7 +45,7 @@ export async function getDetailPageData(
     const rawStatus = raw.status?.trim();
 
     // DB 쿼리용 검색 파라미터 생성
-    const filters: UserSearchParams = {
+    const filters: CustomerSearchParams = {
         // keyword: 빈 문자열 > undefined
         keyword: raw.keyword?.trim() || undefined,
         // status: 'active' or 'inactive'
@@ -56,15 +56,15 @@ export async function getDetailPageData(
     };
 
     const { rows, total, page: resolvedPage, pageSize: resolvedPageSize } =
-        await getUsersPaged({
+        await getCustomersPaged({
             page,
             pageSize,
             ...filters,
         });
 
     return {
-        user,
-        userList: rows,
+        customer,
+        customerList: rows,
         total,
         page: resolvedPage,
         pageSize: resolvedPageSize,

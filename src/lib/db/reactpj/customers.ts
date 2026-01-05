@@ -1,7 +1,7 @@
 import type { RowDataPacket } from 'mysql2/promise';
 import { reactpjPool } from './pool';
 
-export type UserRow = RowDataPacket & {
+export type CustomerRow = RowDataPacket & {
     id: string;
     name: string;
     email: string;
@@ -18,7 +18,7 @@ export type PagedResult<T> = {
 };
 
 /** 검색 조건 **/
-export type UserSearchParams = {
+export type CustomerSearchParams = {
     keyword?: string;
     status?: 'active' | 'inactive';
 };
@@ -26,12 +26,12 @@ export type UserSearchParams = {
 /**
  * USER 조회 페이징 전용 함수
  */
-export async function getUsersPaged(
+export async function getCustomersPaged(
     params: {
         page: number;
         pageSize: number;
-    } & UserSearchParams,
-): Promise<PagedResult<UserRow>> {
+    } & CustomerSearchParams,
+): Promise<PagedResult<CustomerRow>> {
     const { page, pageSize, keyword, status } = params;
 
     const safePage = page > 0 ? page : 1;
@@ -58,13 +58,13 @@ export async function getUsersPaged(
     // 최종 SQL + 바인딩 파라미터 로그
     const sql = `
         SELECT id, name, email, status, created_at
-        FROM users
+        FROM customers
         ${whereSql}
         ORDER BY id
         LIMIT ? OFFSET ?
     `;
 
-    const [rows] = await reactpjPool.query<UserRow[]>(sql, [
+    const [rows] = await reactpjPool.query<CustomerRow[]>(sql, [
         ...queryParams,
         safePageSize,
         offset,
@@ -75,7 +75,7 @@ export async function getUsersPaged(
     >(
         `
             SELECT COUNT(*) AS total
-            FROM users
+            FROM customers
                      ${whereSql}
         `,
         queryParams,
@@ -91,11 +91,11 @@ export async function getUsersPaged(
     };
 }
 
-export async function getUserById(id: string): Promise<UserRow | null> {
-    const [rows] = await reactpjPool.query<UserRow[]>(
+export async function getCustomerById(id: string): Promise<CustomerRow | null> {
+    const [rows] = await reactpjPool.query<CustomerRow[]>(
         `
       SELECT id, name, email, status, created_at
-      FROM users
+      FROM customers
       WHERE id = ?
     `,
         [id],

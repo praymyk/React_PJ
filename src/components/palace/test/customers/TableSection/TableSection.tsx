@@ -5,7 +5,7 @@ import {
     Table,
     type Column,
 } from '@components/common/TableForm/Table';
-import type { Row } from '@/app/palace/test/users/data';
+import type { Row } from '@/app/palace/test/customers/data';
 
 type Mode = 'list' | 'detail';
 
@@ -52,8 +52,8 @@ export default function TableSection({
             // 상세페이지 이동
             const query = sp.toString();
             const href = query
-                ? `/palace/test/users/${row.id}?${query}`
-                : `/palace/test/users/${row.id}`;
+                ? `/palace/test/customers/${row.id}?${query}`
+                : `/palace/test/customers/${row.id}`;
 
             router.push(href);
         } else {

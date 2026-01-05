@@ -9,22 +9,22 @@ import DetailSection from '@components/palace/test/customers/DetailSection/Detai
 import SearchForm from '@components/common/SearchForm/SearchForm';
 import TableSection from '@components/palace/test/customers/TableSection/TableSection';
 
-import { searchRegistry } from '@/app/palace/test/users/searchFields';
-import { tableColumns } from '@/app/palace/test/users/tableColumns';
+import { searchRegistry } from '@/app/palace/test/customers/searchFields';
+import { tableColumns } from '@/app/palace/test/customers/tableColumns';
 
-import type { UserRow } from '@/lib/db/reactpj/users';
+import type { CustomerRow } from '@/lib/db/reactpj/customers';
 
 type Props = {
-    user: UserRow;
-    userList: UserRow[];
+    customer: CustomerRow;
+    customerList: CustomerRow[];
     page: number;
     pageSize: number;
     total: number;
 };
 
 export default function DetailContent({
-    user,
-    userList,
+    customer,
+    customerList,
     page,
     pageSize,
     total,
@@ -34,10 +34,10 @@ export default function DetailContent({
     const searchParams = useSearchParams();
 
     // 선택된 유저 id > props
-    const selectedId = user.id;
+    const selectedId = customer.id;
 
     // 리스트에서 하이라이트용 인덱스
-    const selectedIndex = userList.findIndex((u) => u.id === selectedId);
+    const selectedIndex = customerList.findIndex((u) => u.id === selectedId);
     const safeSelectedIndex = selectedIndex >= 0 ? selectedIndex : null;
 
     const fields = searchRegistry.searchItems;
@@ -105,7 +105,7 @@ export default function DetailContent({
     return (
         <div className={styles.root}>
             {/* 상단: 선택된 유저 상세 */}
-            <DetailSection row={user} />
+            <DetailSection row={customer} />
 
             {/* 중간: 검색 폼 */}
             <SearchForm
@@ -116,7 +116,7 @@ export default function DetailContent({
 
             {/* 하단: 유저 리스트 테이블 (선택된 행 하이라이트) */}
             <TableSection
-                rows={userList}
+                rows={customerList}
                 columns={tableColumns}
                 mode="detail"
                 selectedIndex={safeSelectedIndex}
