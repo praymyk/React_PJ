@@ -9,8 +9,8 @@ import DetailSection from '@components/palace/test/customers/DetailSection/Detai
 import SearchForm from '@components/common/SearchForm/SearchForm';
 import TableSection from '@components/palace/test/customers/TableSection/TableSection';
 
-import { searchRegistry } from '@/app/palace/test/customers/searchFields';
-import { tableColumns } from '@/app/palace/test/customers/tableColumns';
+import { searchRegistry } from '@/app/(protected)/palace/test/customers/searchFields';
+import { tableColumns } from '@/app/(protected)/palace/test/customers/tableColumns';
 
 import type { CustomerRow } from '@/lib/db/reactpj/customers';
 

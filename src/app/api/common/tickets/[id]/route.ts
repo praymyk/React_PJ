@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getTicketById } from '@/lib/db/reactpj/tickets';
-import type { TicketDetailApiResponse } from '@/app/palace/ticket/data';
+import type { TicketDetailApiResponse } from '@/app/(protected)/palace/ticket/data';
 
 export async function GET(
     _req: NextRequest,

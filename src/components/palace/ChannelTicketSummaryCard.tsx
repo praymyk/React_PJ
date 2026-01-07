@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styles from '@components/palace/SummaryCard.module.scss';
-import { ChannelTicketSummaryData } from '@/app/palace/data';
+import { ChannelTicketSummaryData } from '@/app/(protected)/palace/data';
 
 type Props = {
 /**

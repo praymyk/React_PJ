@@ -7,6 +7,51 @@ CREATE DATABASE IF NOT EXISTS reactpj
 
 USE reactpj;
 
+-- 시스템 사용자(상담사/관리자 등) 테이블
+CREATE TABLE IF NOT EXISTS users (
+                                     id             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,  -- 내부 PK (숫자)
+                                     account        VARCHAR(50)    NOT NULL,                  -- 로그인용 계정 ID (예: 'admin')
+    public_id VARCHAR(100) NOT NULL,                         -- 외부 표기용 ID  //TODO: INSERT시 표기용 아이디 등록
+    name           VARCHAR(100)   NOT NULL,                  -- 사용자 이름
+    profile_name   VARCHAR(100)       NULL,                  -- 프로필 표기명 (닉네임)
+    email          VARCHAR(255)   NOT NULL,                  -- 로그인/알림용 이메일
+    extension      VARCHAR(20)        NULL,                  -- 내선번호 (예: '6001')
+    password_hash  VARCHAR(255)   NOT NULL,                  -- 비밀번호 해시
+    status         ENUM('active','inactive','hidden')
+    NOT NULL DEFAULT 'active',                -- 계정 상태
+
+    created_at     TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deactivated_at DATETIME            NULL,
+    updated_at     TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id),
+
+    -- 로그인 ID 유니크
+    UNIQUE KEY uq_users_account (account),
+
+    -- 이메일 유니크
+    UNIQUE KEY uq_users_email (email),
+
+    -- 내선 인덱스 추가
+    INDEX idx_users_extension (extension)
+    ) ENGINE=InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci;
+
+-- 테스트용 시스템 사용자
+INSERT INTO users (account, public_id, name, profile_name, email, extension, password_hash, status)
+VALUES (
+           'admin',           -- account (로그인 ID)
+           'u-0001',
+           '정윤석',
+           '냠냠',
+           'admin@example.com',
+           '6001',
+           '$2b$10$qykjsIxU9K6Wbp9t5RNoz.IBpbcy2vi7GifaDqgX0Cs1wzLyvxybC',
+           'active'
+       );
+
 -- 고객 정보 테이블
 CREATE TABLE IF NOT EXISTS customers (
     id        VARCHAR(20)  NOT NULL PRIMARY KEY,   -- 'u-001'
@@ -261,13 +306,19 @@ INSERT INTO ticket_events (
 
 -- 사용자 환경설정 테이블
 CREATE TABLE IF NOT EXISTS user_preferences (
-                                                user_id           VARCHAR(20) NOT NULL PRIMARY KEY,            -- users.id
-    dark_mode         TINYINT(1)  NOT NULL DEFAULT 0,              -- 0: 라이트, 1: 다크
-    default_page_size INT         NOT NULL DEFAULT 20,             -- 기본 목록 페이지 사이즈
+                                                id               BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,   -- preference PK
+                                                user_id          BIGINT UNSIGNED NOT NULL,                  -- users.id FK (숫자형)
+                                                dark_mode        TINYINT(1)  NOT NULL DEFAULT 0,            -- 0: 라이트, 1: 다크
+    default_page_size INT        NOT NULL DEFAULT 20,           -- 기본 목록 페이지 사이즈
 
-    created_at        TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at        TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at       TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at       TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
     ON UPDATE CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id),
+
+    -- 유저당 1행만 허용
+    UNIQUE KEY uq_user_preferences_user (user_id),
 
     CONSTRAINT fk_user_preferences_user
     FOREIGN KEY (user_id) REFERENCES users(id)
@@ -275,10 +326,3 @@ CREATE TABLE IF NOT EXISTS user_preferences (
     ) ENGINE=InnoDB
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
-
--- 테스트용 기본값 (u-001)
-INSERT INTO user_preferences (user_id, dark_mode, default_page_size)
-VALUES ('u-001', 0, 20)
-    ON DUPLICATE KEY UPDATE
-                         dark_mode = VALUES(dark_mode),
-                         default_page_size = VALUES(default_page_size);

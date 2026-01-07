@@ -26,7 +26,6 @@
   display: flex;
   align-items: flex-start;
   padding: 1rem 0.2rem;
-  transition: width 220ms ease-out;
 
   &.lastItemHovered {
     padding-bottom: 0.2rem;
@@ -100,17 +99,23 @@
   padding: 0.4rem 0;
   background-color: transparent;
 
+  /* 처음 > 가로로 접힌 상태 (0) */
   max-width: 0;
   opacity: 0;
   overflow: hidden;
   pointer-events: none;
+  flex: 0 0 auto;
 
+  // 테마 + 폭 애니메이션
   @extend %themeTransition;
+  transition:
+          max-width 250ms ease-out,
+          opacity 500ms ease-out;
 }
 
-/* 패널 열릴 때: 서브메뉴 영역 확장 */
 .submenuPanelDesktopOpen {
-  min-width: 115px;
+  /* 최대로 펼쳐졌을 때의 가로폭 */
+  max-width: 150px;
   opacity: 1;
   pointer-events: auto;
   background-color: var(--color-accent-soft);
@@ -125,6 +130,21 @@
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
+
+  opacity: 0;
+  transform: translateX(-4px);
+  pointer-events: none;
+
+  transition:
+          opacity 200ms ease-out 80ms,
+          transform 200ms ease-out 80ms;
+}
+
+// 패널이 열린 상태일 때만 텍스트 완전히 보이기
+.submenuPanelDesktopOpen .submenuListDesktop {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
 }
 
 /* 서브메뉴 아이템 래퍼 공통 */

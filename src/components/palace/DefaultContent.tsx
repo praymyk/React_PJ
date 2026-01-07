@@ -19,7 +19,7 @@ import {
     mockNoticeList,
     mockLast24HoursTrendData,
 
-} from '@/app/palace/data';
+} from '@/app/(protected)/palace/data';
 
 export default function DefaultContent() {
     return (

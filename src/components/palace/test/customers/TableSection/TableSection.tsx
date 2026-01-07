@@ -5,7 +5,7 @@ import {
     Table,
     type Column,
 } from '@components/common/TableForm/Table';
-import type { Row } from '@/app/palace/test/customers/data';
+import type { Row } from '@/app/(protected)/palace/test/customers/data';
 
 type Mode = 'list' | 'detail';
 

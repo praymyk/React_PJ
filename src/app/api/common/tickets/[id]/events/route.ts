@@ -6,7 +6,7 @@ import {
 } from '@/lib/db/reactpj/tickets';
 import type {
     TicketEventListApiResponse,
-} from '@/app/palace/ticket/data';
+} from '@/app/(protected)/palace/ticket/data';
 
 export async function GET(
     req: NextRequest,

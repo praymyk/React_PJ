@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import common from '@components/palace/ticket/DefaultContent.module.scss';
 import styles from '@components/palace/ticket/NoteSection/NoteSection.module.scss';
-import type { TicketDetailApiResponse } from '@/app/palace/ticket/data';
+import type { TicketDetailApiResponse } from '@/app/(protected)/palace/ticket/data';
 import TicketNoteEditor from '@components/palace/ticket/NoteSection/TicketNoteEditor';
 
 type Props = {

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import cardStyles from '@components/palace/SummaryCard.module.scss';
-import type { TodayCallDetailRow } from '@/app/palace/data';
+import type { TodayCallDetailRow } from '@/app/(protected)/palace/data';
 
 type Props = {
     /** 금일 콜 상세 전체 목록 (전체 + 내 콜을 여기서 필터링) */

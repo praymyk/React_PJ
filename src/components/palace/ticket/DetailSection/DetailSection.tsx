@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import common from '@components/palace/ticket/DefaultContent.module.scss';
 import styles from '@components/palace/ticket/DetailSection/Detail.module.scss';
-import type { TicketDetailApiResponse } from '@/app/palace/ticket/data';
+import type { TicketDetailApiResponse } from '@/app/(protected)/palace/ticket/data';
 
 type Props = {
     ticket: TicketDetailApiResponse | null;

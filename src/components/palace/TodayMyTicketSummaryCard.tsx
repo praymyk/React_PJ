@@ -3,7 +3,7 @@
 import React from 'react';
 import styles from '@components/palace/SummaryCard.module.scss';
 
-import { TodayMyTicketSummaryData } from '@/app/palace/data';
+import { TodayMyTicketSummaryData } from '@/app/(protected)/palace/data';
 
 type Props = {
     /**

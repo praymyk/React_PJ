@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export function useLogin() {
@@ -6,7 +6,21 @@ export function useLogin() {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const router = useRouter(); // 추가
+    const [rememberId, setRememberId] = useState(false);
+    const router = useRouter();
+
+    // 최초 > 저장된 아이디 로드
+    useEffect(() => {
+
+        const match = document.cookie.match(
+            /(?:^|;\s*)rememberedLoginId=([^;]+)/
+        );
+        if (match) {
+            const saved = decodeURIComponent(match[1]);
+            setUsername(saved);
+            setRememberId(true);
+        }
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -14,49 +28,63 @@ export function useLogin() {
         setError('');
 
         try {
-            // const response = await fetch('/api/login', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify({ username, password }),
-            // });
-            //
-            // if (!response.ok) {
-            //     throw new Error('로그인 실패');
-            // }
-            //
-            // const data = await response.json();
-            // console.log('로그인 성공:', data);
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({ username, password }),
+            });
 
-            // 예: 토큰 저장 및 페이지 이동
-            // localStorage.setItem('token', data.token);
-            // router.push('/dashboard');
-
-            // 임시로 fetch 대신 가짜 응답 생성
-            await new Promise((resolve) => setTimeout(resolve, 500)); // 네트워크 지연 시뮬레이션
-
-            const response = {
-                ok: true,
-                json: async () => ({
-                    token: 'mock-token-12345',
-                    username,
-                    message: '로그인 성공 (mock)',
-                }),
-            };
+            const data = await response.json().catch(() => null);
 
             if (!response.ok) {
-                throw new Error('로그인 실패');
+                const msg =
+                    (data && data.message) ||
+                    '로그인에 실패했습니다. 아이디/비밀번호를 확인해주세요.';
+                throw new Error(msg);
             }
 
-            const data = await response.json();
-            console.log('로그인 성공 (mock):', data);
+            // TODO: 로그인 직후 클라이언트에서 적용할 계정별 설정들을 처리하는 위치.
+            //  - 현재는 darkMode만 반영 중
+            //    여기에서 data.preferences.* 를 읽어 전역 상태/스토어에 저장 필요
+            const darkModeFromServer = Boolean(data.preferences?.darkMode);
+            if (typeof window !== 'undefined') {
+                document.documentElement.classList.toggle('dark', darkModeFromServer);
+                window.localStorage.setItem(
+                    'theme',
+                    darkModeFromServer ? 'dark' : 'light',
+                );
+            }
 
-            // 이동 처리
-            router.push('/palace'); // 원하는 경로로 이동
+            // ★ 쿠키 기반 세션
+            // 아이디 저장 옵션 처리(로그인ID > Cookie)
+            if (rememberId) {
+                // 30일 유지
+                document.cookie = [
+                    `rememberedLoginId=${encodeURIComponent(username)}`,
+                    'path=/',
+                    'max-age=' + 60 * 60 * 24 * 30,
+                ].join('; ');
+            } else {
+                // 쿠키 삭제
+                document.cookie = [
+                    'rememberedLoginId=',
+                    'path=/',
+                    'max-age=0',
+                ].join('; ');
+            }
+            // 로그인 후 이동
+            router.push('/palace');
+
         } catch (err) {
             console.error(err);
-            setError('로그인 실패. 다시 시도해주세요.');
+            const msg =
+                err instanceof Error
+                    ? err.message
+                    : '로그인 실패. 다시 시도해주세요.';
+            setError(msg);
         } finally {
             setLoading(false);
         }
@@ -70,5 +98,7 @@ export function useLogin() {
         loading,
         error,
         handleSubmit,
+        rememberId,
+        setRememberId,
     };
 }

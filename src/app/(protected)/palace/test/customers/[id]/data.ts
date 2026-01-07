@@ -3,7 +3,7 @@ import {
     getCustomersPaged,
     type CustomerRow,
     type CustomerSearchParams,
-} from '@/lib/db/reactpj/customers';
+} from '@lib/db/reactpj/customers';
 
 /**
  * 상세 페이지 사용하는 최종 데이터

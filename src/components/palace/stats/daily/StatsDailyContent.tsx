@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import styles from './Stats.module.scss';
 
-import type { Row, Name } from '@/app/palace/stats/daily/data';
+import type { Row, Name } from '@/app/(protected)/palace/stats/daily/data';
 import { format, subMonths, getDaysInMonth as dfGetDaysInMonth, getDay } from 'date-fns';
 
 // month 문자열 얻는 헬퍼 (기본: 오늘 기준)

@@ -14,7 +14,7 @@ import {
 import { Line } from 'react-chartjs-2';
 import type { ChartOptions } from 'chart.js';
 
-import { Last24HoursTrendData } from '@/app/palace/data';
+import { Last24HoursTrendData } from '@/app/(protected)/palace/data';
 
 // Chart.js에서 라인 차트에 필요한 요소 등록
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend);

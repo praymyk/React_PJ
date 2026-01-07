@@ -1,54 +1,37 @@
 import { useState, ChangeEvent } from 'react';
 import styles from '@components/palace/profile/MainCard.module.scss';
+import type { Profile } from '@components/palace/profile/DefaultContent';
 
-type Profile = {
-    id: string;
-    username: string;   // 프로필명
-    email: string;
-    name: string;
-    joinedAt: string;   // 가입시기 (문자열로 표시)
-    isPublic: boolean;  // 노출 여부
+type Props = {
+    profile: Profile;
+    onProfileChange?: (next: Profile) => void; // API 저장 후 상위 상태 업데이트용
 };
 
-const initialProfile: Profile = {
-    id: 'nyam-0001',
-    username: '냠냠',
-    email: 'nyam@example.com',
-    name: '정냠냠',
-    joinedAt: '1988-03-12',
-    isPublic: true
-};
-
-export function MainCard() {
-    const [profile, setProfile] = useState<Profile>(initialProfile);
-    const [draft, setDraft] = useState<Profile>(initialProfile);
+export function MainCard({ profile, onProfileChange }: Props) {
+    const [draft, setDraft] = useState<Profile>(profile);
     const [isEditing, setIsEditing] = useState(false);
 
     const startEdit = () => {
-        setDraft(profile); // 현재 값 기준으로 편집 시작
+        setDraft(profile);
         setIsEditing(true);
     };
 
     const cancelEdit = () => {
+        setDraft(profile);
         setIsEditing(false);
-        setDraft(profile); // 되돌리기
     };
 
     const saveEdit = () => {
-        setProfile(draft);
+        // TODO: 실제 API 저장 호출 후 성공 시에만 onProfileChange 호출
+        onProfileChange?.(draft);
         setIsEditing(false);
-        // TODO: 실제 API 저장 로직이 있다면 여기에서 호출
     };
 
     const handleChange =
         (field: keyof Profile) =>
             (e: ChangeEvent<HTMLInputElement>) => {
-                const value =
-                    field === 'isPublic' ? e.target.checked : e.target.value;
-                setDraft(prev => ({
-                    ...prev,
-                    [field]: value
-                }));
+                const value = e.target.value as Profile[typeof field];
+                setDraft(prev => ({ ...prev, [field]: value }));
             };
 
     return (
@@ -56,7 +39,6 @@ export function MainCard() {
             {/* 상단 프로필 헤더 */}
             <div className={styles.profileHeader}>
                 <div className={styles.avatar}>
-                    {/* 간단한 이니셜 아바타 */}
                     <span>{profile.name?.[0] ?? 'N'}</span>
                 </div>
 
@@ -102,6 +84,7 @@ export function MainCard() {
 
             {/* 하단 상세 정보 영역 */}
             <div className={styles.profileBody}>
+                {/* ID(로그인 ID/account) */}
                 <div className={styles.fieldRow}>
                     <div className={styles.fieldLabel}>ID</div>
                     <div className={styles.fieldValue}>
@@ -109,15 +92,16 @@ export function MainCard() {
                             <input
                                 type="text"
                                 className={styles.fieldInput}
-                                value={draft.id}
-                                onChange={handleChange('id')}
+                                value={draft.account}
+                                onChange={handleChange('account')}
                             />
                         ) : (
-                            <span className={styles.mono}>{profile.id}</span>
+                            <span className={styles.mono}>{profile.account}</span>
                         )}
                     </div>
                 </div>
 
+                {/* 프로필명 */}
                 <div className={styles.fieldRow}>
                     <div className={styles.fieldLabel}>프로필명</div>
                     <div className={styles.fieldValue}>
@@ -134,6 +118,7 @@ export function MainCard() {
                     </div>
                 </div>
 
+                {/* 이메일 */}
                 <div className={styles.fieldRow}>
                     <div className={styles.fieldLabel}>이메일</div>
                     <div className={styles.fieldValue}>
@@ -150,6 +135,7 @@ export function MainCard() {
                     </div>
                 </div>
 
+                {/* 이름 */}
                 <div className={styles.fieldRow}>
                     <div className={styles.fieldLabel}>이름</div>
                     <div className={styles.fieldValue}>
@@ -166,6 +152,7 @@ export function MainCard() {
                     </div>
                 </div>
 
+                {/* 가입시기 */}
                 <div className={styles.fieldRow}>
                     <div className={styles.fieldLabel}>가입시기</div>
                     <div className={styles.fieldValue}>
@@ -173,15 +160,16 @@ export function MainCard() {
                             <input
                                 type="date"
                                 className={styles.fieldInput}
-                                value={draft.joinedAt}
-                                onChange={handleChange('joinedAt')}
+                                value={draft.created_at.slice(0, 10)}
+                                onChange={handleChange('created_at')}
                             />
                         ) : (
-                            <span>{profile.joinedAt}</span>
+                            <span>{profile.created_at}</span>
                         )}
                     </div>
                 </div>
 
+                {/* 노출(공개/비공개) */}
                 <div className={styles.fieldRow}>
                     <div className={styles.fieldLabel}>노출</div>
                     <div className={styles.fieldValue}>
@@ -189,23 +177,29 @@ export function MainCard() {
                             <label className={styles.toggleWrapper}>
                                 <input
                                     type="checkbox"
-                                    checked={draft.isPublic}
-                                    onChange={handleChange('isPublic')}
+                                    checked={draft.status === 'hidden'}
+                                    onChange={(e) => {
+                                        const nextStatus = e.target.checked ? 'hidden' : 'active';
+                                        setDraft(prev => ({
+                                            ...prev,
+                                            status: nextStatus,
+                                        }));
+                                    }}
                                 />
                                 <span className={styles.toggleVisual} />
                                 <span className={styles.toggleText}>
-                                    {draft.isPublic ? '공개' : '비공개'}
+                                    {draft.status === 'hidden' ? '비공개' : '공개'}
                                 </span>
                             </label>
                         ) : (
                             <span
                                 className={
-                                    profile.isPublic
-                                        ? styles.badgePublic
-                                        : styles.badgePrivate
+                                    profile.status === 'hidden'
+                                        ? styles.badgePrivate
+                                        : styles.badgePublic
                                 }
                             >
-                                {profile.isPublic ? '공개' : '비공개'}
+                                {profile.status === 'hidden' ? '비공개' : '공개'}
                             </span>
                         )}
                     </div>

@@ -1,5 +1,5 @@
 import type { Column } from '@components/common/TableForm/Table';
-import type { Row } from '@/app/palace/test/customers/data';
+import type { Row } from '@/app/(protected)/palace/test/customers/data';
 
 export const tableColumns: Column<Row>[] = [
     {

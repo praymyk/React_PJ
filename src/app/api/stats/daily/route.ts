@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { pool } from '@lib/db/aicc';
-import type { Row } from '@/app/palace/stats/daily/data';
+import type { Row } from '@/app/(protected)/palace/stats/daily/data';
 
 function getMonthRange(month: string) {
     // month: '2025-10'
@@ -75,7 +75,7 @@ export async function GET(req: NextRequest) {
         ]);
 
         const data: Row[] = rows.map((r) => ({
-            id: String(r.id),
+            id: r.id,
             name: r.name,
             ext: r.ext === null ? null : String(r.ext),
             status: r.status === 'active' ? 'active' : 'inactive',

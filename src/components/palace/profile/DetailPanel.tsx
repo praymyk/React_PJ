@@ -1,6 +1,8 @@
 import styles from '@components/palace/profile/DetailPanel.module.scss';
 
-export function DetailPanel() {
+type Props = { userId: number };
+
+export function DetailPanel({ userId }: Props) {
     return (
         <aside className={styles.detailPanel}>
             <div className={styles.detailHeader}>

@@ -22,6 +22,32 @@
   @extend %themeTransition;
 }
 
+.headerActions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logoutButton {
+  height: 2.1rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+  background-color: var(--color-accent-soft);
+  border: none;
+  color: var(--color-theme-toggle-icon);
+  box-shadow: var(--color-theme-toggle-shadow);
+
+  &:hover {
+    background-color: var(--color-theme-toggle-bg-hover);
+    transform: translateY(-1px);
+  }
+
+  @extend %themeTransition
+}
+
 /* 다크모드 토글 버튼 */
 .themeToggle {
   margin-left: auto;

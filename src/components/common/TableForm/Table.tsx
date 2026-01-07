@@ -1,6 +1,5 @@
 'use client';
-
-import {useState, ReactNode, useEffect} from 'react';
+import { useEffect, useState, type Key, type ReactNode } from 'react';
 import styles from './Table.module.scss';
 
 export type Column<T> = {
@@ -13,7 +12,7 @@ type MasterTableProps<T> = {
     rows: T[];
     columns: Column<T>[];
     /** 각 row의 고유 key (React key로 사용) */
-    getRowKey: (row: T, index: number) => string;
+    getRowKey: (row: T, index: number) => Key;
 
     /** row 클릭 시 추가 동작 */
     onRowClick?: (row: T, index: number) => void;

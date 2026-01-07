@@ -3,9 +3,6 @@
 import { useEffect, useState } from 'react';
 import styles from '@components/palace/settings/env/DefaultContent.module.scss';
 
-// TODO: 실제 로그인 세션 연동 시 교체
-const CURRENT_USER_ID = 'u-001';
-
 type EnvPreferences = {
     darkMode: boolean;
     defaultPageSize: number;
@@ -28,9 +25,8 @@ export default function DefaultContent() {
         (async () => {
             try {
                 setLoading(true);
-                const res = await fetch(
-                    `/api/common/users/${encodeURIComponent(CURRENT_USER_ID)}/preferences`,
-                );
+                const res = await fetch('/api/common/users/me/preferences');
+
                 if (!res.ok) {
                     throw new Error(`HTTP ${res.status}`);
                 }
@@ -99,10 +95,8 @@ export default function DefaultContent() {
                 defaultPageSize: prefs.defaultPageSize,
             };
 
-            const res = await fetch(
-                `/api/common/users/${encodeURIComponent(CURRENT_USER_ID)}/preferences`,
-                {
-                    method: 'POST', // 위에서 만든 route.ts 기준
+            const res = await fetch('/api/common/users/me/preferences', {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -255,8 +249,7 @@ export default function DefaultContent() {
                         </div>
 
                         <p className={styles.statusText}>
-                            위 옵션들은 아직 동작하지 않는 목업입니다. 다크 모드와 페이지
-                            크기부터 실제 저장 기능을 붙여 둔 상태입니다.
+                            위 옵션들은 아직 동작하지 않는 목업임
                         </p>
                     </div>
                 </section>

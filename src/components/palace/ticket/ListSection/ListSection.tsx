@@ -2,9 +2,9 @@
 
 import common from '@components/palace/ticket/DefaultContent.module.scss';
 import styles from '@components/palace/ticket/ListSection/ListSection.module.scss';
-import type { Row } from '@/app/palace/ticket/data';
+import type { Row } from '@/app/(protected)/palace/ticket/data';
 import SearchForm from "@components/common/SearchForm/MiniSearchForm";
-import { searchRegistry } from "@/app/palace/ticket/searchFields";
+import { searchRegistry } from "@/app/(protected)/palace/ticket/searchFields";
 
 type Props = {
     rows: Row[];

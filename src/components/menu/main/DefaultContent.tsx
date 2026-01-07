@@ -24,6 +24,11 @@ export default function DefaultContent({ items, offsetTop = 0 }: MainMenuProps) 
 
     const pathname = usePathname();
 
+    // PC 서브메뉴 패널용 상태 (내용/열림 여부 분리)
+    const [panelPath, setPanelPath] = useState<string | null>(null);
+    const [isPanelOpen, setIsPanelOpen] = useState(false);
+    const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
     /** 뷰포트 기준으로 모바일 여부 판별 */
     useEffect(() => {
         const handleResize = () => {
@@ -67,20 +72,27 @@ export default function DefaultContent({ items, offsetTop = 0 }: MainMenuProps) 
             return;
         }
 
-        // 서브메뉴 없는 일반 메뉴라면 그냥 라우팅
-        // (현재 구조에서는 없지만 확장성 고려)
+        // TODO: 서브메뉴 없는 일반 메뉴라면 그냥 라우팅 해야함
     };
 
     /** PC: 호버 시 특정 path 열기 + 해당 li 높이에 맞게 서브메뉴 offset 계산 */
     const handleMouseEnterDesktop = (path: string, e: MouseEvent<HTMLLIElement>) => {
         if (isMobile) return;
 
+        // 패널 닫기 예약되어 있던 타이머가 있으면 취소
+        if (closeTimeoutRef.current) {
+            clearTimeout(closeTimeoutRef.current);
+            closeTimeoutRef.current = null;
+        }
+
         if (!hasSubmenu(path)) {
-            setOpenPath(null);
+            setIsPanelOpen(false);
+            setPanelPath(null);
             return;
         }
 
-        setOpenPath(path);
+        setPanelPath(path);
+        setIsPanelOpen(true);
 
         const listEl = desktopListRef.current;
         const itemEl = e.currentTarget as HTMLElement;
@@ -99,15 +111,34 @@ export default function DefaultContent({ items, offsetTop = 0 }: MainMenuProps) 
     /** PC: 메뉴 영역에서 마우스 나가면 닫기 */
     const handleMouseLeaveDesktop = () => {
         if (isMobile) return;
-        setOpenPath(null);
-        setIsLastItemHovered(false); // Reset
+
+        setIsPanelOpen(false);
+        setIsLastItemHovered(false);
+
+        // 애니메이션 종료 후 내용 정리 (메모리 관리)
+        if (closeTimeoutRef.current) {
+            clearTimeout(closeTimeoutRef.current);
+        }
+        closeTimeoutRef.current = setTimeout(() => {
+            setPanelPath(null);
+            closeTimeoutRef.current = null;
+        }, 350);
     };
 
-    /** PC용 서브메뉴: 현재 openPath 기준으로만 오른쪽 패널에서 렌더 */
+    /** PC용 서브메뉴: 현재 panelPath 기준으로만 오른쪽 패널에서 렌더 */
     const activeSubmenuItems: SubMenuItem[] =
-        !isMobile && openPath && hasSubmenu(openPath)
-            ? getSubmenuItems(openPath)
+        !isMobile && panelPath && hasSubmenu(panelPath)
+            ? getSubmenuItems(panelPath)
             : [];
+
+    // 언마운트 시 패널 닫기 타이머 정리
+    useEffect(() => {
+        return () => {
+            if (closeTimeoutRef.current) {
+                clearTimeout(closeTimeoutRef.current);
+            }
+        };
+    }, []);
 
     return (
         <nav className={styles.menuContainer}
@@ -267,7 +298,7 @@ export default function DefaultContent({ items, offsetTop = 0 }: MainMenuProps) 
                     {/* 우측: 서브메뉴 패널 */}
                     <div
                         className={`${styles.submenuPanelDesktop} ${
-                            activeSubmenuItems.length > 0
+                            isPanelOpen && activeSubmenuItems.length > 0
                                 ? styles.submenuPanelDesktopOpen
                                 : ''
                         }`}

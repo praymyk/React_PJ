@@ -2,7 +2,7 @@ import type { RowDataPacket } from 'mysql2/promise';
 import { reactpjPool } from './pool';
 
 export type CustomerRow = RowDataPacket & {
-    id: string;
+    id: number;
     name: string;
     email: string;
     status: 'active' | 'inactive';

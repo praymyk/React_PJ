@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styles from '@components/palace/SummaryCard.module.scss';
-import { TodayMyCallSummaryData } from '@/app/palace/data';
+import { TodayMyCallSummaryData } from '@/app/(protected)/palace/data';
 
 type Props = {
     /** 금일 나의 콜 요약 데이터 */

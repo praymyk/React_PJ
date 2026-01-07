@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import type { Name } from '@/app/palace/stats/daily/data';
+import type { Name } from '@/app/(protected)/palace/stats/daily/data';
 import { pool } from '@lib/db/aicc';
 
 export async function GET() {

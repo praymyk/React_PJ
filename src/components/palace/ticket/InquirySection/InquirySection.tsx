@@ -2,7 +2,7 @@
 
 import common from '@components/palace/ticket/DefaultContent.module.scss';
 import styles from '@components/palace/ticket/InquirySection/InquirySection.module.scss';
-import { type TicketDetailApiResponse, TicketEventRow } from '@/app/palace/ticket/data';
+import { type TicketDetailApiResponse, TicketEventRow } from '@/app/(protected)/palace/ticket/data';
 
 type Props = {
     ticket: TicketDetailApiResponse | null;

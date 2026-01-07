@@ -1,6 +1,7 @@
 import styles from '@components/palace/profile/ActivityCard.module.scss';
 
-export function ActivityCard() {
+type Props = { userId: number };
+export function ActivityCard({ userId }: Props) {
     return (
         <div className={styles.activityCard}>
             <div className={styles.activityHeader}>

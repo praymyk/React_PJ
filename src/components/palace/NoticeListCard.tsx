@@ -4,7 +4,7 @@ import React from 'react';
 import cardStyles from '@components/palace/SummaryCard.module.scss';
 import listStyles from '@components/palace/SideListCard.module.scss';
 
-import { NoticeListItem, mockNoticeList } from '@/app/palace/data';
+import { NoticeListItem, mockNoticeList } from '@/app/(protected)/palace/data';
 
 type Props = {
     items?: NoticeListItem[];

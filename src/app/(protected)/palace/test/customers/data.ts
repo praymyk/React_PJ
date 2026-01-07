@@ -1,4 +1,4 @@
-import { getCustomersPaged, type CustomerSearchParams, type CustomerRow } from '@/lib/db/reactpj/customers';
+import { getCustomersPaged, type CustomerSearchParams, type CustomerRow } from '@lib/db/reactpj/customers';
 
 export type Row = CustomerRow;
 

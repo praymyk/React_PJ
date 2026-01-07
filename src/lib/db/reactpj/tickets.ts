@@ -4,7 +4,7 @@ import { reactpjPool } from './pool';
 /** 고객 티켓 리스트 Row */
 export type CustomerTicketRow = RowDataPacket & {
     id: number;
-    customer_id: string;
+    customer_id: number;
     submitted_at: Date;
     title: string;
     description: string;
@@ -15,7 +15,7 @@ export type CustomerTicketRow = RowDataPacket & {
 /**
  * 고객별 티켓 Row
  */
-export async function getCustomerTicket(customerId: string): Promise<CustomerTicketRow[]> {
+export async function getCustomerTicket(customerId: number): Promise<CustomerTicketRow[]> {
     const [rows] = await reactpjPool.query<CustomerTicketRow[]>(
         `
             SELECT
@@ -38,12 +38,12 @@ export async function getCustomerTicket(customerId: string): Promise<CustomerTic
 
 /** 티켓 테이블 행 타입 */
 export type TicketRow = RowDataPacket & {
-    id: string;
+    id: number;
     title: string;
     description: string;
     company_id: number;
-    customer_id: string;
-    assignee_id: string | null;
+    customer_id: number;
+    assignee_id: number | null;
     status: '접수' | '진행중' | '종료' | '취소';
     channel: '전화' | '채팅' | '이메일' | '기타';
     submitted_at: Date;
@@ -78,7 +78,7 @@ export type TicketListResult = {
  * 업체별 티켓 Row (상태 필터 + 정렬 + 페이징)
  */
 export async function getTicketsByCompany(
-    companyId: number,
+    companyId: string,
     options?: GetTicketsByCompanyOptions,
 ): Promise<TicketListResult> {
     const {
@@ -167,7 +167,7 @@ export async function getTicketsByCompany(
 /**
  * 선택 티켓 조회
  */
-export async function getTicketById(id: string): Promise<TicketRow | null> {
+export async function getTicketById(id: number): Promise<TicketRow | null> {
     const [rows] = await reactpjPool.query<TicketRow[]>(
         `
         SELECT
@@ -196,9 +196,9 @@ export async function getTicketById(id: string): Promise<TicketRow | null> {
 
 /** 티켓 이벤트 DB Row 타입 */
 export type TicketEventRow = RowDataPacket & {
-    id: number;
+    id: string;
     ticket_id: string;
-    company_id: number;
+    company_id: string;
     event_type:
         | '문의접수'
         | '상담기록'
@@ -237,7 +237,7 @@ export type TicketEventListResult = {
  *  - merged_into_ticket_id = ticketId 인 서브 티켓들까지 포함
  */
 export async function getTicketEventsForTicketCluster(
-    ticketId: string,
+    ticketId: number,
     options?: GetTicketEventsOptions,
 ): Promise<TicketEventListResult> {
     const {
@@ -295,7 +295,7 @@ export async function getTicketEventsForTicketCluster(
 
 /** 티켓 이벤트 등록용 DTO **/
 export type CreateTicketEventInput = {
-    ticketId: string;
+    ticketId: number;
     companyId: number;
     eventType:
         | '문의접수'
@@ -307,8 +307,8 @@ export type CreateTicketEventInput = {
         | '티켓분리'
         | '시스템';
     channel?: '전화' | '채팅' | '이메일' | '기타' | null;
-    authorUserId?: string | null;
-    customerId?: string | null;
+    authorUserId?: number | null;
+    customerId?: number | null;
     content: string;
     meta?: any | null;
 };

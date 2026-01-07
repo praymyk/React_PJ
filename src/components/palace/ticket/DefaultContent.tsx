@@ -15,7 +15,7 @@ import type {
     TicketListApiResponse,
     TicketDetailApiResponse,
     TicketEventListApiResponse,
-} from '@/app/palace/ticket/data';
+} from '@/app/(protected)/palace/ticket/data';
 
 // ======================================================
 // 상태별 뱃지 스타일 매핑
