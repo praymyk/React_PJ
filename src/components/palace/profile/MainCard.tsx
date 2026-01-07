@@ -11,6 +11,9 @@ export function MainCard({ profile, onProfileChange }: Props) {
     const [draft, setDraft] = useState<Profile>(profile);
     const [isEditing, setIsEditing] = useState(false);
 
+    const [saving, setSaving] = useState(false);
+    const [saveError, setSaveError] = useState<string | null>(null);
+
     const startEdit = () => {
         setDraft(profile);
         setIsEditing(true);
@@ -21,10 +24,41 @@ export function MainCard({ profile, onProfileChange }: Props) {
         setIsEditing(false);
     };
 
-    const saveEdit = () => {
-        // TODO: 실제 API 저장 호출 후 성공 시에만 onProfileChange 호출
-        onProfileChange?.(draft);
-        setIsEditing(false);
+    const saveEdit = async () => {
+        try {
+            setSaving(true);
+            setSaveError(null);
+
+            const res = await fetch('/api/common/users/me', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    account: draft.account,
+                    name: draft.name,
+                    profile_name: draft.profile_name,
+                    email: draft.email,
+                    status: draft.status,
+                }),
+            });
+
+            if (!res.ok) {
+                throw new Error(`HTTP ${res.status}`);
+            }
+
+            const updated: Profile = await res.json();
+
+            // 상위(DefaultContent)의 profile 상태 갱신
+            onProfileChange?.(updated);
+
+            setIsEditing(false);
+        } catch (e) {
+            console.error('[MainCard] saveEdit error', e);
+            setSaveError('프로필 저장에 실패했습니다.');
+        } finally {
+            setSaving(false);
+        }
     };
 
     const handleChange =
@@ -43,10 +77,12 @@ export function MainCard({ profile, onProfileChange }: Props) {
                 </div>
 
                 <div className={styles.headerText}>
-                    <div className={styles.usernameRow}>
-                        <span className={styles.username}>{profile.username}</span>
-                        <span className={styles.tag}>#{profile.id}</span>
-                    </div>
+                    <span className={styles.profileName}>
+                        {profile.profile_name ?? profile.name}
+                    </span>
+                    <span className={styles.tag}>
+                        #{profile.id}
+                    </span>
                     <div className={styles.subText}>
                         내 프로필 정보를 확인하고 편집할 수 있습니다.
                     </div>
@@ -63,20 +99,29 @@ export function MainCard({ profile, onProfileChange }: Props) {
                         </button>
                     ) : (
                         <div className={styles.editButtons}>
-                            <button
-                                type="button"
-                                className={styles.secondaryButton}
-                                onClick={cancelEdit}
-                            >
-                                취소
-                            </button>
-                            <button
-                                type="button"
-                                className={styles.primaryButton}
-                                onClick={saveEdit}
-                            >
-                                저장
-                            </button>
+                            <div className={styles.editButtonsRow}>
+                                <button
+                                    type="button"
+                                    className={styles.secondaryButton}
+                                    onClick={cancelEdit}
+                                    disabled={saving}
+                                >
+                                    취소
+                                </button>
+                                <button
+                                    type="button"
+                                    className={styles.primaryButton}
+                                    onClick={saveEdit}
+                                    disabled={saving}
+                                >
+                                    {saving ? '저장 중...' : '저장'}
+                                </button>
+                            </div>
+                            <div className={styles.saveErrorArea}>
+                                {saveError && (
+                                    <span className={styles.saveError}>{saveError}</span>
+                                )}
+                            </div>
                         </div>
                     )}
                 </div>
@@ -109,11 +154,11 @@ export function MainCard({ profile, onProfileChange }: Props) {
                             <input
                                 type="text"
                                 className={styles.fieldInput}
-                                value={draft.username}
-                                onChange={handleChange('username')}
+                                value={draft.profile_name ?? ''}
+                                onChange={handleChange('profile_name')}
                             />
                         ) : (
-                            <span>{profile.username}</span>
+                            <span>{profile.profile_name ?? profile.name}</span>
                         )}
                     </div>
                 </div>

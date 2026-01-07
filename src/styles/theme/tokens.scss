@@ -49,6 +49,10 @@
 
   /* 공통 트랜지션 (테마 변경, 호버 등) */
   --transition-theme: 280ms ease-in-out;
+
+  /* 상태 / 피드백 컬러 */
+  --color-text-danger: #ef4444;                // 에러 텍스트
+  --color-bg-danger-soft: rgba(239, 68, 68, .08); // 배경용
 }
 
 /* 다크 모드 값 */
@@ -99,4 +103,8 @@ html.dark {
 
   /* 공통 트랜지션 */
   --transition-theme: 280ms ease-in-out;
+
+  /* 상태 / 피드백 컬러 */
+  --color-text-danger: #f97373;
+  --color-bg-danger-soft: rgba(248, 113, 113, .16);
 }
