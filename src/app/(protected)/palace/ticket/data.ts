@@ -13,7 +13,7 @@ export type TicketListApiResponse = {
         id: string;
         title: string;
         description: string;
-        assignee_id: string | null;
+        assignee_id: number | null;
         status: '접수' | '진행중' | '종료' | '취소';
     }[];
     page: number;
@@ -23,13 +23,13 @@ export type TicketListApiResponse = {
 
 /** 티켓 상세 API 응답 타입 (단일 티켓) */
 export type TicketDetailApiResponse = {
-    id: string;
+    id: number;
     title: string;
     description: string;
     status: '접수' | '진행중' | '종료' | '취소';
     company_id: number;
-    customer_id: string;
-    assignee_id: string | null;
+    customer_id: number;
+    assignee_id: number | null;
     channel: '전화' | '채팅' | '이메일' | '기타';
     submitted_at: string;  // TODO : 등록 정보 JSON 타입 저장 대비
     closed_at: string | null;
@@ -40,7 +40,7 @@ export type TicketDetailApiResponse = {
 /** 티켓 이벤트(타임라인) Row 타입 */
 export type TicketEventRow = {
     id: number;
-    ticketId: string;
+    ticketId: number;
     eventType:
         | '문의접수'
         | '상담기록'
@@ -51,15 +51,15 @@ export type TicketEventRow = {
         | '티켓분리'
         | '시스템';
     channel: '전화' | '채팅' | '이메일' | '기타' | null;
-    authorUserId: string | null;
-    customerId: string | null;
+    authorUserId: number | null;
+    customerId: number | null;
     content: string;
     createdAt: string;
 };
 
 /** 특정 티켓(+병합된 서브 티켓 포함)의 이벤트 리스트 응답 */
 export type TicketEventListApiResponse = {
-    ticketId: string;          // 기준 티켓 ID (요청한 id)
+    ticketId: number;          // 기준 티켓 ID (요청한 id)
     events: TicketEventRow[];  // 이벤트 목록
     page: number;
     pageSize: number;

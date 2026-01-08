@@ -8,6 +8,7 @@ import type {
     TicketEventListApiResponse,
 } from '@/app/(protected)/palace/ticket/data';
 
+// GET: 티켓 이벤트 타임라인 + 페이징
 export async function GET(
     req: NextRequest,
     { params }: { params: Promise<{ id: string }> },
@@ -15,24 +16,32 @@ export async function GET(
     try {
         const { id } = await params;
 
+        // URL 파라미터는 항상 string → DB용 number 로 변환
+        const ticketId = Number(id);
+        if (Number.isNaN(ticketId)) {
+            return NextResponse.json(
+                { message: '잘못된 티켓 ID 입니다.' },
+                { status: 400 },
+            );
+        }
+
         // DB에서 이벤트 타임라인 조회
         const { searchParams } = new URL(req.url);
         const page = Number(searchParams.get('page') ?? '1') || 1;
         const pageSize = Number(searchParams.get('pageSize') ?? '20') || 20;
 
-        // DB에서 이벤트 타임라인 조회 (페이징)
         const {
             rows,
             total,
             page: currentPage,
             pageSize: currentPageSize,
-        } = await getTicketEventsForTicketCluster(id, {
+        } = await getTicketEventsForTicketCluster(ticketId, {
             page,
             pageSize,
         });
 
         const response: TicketEventListApiResponse = {
-            ticketId: id,
+            ticketId,
             events: rows.map((r) => ({
                 id: r.id,
                 ticketId: r.ticket_id,
@@ -58,6 +67,7 @@ export async function GET(
     }
 }
 
+// POST: 티켓 이벤트(메모) 추가
 export async function POST(
     req: NextRequest,
     { params }: { params: Promise<{ id: string }> },
@@ -65,8 +75,16 @@ export async function POST(
     try {
         const { id } = await params;
 
+        const ticketId = Number(id);
+        if (Number.isNaN(ticketId)) {
+            return NextResponse.json(
+                { message: '잘못된 티켓 ID 입니다.' },
+                { status: 400 },
+            );
+        }
+
         // 1) 티켓 존재 여부 확인
-        const ticket = await getTicketById(id);
+        const ticket = await getTicketById(ticketId);
         if (!ticket) {
             return NextResponse.json(
                 { message: '티켓을 찾을 수 없습니다.' },
@@ -81,10 +99,8 @@ export async function POST(
             body?.eventType ??
             '상담사메모'; // 기본값: 상담사 메모
 
-        const authorUserId: string | null =
-            body?.authorUserId && typeof body.authorUserId === 'string'
-                ? body.authorUserId
-                : null;
+        const authorUserId: number | null =
+            typeof body?.authorUserId === 'number' ? body.authorUserId : null;
 
         const meta = body?.meta ?? null;
 

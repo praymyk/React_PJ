@@ -33,6 +33,7 @@ export async function getDetailPageData(
     id: string,
     raw: DetailRawSearchParams,
 ): Promise<DetailPageData | null> {
+
     // 1) 유저 ID
     const customer = await getCustomerById(id);
     if (!customer) return null;

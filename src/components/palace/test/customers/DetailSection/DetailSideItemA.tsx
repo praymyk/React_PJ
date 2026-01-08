@@ -3,15 +3,15 @@
 import styles from './DetailSideItem.module.scss';
 import { useEffect, useState } from 'react';
 
-import type { UserRow } from '@/lib/db/reactpj/users';
-import type { UserTicketRow } from '@/lib/db/reactpj/tickets';
+import type { CustomerRow } from '@/lib/db/reactpj/customers';
+import type { CustomerTicketRow } from '@/lib/db/reactpj/tickets';
 
 type Props = {
-    row: UserRow;
+    row: CustomerRow;
 };
 
 export default function DetailSideItemA({ row }: Props) {
-    const [historyItems, setHistoryItems] = useState<UserTicketRow[]>([]);
+    const [historyItems, setHistoryItems] = useState<CustomerTicketRow[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -35,7 +35,7 @@ export default function DetailSideItemA({ row }: Props) {
                     throw new Error(`HTTP ${res.status}`);
                 }
 
-                const data: UserTicketRow[] = await res.json();
+                const data: CustomerTicketRow[] = await res.json();
                 if (!cancelled) {
                     setHistoryItems(data);
                 }

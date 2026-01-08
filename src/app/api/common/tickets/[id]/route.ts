@@ -9,7 +9,15 @@ export async function GET(
     try {
         const { id } = await params;
 
-        const row = await getTicketById(id);
+        const ticketId = Number(id);
+        if (Number.isNaN(ticketId)) {
+            return NextResponse.json(
+                { message: '잘못된 티켓 ID 입니다.' },
+                { status: 400 },
+            );
+        }
+
+        const row = await getTicketById(ticketId);
 
         if (!row) {
             return NextResponse.json(

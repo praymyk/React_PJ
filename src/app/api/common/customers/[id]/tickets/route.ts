@@ -8,7 +8,15 @@ export async function GET(
     try {
         const { id } = await params;
 
-        const rows = await getCustomerTicket(id);
+        const customerId = Number(id);
+        if (Number.isNaN(customerId)) {
+            return NextResponse.json(
+                { message: '잘못된 고객 ID 입니다.' },
+                { status: 400 },
+            );
+        }
+
+        const rows = await getCustomerTicket(customerId);
 
         // 화면용 응답 형태로 매핑
         const response = rows.map(r => ({

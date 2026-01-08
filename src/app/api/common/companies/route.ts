@@ -17,7 +17,7 @@ export async function GET() {
         );
 
         const companies: Name[] = rows.map((r) => ({
-            id: String(r.id),
+            id: r.id,
             name: String(r.name),
         }));
 

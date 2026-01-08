@@ -66,6 +66,7 @@ export default function DefaultContent() {
     // --------------------------------------------------
     const [selectedId, setSelectedId] = useState<string | null>(null);
 
+    //TODO : 티켓 선택 이벤트 처리 예정
     const selectedTicket =
         rows.find((row) => row.id === selectedId) ?? null;
 

@@ -6,7 +6,7 @@ import styles from './TicketNoteEditor.module.scss';
 
 type Props = {
     /** 대상 티켓 ID */
-    ticketId?: string | null;
+    ticketId?: number | null;
     /** 외부에서 값 관리용 value / onChange 넘기기 (옵션) */
     value?: string;
     onChange?: (next: string) => void;

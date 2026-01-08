@@ -78,7 +78,7 @@ export type TicketListResult = {
  * 업체별 티켓 Row (상태 필터 + 정렬 + 페이징)
  */
 export async function getTicketsByCompany(
-    companyId: string,
+    companyId: number,
     options?: GetTicketsByCompanyOptions,
 ): Promise<TicketListResult> {
     const {
@@ -196,9 +196,9 @@ export async function getTicketById(id: number): Promise<TicketRow | null> {
 
 /** 티켓 이벤트 DB Row 타입 */
 export type TicketEventRow = RowDataPacket & {
-    id: string;
-    ticket_id: string;
-    company_id: string;
+    id: number;
+    ticket_id: number;
+    company_id: number;
     event_type:
         | '문의접수'
         | '상담기록'
@@ -209,8 +209,8 @@ export type TicketEventRow = RowDataPacket & {
         | '티켓분리'
         | '시스템';
     channel: '전화' | '채팅' | '이메일' | '기타' | null;
-    author_user_id: string | null;
-    customer_id: string | null;
+    author_user_id: number | null;
+    customer_id: number | null;
     content: string | null;
     meta: any | null;
     created_at: Date;
