@@ -32,7 +32,7 @@ function PalaceLayoutContent({ children }: { children: React.ReactNode }) {
                     className={styles.sidebarToggleButton}
                     onClick={() => setShowRightSidebar(!showRightSidebar)}
                 >
-                    {showRightSidebar ? '우측 숨김' : '우측 보임'}
+                    {showRightSidebar ? '우측 보임' : '우측 숨김'}
                 </button>
             </aside>
 

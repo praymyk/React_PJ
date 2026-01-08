@@ -47,7 +47,7 @@ export async function getCustomersPaged(
         queryParams.push(like, like);
     }
 
-    // 타입 'active' | 'inactive' | undefined
+    // 타입
     if (status) {
         where.push('status = ?');
         queryParams.push(status);

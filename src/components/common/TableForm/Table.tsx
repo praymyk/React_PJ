@@ -6,6 +6,9 @@ export type Column<T> = {
     header: string;
     render: (row: T) => ReactNode;
     width?: string;
+
+    sortable?: boolean;
+    sortAccessor?: (row: T) => string | number | Date | null | undefined;
 };
 
 type MasterTableProps<T> = {
@@ -17,6 +20,9 @@ type MasterTableProps<T> = {
     /** row 클릭 시 추가 동작 */
     onRowClick?: (row: T, index: number) => void;
 
+    /** th 클릭 정렬 */
+    onHeaderClick?: (column: Column<T>, columnIndex: number) => void;
+
     /** row 클릭 indec */
     initialSelectedIndex?: number | null;
 };
@@ -26,6 +32,7 @@ export function Table<T>({
                                    columns,
                                    getRowKey,
                                    onRowClick,
+                                   onHeaderClick,
                                    initialSelectedIndex = null,
                                }: MasterTableProps<T>) {
     const [selectedIndex, setSelectedIndex] = useState<number | null>(initialSelectedIndex);
@@ -41,18 +48,19 @@ export function Table<T>({
                 <table className={styles.table}>
                     <thead>
                     <tr>
-                        {columns.map((col, idx) => (
-                            <th
-                                key={idx}
-                                style={
-                                    col.width
-                                        ? { width: col.width }
-                                        : undefined
-                                }
-                            >
-                                {col.header}
-                            </th>
-                        ))}
+                        {columns.map((col, idx) => {
+                            const clickable = !!(col.sortable && onHeaderClick);
+
+                            return (
+                                <th
+                                    key={idx}
+                                    style={col.width ? { width: col.width } : undefined}
+                                    onClick={clickable ? () => onHeaderClick?.(col, idx) : undefined}
+                                >
+                                    {col.header}
+                                </th>
+                            );
+                        })}
                     </tr>
                     </thead>
                     <tbody>
