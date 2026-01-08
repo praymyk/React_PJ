@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { reactpjPool } from '@/lib/db/reactpj/pool';
 
+// root/api/debug/db-test DB 접속 여부 체크
 export async function GET() {
     try {
         const [rows] = await reactpjPool.query('SELECT 1 AS v');
