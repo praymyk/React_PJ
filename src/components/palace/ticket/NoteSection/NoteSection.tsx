@@ -110,7 +110,7 @@ export default function NoteSection({ ticket, onEventsReload }: Props) {
                                 placeholder={
                                     hasTicket
                                         ? '예) 010-0000-0000 / MEM-0001'
-                                        : '티켓 선택 후 입력 가능합니다.'
+                                        : '티켓 선택 후 입력 가능합니다.2'
                                 }
                                 value={phoneNumber}
                                 onChange={(e) => setPhoneNumber(e.target.value)}
