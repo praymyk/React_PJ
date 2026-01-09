@@ -25,6 +25,62 @@
   text-align: left;
 }
 
+/* 정렬 가능한 헤더 공통 스타일 */
+.headerSortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.headerInner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.sortIcon {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  margin-left: 2px;
+}
+
+.sortArrow {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  opacity: 0.3;
+  transition:
+    opacity var(--transition-theme),
+    border-color var(--transition-theme),
+    transform 120ms ease-out;
+}
+
+.sortArrowUp {
+  border-bottom: 5px solid var(--color-text-muted);
+}
+
+.sortArrowDown {
+  border-top: 5px solid var(--color-text-muted);
+}
+
+.sortIconActiveAsc .sortArrowUp {
+  opacity: 1;
+  border-bottom-color: var(--color-accent);
+  transform: translateY(-1px);
+}
+
+.sortIconActiveDesc .sortArrowDown {
+  opacity: 1;
+  border-top-color: var(--color-accent);
+  transform: translateY(1px);
+}
+
+.headerSortable:hover {
+  background-color: rgba(148, 163, 184, 0.24);
+}
+
 .table tbody tr {
   cursor: pointer;
   transition: background-color 160ms ease-out;

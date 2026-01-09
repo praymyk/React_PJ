@@ -20,11 +20,6 @@ type Props = {
     pageSize?: number;
 };
 
-type SortState = {
-    columnIndex: number | null;
-    direction: 'asc' | 'desc';
-};
-
 export default function TableSection({
                                          rows,
                                          columns,
@@ -33,39 +28,6 @@ export default function TableSection({
                                          currentPage,
                                          pageSize,
                                      }: Props) {
-    const [sortState, setSortState] = useState<SortState>({
-        columnIndex: null,
-        direction: 'asc',
-    });
-
-    const sortedRows = useMemo(() => {
-        if (sortState.columnIndex === null) return rows;
-
-        const column = columns[sortState.columnIndex];
-        if (!column || !column.sortable || !column.sortAccessor) {
-            return rows;
-        }
-
-        const direction = sortState.direction;
-
-        return [...rows].sort((a, b) => {
-            const va = column.sortAccessor!(a);
-            const vb = column.sortAccessor!(b);
-
-            if (va == null && vb == null) return 0;
-            if (va == null) return 1;
-            if (vb == null) return -1;
-
-            if (typeof va === 'number' && typeof vb === 'number') {
-                return direction === 'asc' ? va - vb : vb - va;
-            }
-
-            const sa = String(va);
-            const sb = String(vb);
-            const cmp = sa.localeCompare(sb);
-            return direction === 'asc' ? cmp : -cmp;
-        });
-    }, [rows, columns, sortState]);
 
     const router = useRouter();
     const pathname = usePathname();
@@ -108,32 +70,44 @@ export default function TableSection({
         }
     };
 
-    const handleHeaderClick = (column: Column<Row>, columnIndex: number) => {
-        if (!column.sortable) return;
+    const handleHeaderClick = (column: Column<Row>, _columnIndex: number) => {
+        if (!column.sortable || !column.sortKey) return;
 
-        setSortState((prev) => {
-            if (prev.columnIndex === columnIndex) {
-                // 컬럼 클릭 → 방향 토글
-                return {
-                    columnIndex,
-                    direction: prev.direction === 'asc' ? 'desc' : 'asc',
-                };
-            }
-            // 첫 클릭 > asc 로 시작
-            return {
-                columnIndex,
-                direction: 'asc',
-            };
-        });
+        const sp = new URLSearchParams(searchParams.toString());
+        const currentSortBy = sp.get('sortBy');
+        const currentSortDir = sp.get('sortDir') === 'desc' ? 'desc' : 'asc';
+
+        const nextSortBy = column.sortKey;
+        let nextSortDir: 'asc' | 'desc' = 'asc';
+
+        if (currentSortBy === column.sortKey) {
+            nextSortDir = currentSortDir === 'asc' ? 'desc' : 'asc';
+        }
+
+        sp.set('sortBy', nextSortBy);
+        sp.set('sortDir', nextSortDir);
+        sp.set('page', '1');
+
+        const href = `${pathname}?${sp.toString()}`;
+        router.push(href);
     };
+
+    const sortByParam = searchParams.get('sortBy');
+    const sortDirParam = searchParams.get('sortDir');
+
+    const currentSortKey = sortByParam ?? null;
+    const currentSortDir: 'asc' | 'desc' | null =
+        sortByParam ? (sortDirParam === 'desc' ? 'desc' : 'asc') : null;
 
     return (
         <Table<Row>
-            rows={sortedRows}
+            rows={rows}
             columns={columns}
             getRowKey={(row) => row.id}
             onRowClick={handleRowClick}
             onHeaderClick={handleHeaderClick}
+            currentSortKey={currentSortKey}      // 예: 'id' | 'name' | 'email'
+            currentSortDir={currentSortDir}      // 'asc' | 'desc' | null
             initialSelectedIndex={selectedIndex}
         />
     );
