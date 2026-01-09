@@ -1,0 +1,272 @@
+.root {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* 상단 헤더 */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem;
+}
+
+.description {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+/* 헤더 오른쪽 영역 */
+.headerRight {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.kindSelect {
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-subtle);
+  background-color: var(--color-bg-input);
+  font-size: 0.875rem;
+}
+
+.primaryButton {
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: none;
+  background-color: var(--color-accent);
+  color: #fff;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+/* 툴바 */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.75rem;
+  background-color: var(--color-bg-surface);
+  box-shadow: var(--shadow-elevated);
+}
+
+.badgeLabel {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-right: 0.5rem;
+}
+
+.badgeValue {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.toolbarRight {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.secondaryButton {
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-subtle);
+  background-color: var(--color-bg-surface);
+  font-size: 0.875rem;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+}
+
+/* ===== 본문: 4단계 컬럼 ===== */
+
+.body {
+  border-radius: 0.75rem;
+  background-color: var(--color-bg-surface);
+  box-shadow: var(--shadow-elevated);
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.columnHeaderRow {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  padding: 0 0.25rem;
+}
+
+.columnHeaderCell {
+  padding: 0.25rem 0.25rem;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+  min-height: 240px;
+}
+
+.column {
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-border-subtle);
+  background-color: var(--color-bg-surface);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.columnTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.columnTitle {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.columnAddButton {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  border: 1px dashed var(--color-border-subtle);
+  background-color: var(--color-bg-surface);
+  font-size: 0.75rem;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+}
+
+.columnList {
+  padding: 0.25rem;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.item {
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  padding: 0.3rem 0.4rem;
+  font-size: 0.8rem;
+  text-align: left;
+  background-color: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.item:hover {
+  background-color: rgba(148, 163, 184, 0.12);
+}
+
+.itemSelected {
+  background-color: var(--color-accent-soft);
+  border-color: var(--color-accent);
+}
+
+.itemInactive {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
+
+.itemName {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.emptyColumnText {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  padding: 0.25rem 0.4rem;
+}
+
+/* 하단: 선택 경로 + 액션 */
+
+.bottomArea {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.selectedPathBox {
+  flex: 1;
+  min-height: 2.25rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+}
+
+.selectedPathEmpty {
+  color: var(--color-text-muted);
+}
+
+.breadcrumbItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.breadcrumbSeparator {
+  color: var(--color-text-muted);
+}
+
+.breadcrumbLabel {
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background-color: var(--color-accent-soft);
+  color: var(--color-accent);
+  font-size: 0.75rem;
+}
+
+.bottomActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  justify-content: flex-end;
+}
+
+.iconButtonDanger {
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-text-danger);
+  background-color: var(--color-bg-surface);
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: var(--color-text-danger);
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+}
