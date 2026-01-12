@@ -6,6 +6,8 @@ export type Column<T> = {
     header: string;
     render: (row: T) => ReactNode;
     width?: string;
+    sortable?: boolean;
+    sortKey?: string;
 };
 
 type MasterTableProps<T> = {
@@ -17,17 +19,28 @@ type MasterTableProps<T> = {
     /** row 클릭 시 추가 동작 */
     onRowClick?: (row: T, index: number) => void;
 
-    /** row 클릭 indec */
+    /** th 클릭 정렬 */
+    onHeaderClick?: (column: Column<T>, columnIndex: number) => void;
+
+    /** 현재 정렬 기준(col.sortKey) */
+    currentSortKey?: string | null;
+    /** 현재 정렬 방향 */
+    currentSortDir?: 'asc' | 'desc' | null;
+
+    /** row 클릭 index */
     initialSelectedIndex?: number | null;
 };
 
 export function Table<T>({
-                                   rows,
-                                   columns,
-                                   getRowKey,
-                                   onRowClick,
-                                   initialSelectedIndex = null,
-                               }: MasterTableProps<T>) {
+                             rows,
+                             columns,
+                             getRowKey,
+                             onRowClick,
+                             onHeaderClick,
+                             currentSortKey,
+                             currentSortDir,
+                             initialSelectedIndex = null,
+                         }: MasterTableProps<T>) {
     const [selectedIndex, setSelectedIndex] = useState<number | null>(initialSelectedIndex);
 
     useEffect(() => {
@@ -41,18 +54,46 @@ export function Table<T>({
                 <table className={styles.table}>
                     <thead>
                     <tr>
-                        {columns.map((col, idx) => (
-                            <th
-                                key={idx}
-                                style={
-                                    col.width
-                                        ? { width: col.width }
-                                        : undefined
-                                }
-                            >
-                                {col.header}
-                            </th>
-                        ))}
+                        {columns.map((col, idx) => {
+                            const clickable = !!(col.sortable && onHeaderClick);
+                            const isSorted =
+                                !!col.sortable &&
+                                !!col.sortKey &&
+                                !!currentSortKey &&
+                                col.sortKey === currentSortKey;
+
+                            let sortIconClass = styles.sortIcon;
+                            if (isSorted) {
+                                sortIconClass +=
+                                    ' ' +
+                                    (currentSortDir === 'asc'
+                                        ? styles.sortIconActiveAsc
+                                        : styles.sortIconActiveDesc);
+                            }
+
+                            return (
+                                <th
+                                    key={idx}
+                                    className={clickable ? styles.headerSortable : undefined}
+                                    style={col.width ? { width: col.width } : undefined}
+                                    onClick={clickable ? () => onHeaderClick?.(col, idx) : undefined}
+                                >
+                                    <div className={styles.headerInner}>
+                                        <span>{col.header}</span>
+                                        {col.sortable && (
+                                            <span className={sortIconClass}>
+                                                <span
+                                                    className={`${styles.sortArrow} ${styles.sortArrowUp}`}
+                                                />
+                                                <span
+                                                    className={`${styles.sortArrow} ${styles.sortArrowDown}`}
+                                                />
+                                            </span>
+                                        )}
+                                    </div>
+                                </th>
+                            );
+                        })}
                     </tr>
                     </thead>
                     <tbody>

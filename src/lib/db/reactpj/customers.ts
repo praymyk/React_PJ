@@ -18,9 +18,14 @@ export type PagedResult<T> = {
 };
 
 /** 검색 조건 **/
+export type CustomerSortKey = 'id' | 'name' | 'email' | 'status' | 'created_at';
+export type SortDirection = 'asc' | 'desc';
+
 export type CustomerSearchParams = {
     keyword?: string;
     status?: 'active' | 'inactive';
+    sortBy?: CustomerSortKey;
+    sortDir?: SortDirection;
 };
 
 /**
@@ -32,7 +37,7 @@ export async function getCustomersPaged(
         pageSize: number;
     } & CustomerSearchParams,
 ): Promise<PagedResult<CustomerRow>> {
-    const { page, pageSize, keyword, status } = params;
+    const { page, pageSize, keyword, status, sortBy, sortDir } = params;
 
     const safePage = page > 0 ? page : 1;
     const safePageSize = pageSize > 0 ? pageSize : 10;
@@ -47,7 +52,6 @@ export async function getCustomersPaged(
         queryParams.push(like, like);
     }
 
-    // 타입 'active' | 'inactive' | undefined
     if (status) {
         where.push('status = ?');
         queryParams.push(status);
@@ -55,14 +59,26 @@ export async function getCustomersPaged(
 
     const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
 
-    // 최종 SQL + 바인딩 파라미터 로그
+    // 정렬 컬럼 리스트
+    const sortKeyMap: Record<CustomerSortKey, string> = {
+        id: 'id',
+        name: 'name',
+        email: 'email',
+        status: 'status',
+        created_at: 'created_at',
+    };
+
+    const sortColumn =
+        (sortBy && sortKeyMap[sortBy]) ? sortKeyMap[sortBy] : 'id';
+    const direction = sortDir === 'desc' ? 'DESC' : 'ASC';
+
     const sql = `
-        SELECT id, name, email, status, created_at
-        FROM customers
-        ${whereSql}
-        ORDER BY id
-        LIMIT ? OFFSET ?
-    `;
+    SELECT id, name, email, status, created_at
+    FROM customers
+    ${whereSql}
+    ORDER BY ${sortColumn} ${direction}
+    LIMIT ? OFFSET ?
+  `;
 
     const [rows] = await reactpjPool.query<CustomerRow[]>(sql, [
         ...queryParams,
@@ -74,10 +90,10 @@ export async function getCustomersPaged(
         (RowDataPacket & { total: number })[]
     >(
         `
-            SELECT COUNT(*) AS total
-            FROM customers
-                     ${whereSql}
-        `,
+      SELECT COUNT(*) AS total
+      FROM customers
+      ${whereSql}
+    `,
         queryParams,
     );
 

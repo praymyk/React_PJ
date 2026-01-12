@@ -102,7 +102,7 @@ export default function NoteSection({ ticket, onEventsReload }: Props) {
 
                         <div className={styles.fieldRow}>
                             <label className={styles.fieldLabel}>
-                                전화 / 회원번호
+                                전화 / 회원번호2
                             </label>
                             <input
                                 className={styles.fieldInput}

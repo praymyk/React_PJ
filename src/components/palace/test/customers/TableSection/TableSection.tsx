@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useMemo } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import {
     Table,
@@ -19,7 +20,6 @@ type Props = {
     pageSize?: number;
 };
 
-
 export default function TableSection({
                                          rows,
                                          columns,
@@ -28,6 +28,7 @@ export default function TableSection({
                                          currentPage,
                                          pageSize,
                                      }: Props) {
+
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -69,12 +70,44 @@ export default function TableSection({
         }
     };
 
+    const handleHeaderClick = (column: Column<Row>, _columnIndex: number) => {
+        if (!column.sortable || !column.sortKey) return;
+
+        const sp = new URLSearchParams(searchParams.toString());
+        const currentSortBy = sp.get('sortBy');
+        const currentSortDir = sp.get('sortDir') === 'desc' ? 'desc' : 'asc';
+
+        const nextSortBy = column.sortKey;
+        let nextSortDir: 'asc' | 'desc' = 'asc';
+
+        if (currentSortBy === column.sortKey) {
+            nextSortDir = currentSortDir === 'asc' ? 'desc' : 'asc';
+        }
+
+        sp.set('sortBy', nextSortBy);
+        sp.set('sortDir', nextSortDir);
+        sp.set('page', '1');
+
+        const href = `${pathname}?${sp.toString()}`;
+        router.push(href);
+    };
+
+    const sortByParam = searchParams.get('sortBy');
+    const sortDirParam = searchParams.get('sortDir');
+
+    const currentSortKey = sortByParam ?? null;
+    const currentSortDir: 'asc' | 'desc' | null =
+        sortByParam ? (sortDirParam === 'desc' ? 'desc' : 'asc') : null;
+
     return (
         <Table<Row>
             rows={rows}
             columns={columns}
             getRowKey={(row) => row.id}
             onRowClick={handleRowClick}
+            onHeaderClick={handleHeaderClick}
+            currentSortKey={currentSortKey}      // 예: 'id' | 'name' | 'email'
+            currentSortDir={currentSortDir}      // 'asc' | 'desc' | null
             initialSelectedIndex={selectedIndex}
         />
     );

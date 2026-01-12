@@ -340,3 +340,90 @@ CREATE TABLE IF NOT EXISTS user_preferences (
     ) ENGINE=InnoDB
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
+
+-- 카테고리 종류 테이블
+CREATE TABLE category_kind (
+                               id          BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                               code        VARCHAR(50)     NOT NULL,      -- 'consult', 'reserve', 'etc'
+                               name        VARCHAR(100)    NOT NULL,      -- '상담 카테고리', '예약 카테고리' ...
+                               description VARCHAR(255)        NULL,
+
+                               is_active   TINYINT(1)      NOT NULL DEFAULT 1,
+
+                               created_at  TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                               updated_at  TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP
+                                   ON UPDATE CURRENT_TIMESTAMP,
+
+                               PRIMARY KEY (id),
+                               UNIQUE KEY uq_category_kind_code (code)
+) ENGINE=InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
+
+INSERT INTO category_kind (code, name) VALUES
+                                           ('consult', '상담 카테고리'),
+                                           ('reserve', '예약 카테고리'),
+                                           ('etc',     '기타 카테고리');
+
+
+-- 카테고리 트리구조 테이블
+CREATE TABLE category (
+                          id            BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+
+                          kind_id       BIGINT UNSIGNED NOT NULL,         -- category_kind.id
+                          company_id    BIGINT UNSIGNED NOT NULL,         -- 업체 ID
+
+                          parent_id     BIGINT UNSIGNED     NULL,         -- 상위 카테고리 (1차는 NULL)
+                          level         TINYINT UNSIGNED NOT NULL,        -- 1~4 (1차/2차/3차/4차)
+                          name          VARCHAR(100)      NOT NULL,
+
+                          sort_order    INT UNSIGNED      NOT NULL DEFAULT 1,    -- 같은 parent 내 순번
+                          is_active     TINYINT(1)        NOT NULL DEFAULT 1,    -- 1:사용, 0:미사용
+
+                            -- 필요시 path 캐싱용 컬럼도 가능: '1>3>10'
+                            -- full_path     VARCHAR(255) NULL,
+
+                          created_at    TIMESTAMP         NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                          updated_at    TIMESTAMP         NOT NULL DEFAULT CURRENT_TIMESTAMP
+                              ON UPDATE CURRENT_TIMESTAMP,
+
+                          PRIMARY KEY (id),
+
+                          CONSTRAINT fk_category_kind
+                              FOREIGN KEY (kind_id) REFERENCES category_kind(id)
+                                  ON DELETE RESTRICT,
+
+                          CONSTRAINT fk_category_parent
+                              FOREIGN KEY (parent_id) REFERENCES category(id)
+                                  ON DELETE CASCADE,
+
+                            -- 같은 company + kind + 같은 부모 안에서 이름 중복 방지 가능
+                          UNIQUE KEY uq_category_name_per_parent (company_id, kind_id, parent_id, name),
+
+                            -- 정렬/조회용 인덱스 (company_id 포함)
+                          INDEX idx_category_company_kind_level   (company_id, kind_id, level),
+                          INDEX idx_category_company_parent_order (company_id, kind_id, parent_id, sort_order)
+) ENGINE=InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
+
+
+-- kind_id 찾기
+SELECT id INTO @K_CONSULT FROM category_kind WHERE code = 'consult';
+SELECT id INTO @K_RESERVE FROM category_kind WHERE code = 'reserve';
+
+-- 1차 (대분류)
+INSERT INTO category (company_id, kind_id, parent_id, level, name, sort_order)
+VALUES
+    (1, @K_CONSULT, NULL, 1, '상담유형', 1),
+    (1, @K_RESERVE, NULL, 1, '예약유형', 1);
+
+-- 방금 들어간 PK 저장
+SELECT id INTO @C1 FROM category
+WHERE company_id = 1 AND kind_id = @K_CONSULT AND parent_id IS NULL AND name = '상담유형';
+
+-- 2차 (중분류)
+INSERT INTO category (company_id, kind_id, parent_id, level, name, sort_order)
+VALUES
+    (1, @K_CONSULT, @C1, 2, '일반문의', 1),
+    (1, @K_CONSULT, @C1, 2, '장애/오류', 2);

@@ -46,8 +46,8 @@ export const menuRegistry: Record<MenuGroup, MenuItem[]> = {
 // 테스트 섹션(그룹) 하위 메뉴 레지스트리
 export const submenuRegistry: Record<SubMenuGroup, SubMenuItem[]> = {
     '/palace/test': [
-        { label: '고객 관리', icon: FaRegCircle, path: '/palace/test/customers' },
-        { label: '나', icon: FaRegCircle, path: '/palace/test/b' },
+        { label: '고객정보 관리', icon: FaRegCircle, path: '/palace/test/customers' },
+        { label: '카테고리 관리', icon: FaRegCircle, path: '/palace/test/category' },
         { label: '다', icon: FaRegCircle, path: '/palace/test/c' },
     ],
     '/palace/stats': [
