@@ -158,7 +158,6 @@ export async function replaceCategoryTreeForKind(params: {
         const newNodes = nodes.filter((n) => n.id == null);
 
         // 7) 신규 노드 INSERT (부모가 이미 등록된 것부터 순차적으로)
-        //    깊이가 4단계이므로 최대 4~5회 루프
         const insertedClientIds = new Set<number>();
         let safety = 0;
 
@@ -183,20 +182,75 @@ export async function replaceCategoryTreeForKind(params: {
                     if (parentDbId == null) continue;
                 }
 
-                // INSERT 가능
+                // soft-delete 된 동일한 카테고리가 있는지 확인
+                const [reviveRows] = await conn.query<RowDataPacket[]>(
+                    `
+                        SELECT id
+                        FROM category
+                        WHERE company_id = ?
+                          AND kind_id = ?
+                          AND parent_id <=> ?
+              AND name = ?
+              AND is_active = 0
+            LIMIT 1
+                    `,
+                    [companyId, kindId, parentDbId, node.name],
+                );
+
+                if (reviveRows.length > 0) {
+                    const reviveId = reviveRows[0].id as number;
+
+                    await conn.query(
+                        `
+                UPDATE category
+                SET
+                  parent_id  = ?,
+                  level      = ?,
+                  sort_order = ?,
+                  is_active  = ?
+                WHERE id = ?
+                  AND company_id = ?
+                  AND kind_id = ?
+                `,
+                        [
+                            parentDbId,
+                            node.level,
+                            node.sortOrder,
+                            node.active ? 1 : 0,
+                            reviveId,
+                            companyId,
+                            kindId,
+                        ],
+                    );
+
+                    // 이후 parent 계산에 쓸 수 있도록 매핑
+                    clientToDbId.set(node.clientId, reviveId);
+                    insertedClientIds.add(node.clientId);
+
+                    // reviveId가 deleteIds 안에 들어있다면 제거
+                    const idx = deleteIds.indexOf(reviveId);
+                    if (idx >= 0) {
+                        deleteIds.splice(idx, 1);
+                    }
+
+                    progress = true;
+                    continue;
+                }
+
+                // soft-delete 대상이 없으면 새로 INSERT
                 const [result] = await conn.query<ResultSetHeader>(
                     `
-                      INSERT INTO category (
-                        kind_id,
-                        company_id,
-                        parent_id,
-                        level,
-                        name,
-                        sort_order,
-                        is_active
-                      )
-                      VALUES (?, ?, ?, ?, ?, ?, ?)
-                      `,
+              INSERT INTO category (
+                kind_id,
+                company_id,
+                parent_id,
+                level,
+                name,
+                sort_order,
+                is_active
+              )
+              VALUES (?, ?, ?, ?, ?, ?, ?)
+              `,
                     [
                         kindId,
                         companyId,
