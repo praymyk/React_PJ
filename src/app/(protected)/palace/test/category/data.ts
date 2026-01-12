@@ -36,13 +36,12 @@ export async function getCategoryPageData(
     }));
 
     const initialNodes: CategoryNode[] = categoryRows.map((row) => ({
-        id: row.id,
-        kind:
-            (kindRows.find((k) => k.id === row.kind_id)?.code ??
-                'consult') as CategoryKind,
+        id: row.id,          // clientId = dbId ( 조회 시 동일 )
+        dbId: row.id,        // DB PK
+        kind: (kindRows.find((k) => k.id === row.kind_id)?.code ?? 'consult') as CategoryKind,
         level: row.level as CategoryLevel,
         name: row.name,
-        parentId: row.parent_id,
+        parentId: row.parent_id,  // 부모 clientId = 부모 dbId (초기 로드는 동일)
         sortOrder: row.sort_order,
         active: row.is_active === 1,
     }));
