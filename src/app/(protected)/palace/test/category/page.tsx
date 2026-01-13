@@ -10,6 +10,7 @@ export default async function Page() {
 
     return (
         <DefaultContent
+            companyId={DEFAULT_COMPANY_ID}
             kindOptions={kindOptions}
             initialNodes={initialNodes}
             initialSelectedKind={initialSelectedKind}

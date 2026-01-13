@@ -1,6 +1,7 @@
-@use '@/styles/base/mixins.scss' as *;
+@use '@styles/base/mixins.scss' as *;
 
 .tableArea {
+  border: 1px solid var(--color-border-subtle);
   border-radius: 0.75rem;
   overflow: hidden;
   background-color: var(--color-bg-surface);

@@ -8,9 +8,12 @@ export type CategoryLevel = 1 | 2 | 3 | 4; // 대/중/소/세분류
 
 export interface CategoryNode {
     id: number;
+    dbId: number | null;
+
     kind: CategoryKind;
     level: CategoryLevel;
     name: string;
+
     parentId: number | null;
     sortOrder: number;
     active: boolean;
@@ -29,12 +32,14 @@ const LEVEL_LABEL: Record<CategoryLevel, string> = {
 };
 
 type DefaultContentProps = {
+    companyId: number;
     kindOptions: CategoryKindOption[];
     initialNodes: CategoryNode[];
     initialSelectedKind?: CategoryKind;
 };
 
 export default function DefaultContent({
+                                           companyId,
                                            kindOptions,
                                            initialNodes,
                                            initialSelectedKind,
@@ -42,6 +47,7 @@ export default function DefaultContent({
     const [selectedKind, setSelectedKind] = useState<CategoryKind>(
         initialSelectedKind ?? (kindOptions[0]?.value ?? 'consult'),
     );
+
     const [nodes, setNodes] = useState<CategoryNode[]>(initialNodes);
 
     // 각 단계별 선택된 ID (1~4단계)
@@ -106,6 +112,7 @@ export default function DefaultContent({
 
         const newNode: CategoryNode = {
             id: getNextId(),
+            dbId: null,
             kind: selectedKind,
             level,
             parentId,
@@ -158,13 +165,6 @@ export default function DefaultContent({
 
         setNodes((prev) =>
             prev.map((n) => (n.id === node.id ? { ...n, name: name.trim() } : n)),
-        );
-    };
-
-    /** 활성/비활성 토글 */
-    const handleToggleActive = (node: CategoryNode) => {
-        setNodes((prev) =>
-            prev.map((n) => (n.id === node.id ? { ...n, active: !n.active } : n)),
         );
     };
 
@@ -254,9 +254,41 @@ export default function DefaultContent({
         selectedPathNodes[selectedPathNodes.length - 1] ?? null;
 
     /** 저장 버튼 클릭 - 나중에 API 연동 자리 */
-    const handleSave = () => {
-        console.log('저장 payload', nodes);
-        alert('현재는 프론트 상태만 가지고 있습니다. 나중에 API에 연결하세요 🙂');
+    const handleSave = async () => {
+        try {
+            const targetNodes = nodes.filter(
+                (n) => n.kind === selectedKind,
+            );
+
+            const payload = {
+                companyId,
+                kind: selectedKind,
+                nodes: targetNodes.map((n) => ({
+                    id: n.dbId,             // DB PK, 신규면 null
+                    clientId: n.id,         // 프론트 전용 ID
+                    parentClientId: n.parentId, // 부모 프론트 ID
+                    level: n.level,
+                    name: n.name,
+                    sortOrder: n.sortOrder,
+                    active: n.active,
+                })),
+            };
+
+            const res = await fetch('/api/common/categories/tree', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+
+            if (!res.ok) {
+                throw new Error('저장 실패');
+            }
+
+            alert('저장 완료');
+        } catch (err) {
+            console.error(err);
+            alert('저장 중 오류가 발생했습니다.');
+        }
     };
 
     return (
@@ -422,19 +454,6 @@ export default function DefaultContent({
                     </div>
 
                     <div className={styles.bottomActions}>
-                        <button
-                            type="button"
-                            className={styles.secondaryButton}
-                            onClick={() => {
-                                if (!lastSelectedNode) return;
-                                handleToggleActive(lastSelectedNode);
-                            }}
-                            disabled={!lastSelectedNode}
-                        >
-                            {lastSelectedNode && lastSelectedNode.active
-                                ? '미사용 처리'
-                                : '사용 처리'}
-                        </button>
                         <button
                             type="button"
                             className={styles.secondaryButton}
