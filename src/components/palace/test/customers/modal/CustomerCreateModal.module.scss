@@ -1,0 +1,162 @@
+@use '@styles/base/mixins.scss' as *;
+
+/* ===== 공통 모달 레이아웃 (나중에 공용으로 분리 가능) ===== */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @extend %themeTransition;
+}
+
+.dialog {
+  width: 520px;
+  max-width: 100%;
+  max-height: 90vh;
+  background-color: var(--color-bg-surface);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-elevated);
+  padding: 1.25rem 1.5rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+
+  @extend %themeTransition;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-main);
+}
+
+.iconButton {
+  @extend %buttonBase;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border-radius: 999px;
+  background-color: transparent;
+  border-color: transparent;
+  font-size: var(--font-size-xl);
+  line-height: 1;
+  color: var(--color-text-muted);
+
+  &:hover {
+    background-color: rgba(148, 163, 184, 0.18);
+  }
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.footer {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* 버튼 공통 스타일 */
+.primaryButton {
+  @extend %buttonBase;
+  background-color: var(--color-accent);
+  color: #fff;
+
+  &:hover {
+    background-color: rgba(88, 101, 242, 0.9);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+}
+
+.secondaryButton {
+  @extend %buttonBase;
+  background-color: var(--color-bg-surface);
+  border-color: var(--color-border-subtle);
+  color: var(--color-text-main);
+
+  &:hover {
+    background-color: rgba(148, 163, 184, 0.12);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+}
+
+/* ===== 고객 등록 폼 스타일 ===== */
+
+.formRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.requiredMark {
+  margin-left: 2px;
+  color: var(--color-text-danger);
+}
+
+.input,
+.select,
+.textarea {
+  padding: 0.5rem 0.6rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border-subtle);
+  background-color: var(--color-bg-input);
+  color: var(--color-text-main);
+  font-size: var(--font-size-base);
+
+  @extend %themeTransition;
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 1px rgba(88, 101, 242, 0.35);
+  }
+
+  &::placeholder {
+    color: var(--color-text-muted);
+    opacity: 0.8;
+  }
+}
+
+.select {
+  appearance: none;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.errorText {
+  margin-top: 0.25rem;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-danger);
+}

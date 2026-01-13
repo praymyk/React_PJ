@@ -178,79 +178,89 @@ export async function replaceCategoryTreeForKind(params: {
 
                 if (parentClientId != null) {
                     parentDbId = clientToDbId.get(parentClientId) ?? null;
-                    // 부모가 아직 INSERT 안된 경우 > 다음 라운드에서 다시 시도
+                    // 부모가 아직 INSERT 안 되었으면 다시 시도
                     if (parentDbId == null) continue;
                 }
 
-                // soft-delete 된 동일한 카테고리가 있는지 확인
-                const [reviveRows] = await conn.query<RowDataPacket[]>(
+                // (1) 동일 company + kind + parent + name 이 이미 있는지 먼저 확인
+                const [dupRows] = await conn.query<RowDataPacket[]>(
                     `
-                        SELECT id
+                        SELECT id, is_active
                         FROM category
                         WHERE company_id = ?
                           AND kind_id = ?
                           AND parent_id <=> ?
-              AND name = ?
-              AND is_active = 0
-            LIMIT 1
-                    `,
+                          AND name = ?
+                        LIMIT 1
+                                `,
                     [companyId, kindId, parentDbId, node.name],
                 );
 
-                if (reviveRows.length > 0) {
-                    const reviveId = reviveRows[0].id as number;
+                if (dupRows.length > 0) {
+                    const dup = dupRows[0];
+                    const dupId = dup.id as number;
+                    const dupActive = dup.is_active as 0 | 1;
 
-                    await conn.query(
-                        `
-                UPDATE category
-                SET
-                  parent_id  = ?,
-                  level      = ?,
-                  sort_order = ?,
-                  is_active  = ?
-                WHERE id = ?
-                  AND company_id = ?
-                  AND kind_id = ?
-                `,
-                        [
-                            parentDbId,
-                            node.level,
-                            node.sortOrder,
-                            node.active ? 1 : 0,
-                            reviveId,
-                            companyId,
-                            kindId,
-                        ],
-                    );
+                    const inDeleteList = deleteIds.includes(dupId);
 
-                    // 이후 parent 계산에 쓸 수 있도록 매핑
-                    clientToDbId.set(node.clientId, reviveId);
-                    insertedClientIds.add(node.clientId);
+                    // (2) 삭제되어 있거나, 이번 요청에서 삭제 예정인 대상 재등록 → 재사용
+                    if (dupActive === 0 || inDeleteList) {
+                        await conn.query(
+                            `
+                    UPDATE category
+                    SET
+                      parent_id  = ?,
+                      level      = ?,
+                      sort_order = ?,
+                      is_active  = ?
+                    WHERE id = ?
+                      AND company_id = ?
+                      AND kind_id = ?
+                    `,
+                            [
+                                parentDbId,
+                                node.level,
+                                node.sortOrder,
+                                node.active ? 1 : 0,
+                                dupId,
+                                companyId,
+                                kindId,
+                            ],
+                        );
 
-                    // reviveId가 deleteIds 안에 들어있다면 제거
-                    const idx = deleteIds.indexOf(reviveId);
-                    if (idx >= 0) {
-                        deleteIds.splice(idx, 1);
+                        clientToDbId.set(node.clientId, dupId);
+                        insertedClientIds.add(node.clientId);
+
+                        // deleteIds 에 있었다면, 제거
+                        if (inDeleteList) {
+                            const idx = deleteIds.indexOf(dupId);
+                            if (idx >= 0) deleteIds.splice(idx, 1);
+                        }
+
+                        progress = true;
+                        continue;
                     }
 
-                    progress = true;
-                    continue;
+                    // (3) 중복 생성 케이스
+                    throw new Error(
+                        `Duplicate category name under same parent: "${node.name}"`,
+                    );
                 }
 
-                // soft-delete 대상이 없으면 새로 INSERT
+                //(4) 순수 신규 케이스 → INSERT
                 const [result] = await conn.query<ResultSetHeader>(
                     `
-              INSERT INTO category (
-                kind_id,
-                company_id,
-                parent_id,
-                level,
-                name,
-                sort_order,
-                is_active
-              )
-              VALUES (?, ?, ?, ?, ?, ?, ?)
-              `,
+                        INSERT INTO category (
+                            kind_id,
+                            company_id,
+                            parent_id,
+                            level,
+                            name,
+                            sort_order,
+                            is_active
+                        )
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                    `,
                     [
                         kindId,
                         companyId,

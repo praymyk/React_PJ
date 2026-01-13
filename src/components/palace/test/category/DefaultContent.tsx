@@ -7,7 +7,6 @@ export type CategoryKind = 'consult' | 'reserve' | 'etc';
 export type CategoryLevel = 1 | 2 | 3 | 4; // 대/중/소/세분류
 
 export interface CategoryNode {
-    /** 프론트 식별용 ID / db 저장용 ID 구분 => */
     id: number;
     dbId: number | null;
 
@@ -166,13 +165,6 @@ export default function DefaultContent({
 
         setNodes((prev) =>
             prev.map((n) => (n.id === node.id ? { ...n, name: name.trim() } : n)),
-        );
-    };
-
-    /** 활성/비활성 토글 */
-    const handleToggleActive = (node: CategoryNode) => {
-        setNodes((prev) =>
-            prev.map((n) => (n.id === node.id ? { ...n, active: !n.active } : n)),
         );
     };
 
@@ -462,19 +454,6 @@ export default function DefaultContent({
                     </div>
 
                     <div className={styles.bottomActions}>
-                        <button
-                            type="button"
-                            className={styles.secondaryButton}
-                            onClick={() => {
-                                if (!lastSelectedNode) return;
-                                handleToggleActive(lastSelectedNode);
-                            }}
-                            disabled={!lastSelectedNode}
-                        >
-                            {lastSelectedNode && lastSelectedNode.active
-                                ? '미사용 처리'
-                                : '사용 처리'}
-                        </button>
                         <button
                             type="button"
                             className={styles.secondaryButton}

@@ -5,9 +5,9 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 import styles from '@components/palace/test/customers/DefaultContent.module.scss';
 
-import DetailSection from '@components/palace/test/customers/DetailSection/DetailSection';
+import DetailSection from '@components/palace/test/customers/detailSection/DetailSection';
 import SearchForm from '@components/common/SearchForm/SearchForm';
-import TableSection from '@components/palace/test/customers/TableSection/TableSection';
+import TableSection from '@components/palace/test/customers/tableSection/TableSection';
 
 import { searchRegistry } from '@/app/(protected)/palace/test/customers/searchFields';
 import { tableColumns } from '@/app/(protected)/palace/test/customers/tableColumns';

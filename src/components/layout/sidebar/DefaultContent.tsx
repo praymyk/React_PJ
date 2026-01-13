@@ -108,8 +108,6 @@ export function Panel({ items }: SidebarProps) {
 
     const Component = selectedPanel.component;
 
-    console.log("bottom-offset :", bottom);
-
     return (
         <div
             className={`${styles.rightPanelWrapper} ${!isVisible ? styles.rightPanelExit : ''}`}

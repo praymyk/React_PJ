@@ -6,9 +6,9 @@ import type { CustomerRow } from '@/lib/db/reactpj/customers';
 
 import DetailSideActions, {
     type DetailSideAction,
-} from '@components/palace/test/customers/DetailSection/DetailSideActions';
+} from '@components/palace/test/customers/detailSection/DetailSideActions';
 
-import DetailSideItemA from '@components/palace/test/customers/DetailSection/DetailSideItemA';
+import DetailSideItemA from '@components/palace/test/customers/detailSection/DetailSideItemA';
 
 // 아래쪽 어떤 패널이 열려있는지 표현할 타입
 type ActivePanel = 'history' | 'logs' | 'extra' | null;

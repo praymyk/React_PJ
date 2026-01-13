@@ -65,7 +65,7 @@ export default function Header() {
 
     return (
         <header className={styles.header}>
-            <span>Header NYAM NYAM</span>
+            <span>Header NYANG NYANG</span>
 
             <div className={styles.headerActions}>
                 <button

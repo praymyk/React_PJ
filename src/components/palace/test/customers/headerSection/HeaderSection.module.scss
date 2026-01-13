@@ -1,0 +1,68 @@
+@use '@/styles/base/mixins.scss' as *;
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  @extend %themeTransition;
+}
+
+/* 타이틀 + 설명*/
+.line1 {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+
+  border-radius: .5rem;
+  padding: .75rem 0rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.description {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.line2 {
+  margin-top: 0.2rem;
+  display: flex;
+  align-items: center;
+}
+
+.createButton {
+  @extend %buttonBase;
+
+  height: 2rem;
+  padding: 0 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  border-color: transparent;
+  box-shadow: none;
+
+  display: inline-flex;
+  gap: 0.25rem;
+
+  &:hover {
+    background: var(--color-accent-soft-strong);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+.createIcon {
+  font-size: 0.9rem;
+  line-height: 1;
+}
