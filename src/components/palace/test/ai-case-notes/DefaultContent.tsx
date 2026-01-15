@@ -63,7 +63,7 @@ export default function DefaultContent() {
 
         try {
             const qs = buildTemplateListQuery({ companyId, kind, page: 1, pageSize: 50 });
-            const res = await fetch(`/api/common/response-templates?${qs}`, { cache: 'no-store' });
+            const res = await fetch(`/api/common/template?${qs}`, { cache: 'no-store' });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
             const json: TemplateListApiResponse = await res.json();
