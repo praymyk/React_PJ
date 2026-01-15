@@ -116,7 +116,7 @@ export default function CustomerCreateModal({
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            placeholder="예: 홍길동"
+                            placeholder="예: 홍냐냐"
                         />
                     </div>
 
@@ -165,7 +165,7 @@ export default function CustomerCreateModal({
                             type="text"
                             value={organization}
                             onChange={(e) => setOrganization(e.target.value)}
-                            placeholder="예: 메타 SNC"
+                            placeholder="예: 냠냠 .inc"
                         />
                     </div>
 

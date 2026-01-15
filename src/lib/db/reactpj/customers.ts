@@ -1,5 +1,6 @@
-import type { RowDataPacket } from 'mysql2/promise';
+
 import { reactpjPool } from './pool';
+import type { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
 
 export type CustomerRow = RowDataPacket & {
     id: number;
@@ -7,6 +8,12 @@ export type CustomerRow = RowDataPacket & {
     email: string;
     status: 'active' | 'inactive';
     created_at: Date;
+};
+
+type CreateCustomerInput = {
+    name: string;
+    email: string;
+    status: 'active' | 'inactive';
 };
 
 /** 페이징 결과 타입 */
@@ -118,3 +125,56 @@ export async function getCustomerById(id: string): Promise<CustomerRow | null> {
     );
     return rows[0] ?? null;
 }
+
+/** 고객 1명 생성 후, 생성된 행을 리턴 */
+export async function createCustomer(
+    input: CreateCustomerInput,
+): Promise<CustomerRow> {
+    const conn = await reactpjPool.getConnection();
+    try {
+        await conn.beginTransaction();
+
+        const [result] = await conn.query<ResultSetHeader>(
+            `
+            INSERT INTO customers (
+              name,
+              email,
+              status,
+              created_at
+            )
+            VALUES (?, ?, ?, NOW())
+            `,
+            [
+                input.name,
+                input.email,
+                input.status,
+            ],
+        );
+
+        const newId = result.insertId;
+
+        const [rows] = await conn.query<CustomerRow[]>(
+            `
+            SELECT
+              id,
+              name,
+              email,
+              status,
+              created_at
+            FROM customers
+            WHERE id = ?
+            `,
+            [newId],
+        );
+
+        await conn.commit();
+
+        return rows[0];
+    } catch (err) {
+        await conn.rollback();
+        throw err;
+    } finally {
+        conn.release();
+    }
+}
+
