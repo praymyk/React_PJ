@@ -7,6 +7,24 @@ CREATE DATABASE IF NOT EXISTS reactpj
 
 USE reactpj;
 
+-- 회사(업체) 테이블
+CREATE TABLE IF NOT EXISTS companies (
+                                         id          BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                                         name        VARCHAR(120) NOT NULL,
+    status      ENUM('active','inactive') NOT NULL DEFAULT 'active',
+    created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_companies_name (name)
+    ) ENGINE=InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci;
+
+-- 더미 회사 (companyId=1)
+INSERT INTO companies (name, status)
+VALUES ('Nyam_Company', 'active')
+    ON DUPLICATE KEY UPDATE name = VALUES(name), status = VALUES(status);
+
 -- 시스템 사용자(상담사/관리자 등) 테이블
 CREATE TABLE IF NOT EXISTS users (
                                      id             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,  -- 내부 PK (숫자)
@@ -427,3 +445,67 @@ INSERT INTO category (company_id, kind_id, parent_id, level, name, sort_order)
 VALUES
     (1, @K_CONSULT, @C1, 2, '일반문의', 1),
     (1, @K_CONSULT, @C1, 2, '장애/오류', 2);
+
+
+-- 응대 템플릿(상담이력/1:1/문자) 저장 테이블
+CREATE TABLE IF NOT EXISTS response_templates (
+                                                  id          BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                                                  company_id  BIGINT UNSIGNED NOT NULL,
+
+    -- 템플릿 종류: UI 탭과 동일하게 유지
+                                                  kind        ENUM('case_note','inquiry_reply','sms_reply') NOT NULL,
+
+    title       VARCHAR(200) NOT NULL,   -- 템플릿 이름(저장 시 입력)
+    prompt      TEXT NULL,               -- 생성에 사용한 프롬프트(선택)
+    content     MEDIUMTEXT NOT NULL,     -- 실제 템플릿 본문(상담원이 복붙할 텍스트)
+
+    created_by  BIGINT UNSIGNED NULL,    -- 작성자(users.id) - optional
+    created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at  DATETIME NULL,
+
+    PRIMARY KEY (id),
+
+    -- 종류/목록 조회용 인덱스
+    INDEX idx_rt_company_kind_created (company_id, kind, created_at),
+    INDEX idx_rt_company_kind_title   (company_id, kind, title),
+
+    CONSTRAINT fk_rt_company
+    FOREIGN KEY (company_id) REFERENCES companies (id)
+                                                             ON DELETE CASCADE ON UPDATE CASCADE,
+
+    CONSTRAINT fk_rt_created_by
+    FOREIGN KEY (created_by) REFERENCES users (id)
+                                                             ON DELETE SET NULL ON UPDATE CASCADE
+    ) ENGINE=InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci;
+
+-- 더미 템플릿 데이터
+INSERT INTO response_templates
+(company_id, kind, title, prompt, content, created_by)
+VALUES
+    (
+        1,
+        'case_note',
+        '상담이력_표준',
+        '상담이력 작성 시 기본정보/요약/조치/후속조치 포함해서 템플릿 만들어줘',
+        '### 상담이력 작성 템플릿\n\n**1) 상담 요약**\n- 고객명/연락처:\n- 문의 채널/인입경로:\n- 핵심 이슈(1줄):\n\n**2) 상세 내용**\n- 상황:\n- 고객 요구:\n- 특이사항/제약:\n\n**3) 조치/안내**\n- 안내 내용:\n- 처리 결과:\n- 근거/정책:\n\n**4) 후속 조치**\n- 담당/기한:\n- 다음 액션:\n\n**5) 태그**\n- #태그1 #태그2\n',
+        (SELECT id FROM users WHERE account='admin' LIMIT 1)
+    ),
+(
+  1,
+  'inquiry_reply',
+  '1:1문의_기본응대',
+  '1:1 문의 답변을 공손한 톤으로 작성할 수 있는 기본 템플릿 만들어줘',
+  '안녕하세요. [고객명]님,\n\n문의 주신 내용 확인했습니다.\n\n- 문의 요약:\n- 확인 결과:\n\n아래와 같이 안내드립니다.\n1) \n2) \n\n추가로 궁금하신 점이 있으시면 편하게 회신 부탁드립니다.\n감사합니다.\n',
+  (SELECT id FROM users WHERE account='admin' LIMIT 1)
+),
+(
+  1,
+  'sms_reply',
+  '문자_간단안내',
+  '문자 답변 템플릿을 짧고 명확하게 만들어줘',
+  '[업체명]입니다.\n문의하신 내용 안내드립니다.\n- \n추가 문의는 답장 부탁드립니다. 감사합니다.\n',
+  (SELECT id FROM users WHERE account='admin' LIMIT 1)
+);

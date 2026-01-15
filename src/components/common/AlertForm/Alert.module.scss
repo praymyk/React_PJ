@@ -1,0 +1,169 @@
+@use '@styles/base/mixins' as *;
+
+.root {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  padding: 1.25rem;
+  min-height: calc(100vh - var(--layout-header-height, 0px) - var(--layout-footer-height, 0px));
+}
+
+.card {
+  width: min(720px, 100%);
+  border-radius: 1rem;
+  background: var(--color-bg-surface);
+  box-shadow: var(--shadow-elevated);
+  border: 1px solid var(--color-border-subtle);
+  padding: 1.25rem;
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: var(--font-size-xs);
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+  border: 1px solid var(--color-accent-soft-strong);
+}
+
+.eta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.iconWrap {
+  display: flex;
+  justify-content: center;
+  margin: 0.75rem 0 0.5rem;
+}
+
+.icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  font-size: 2rem;
+  border: 1px solid var(--color-accent-soft-strong);
+}
+
+.title {
+  margin: 0.5rem 0 0.25rem;
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-text-main);
+  text-align: center;
+}
+
+.desc {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: 1.55;
+  text-align: center;
+}
+
+.featureBox {
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 0.85rem;
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.featureTitle {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.featureList {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--color-text-main);
+  font-size: var(--font-size-sm);
+
+  li {
+    margin: 0.25rem 0;
+  }
+}
+
+.actions {
+  margin-top: 1.25rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* 공통 버튼(믹스인) */
+.btnPrimary,
+.btnOutline,
+.btnGhost {
+  @extend %buttonBase;
+  text-decoration: none;
+}
+
+/* Primary */
+.btnPrimary {
+  background: var(--color-accent);
+  color: #fff;
+  border-color: transparent;
+
+  &:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.02);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/* Outline */
+.btnOutline {
+  background: transparent;
+  color: var(--color-text-main);
+  border-color: var(--color-border-subtle);
+
+  &:hover {
+    background: var(--color-accent-soft);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/* secondaryHref 없을 때 레이아웃 유지용 */
+.btnGhost {
+  opacity: 0.35;
+  cursor: default;
+  border-color: transparent;
+  background: transparent;
+}
+
+.footerHint {
+  margin-top: 0.9rem;
+  text-align: center;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}

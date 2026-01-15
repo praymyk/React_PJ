@@ -1,10 +1,30 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
+
 import styles from '@components/palace/test/ai-case-notes/DefaultContent.module.scss';
 import HeaderSection from '@components/common/SubContentForm/headerSection/HeaderSection';
+import KindTabSection from '@components/palace/test/ai-case-notes/tabSection/KindTabSection';
 
-type TemplateKind = 'case_note' | 'inquiry_reply' | 'sms_reply';
+import {
+    buildTemplateListQuery,
+    normalizeKind,
+    type TemplateKind,
+    type TemplateListApiResponse,
+} from '@/app/(protected)/palace/test/ai-case-notes/data';
+
+type UiTemplateRow = {
+    id: string;
+    companyId: number;
+    kind: TemplateKind;
+    title: string;
+    prompt: string | null;
+    content: string;
+    createdAt: string;
+    updatedAt: string;
+    createdBy: number | null;
+};
 
 const KIND_LABEL: Record<TemplateKind, string> = {
     case_note: '상담이력',
@@ -12,56 +32,76 @@ const KIND_LABEL: Record<TemplateKind, string> = {
     sms_reply: '문자 답변',
 };
 
-type SavedTemplate = {
-    id: string;
-    companyId: number;
-    kind: TemplateKind;
-    title: string;
-    prompt: string;
-    content: string;
-    createdAt: string; // ISO
-};
-
-const STORAGE_KEY_PREFIX = 'react-pj:templates:company:';
-
-function makeId() {
-    return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-}
-
 export default function DefaultContent() {
     const companyId = 1;
+    const sp = useSearchParams();
 
-    // 1. 종류 선택(필수)
-    const [kind, setKind] = useState<TemplateKind>('case_note');
+    const kind: TemplateKind = useMemo(() => normalizeKind(sp.get('kind')), [sp]);
 
-    // 2. company + kind 별로 따로 저장
-    const storageKey = useMemo(
-        () => `${STORAGE_KEY_PREFIX}${companyId}:kind:${kind}`,
-        [companyId, kind]
-    );
-
+    // ===== 생성 UI 상태 =====
     const [prompt, setPrompt] = useState('');
     const [generated, setGenerated] = useState('');
-
     const [saveTitle, setSaveTitle] = useState('');
     const [showSaveBox, setShowSaveBox] = useState(false);
 
-    const [saved, setSaved] = useState<SavedTemplate[]>([]);
+    // ===== 목록(DB) 상태 =====
+    const [saved, setSaved] = useState<UiTemplateRow[]>([]);
+    const [listLoading, setListLoading] = useState(false);
+    const [listError, setListError] = useState<string | null>(null);
 
+    // kind 바뀌면 생성 UI 초기화 (URL=진실 패턴)
     useEffect(() => {
-        try {
-            const raw = localStorage.getItem(storageKey);
-            const list: SavedTemplate[] = raw ? JSON.parse(raw) : [];
-            setSaved(Array.isArray(list) ? list : []);
-        } catch {
-            setSaved([]);
-        }
-    }, [storageKey]);
+        setPrompt('');
+        setGenerated('');
+        setSaveTitle('');
+        setShowSaveBox(false);
+    }, [kind]);
 
-    const persist = (list: SavedTemplate[]) => {
-        setSaved(list);
-        localStorage.setItem(storageKey, JSON.stringify(list));
-    };
+    const refetchList = useCallback(async () => {
+        setListLoading(true);
+        setListError(null);
+
+        try {
+            const qs = buildTemplateListQuery({ companyId, kind, page: 1, pageSize: 50 });
+            const res = await fetch(`/api/common/response-templates?${qs}`, { cache: 'no-store' });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+            const json: TemplateListApiResponse = await res.json();
+            if (!json.ok) throw new Error('API ok=false');
+
+            const uiRows: UiTemplateRow[] = json.data.rows.map((r) => ({
+                id: String(r.id),
+                companyId: r.company_id,
+                kind: r.kind,
+                title: r.title,
+                prompt: r.prompt,
+                content: r.content,
+                createdAt: r.created_at,
+                updatedAt: r.updated_at,
+                createdBy: r.created_by,
+            }));
+
+            setSaved(uiRows);
+        } catch (e) {
+            console.error('[DefaultContent] list fetch error:', e);
+            setSaved([]);
+            setListError('템플릿 목록을 불러오지 못했습니다.');
+        } finally {
+            setListLoading(false);
+        }
+    }, [companyId, kind]);
+
+    // 탭(kind) / companyId 바뀌면 목록 재조회
+    useEffect(() => {
+        let cancelled = false;
+        (async () => {
+            if (cancelled) return;
+            await refetchList();
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, [refetchList]);
 
     const resetAll = () => {
         setPrompt('');
@@ -70,7 +110,7 @@ export default function DefaultContent() {
         setShowSaveBox(false);
     };
 
-    // 3. kind별 더미 템플릿 (나중에 GPT 호출로 교체)
+    // ===== 더미 생성(추후 GPT 연동으로 교체) =====
     const buildDummyTemplate = (k: TemplateKind, p: string) => {
         if (k === 'case_note') {
             return (
@@ -96,19 +136,17 @@ export default function DefaultContent() {
                 `- 확인 결과:\n\n` +
                 `아래와 같이 안내드립니다.\n` +
                 `1) ...\n2) ...\n\n` +
-                `추가로 궁금하신 점이 있다면 편하게 회신 부탁드립니다.\n감사합니다.\n\n` +
+                `추가 문의는 편하게 회신 부탁드립니다.\n감사합니다.\n\n` +
                 `---\n요청 프롬프트(원문):\n${p}\n`
             );
         }
 
-        // sms_reply
         return (
             `### 문자 답변 템플릿\n` +
             `- 회사ID: ${companyId}\n` +
             `- 종류: 문자 답변\n\n` +
             `[업체명]입니다.\n` +
-            `문의하신 내용 안내드립니다: \n` +
-            `- \n` +
+            `문의하신 내용 안내드립니다:\n- \n` +
             `추가 문의는 답장 부탁드립니다. 감사합니다.\n\n` +
             `---\n요청 프롬프트(원문):\n${p}\n`
         );
@@ -119,42 +157,57 @@ export default function DefaultContent() {
         if (!p) return;
 
         const template = buildDummyTemplate(kind, p);
-
         setGenerated(template);
         setShowSaveBox(true);
 
-        if (!saveTitle.trim()) {
-            setSaveTitle(`${KIND_LABEL[kind]} 템플릿`);
+        if (!saveTitle.trim()) setSaveTitle(`${KIND_LABEL[kind]} 템플릿`);
+    };
+
+    // ===== DB 저장(POST) =====
+    const saveTemplate = async () => {
+        const title = saveTitle.trim();
+        if (!title || !generated.trim()) return;
+
+        try {
+            const res = await fetch('/api/common/response-templates', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    companyId,
+                    kind,
+                    title,
+                    prompt: prompt.trim() || null,
+                    content: generated,
+                }),
+            });
+
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+            setShowSaveBox(false);
+            await refetchList(); // 저장 후 목록 리프레시
+        } catch (e) {
+            console.error('[DefaultContent] saveTemplate error:', e);
+            alert('저장에 실패했습니다.');
         }
     };
 
-    const saveTemplate = () => {
-        const title = saveTitle.trim();
-        if (!title) return;
-        if (!generated.trim()) return;
-
-        const item: SavedTemplate = {
-            id: makeId(),
-            companyId,
-            kind,
-            title,
-            prompt: prompt.trim(),
-            content: generated,
-            createdAt: new Date().toISOString(),
-        };
-
-        persist([item, ...saved]);
-        setShowSaveBox(false);
+    // ===== DB 삭제(DELETE) =====
+    const removeTemplate = async (id: string) => {
+        try {
+            const res = await fetch(`/api/common/response-templates/${id}`, { method: 'DELETE' });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            await refetchList();
+        } catch (e) {
+            console.error('[DefaultContent] removeTemplate error:', e);
+            alert('삭제에 실패했습니다.');
+        }
     };
 
-    const removeTemplate = (id: string) => {
-        persist(saved.filter((x) => x.id !== id));
-    };
-
+    // ===== 불러오기(목록에서 UI로) =====
     const loadTemplate = (id: string) => {
         const item = saved.find((x) => x.id === id);
         if (!item) return;
-        setPrompt(item.prompt);
+        setPrompt(item.prompt ?? '');
         setGenerated(item.content);
         setSaveTitle(item.title);
         setShowSaveBox(true);
@@ -172,58 +225,10 @@ export default function DefaultContent() {
                 description="상담이력/1:1 답변/문자 답변 등 템플릿을 문장으로 생성하고 저장해 재사용합니다."
             />
 
-            {/* 종류 선택 Bar */}
-            <section className={styles.kindBar}>
-                <div className={styles.kindTabs} role="tablist" aria-label="템플릿 종류">
-                    <button
-                        type="button"
-                        role="tab"
-                        aria-selected={kind === 'case_note'}
-                        className={`${styles.kindTab} ${kind === 'case_note' ? styles.kindTabActive : ''}`}
-                        onClick={() => {
-                            setKind('case_note');
-                            setShowSaveBox(false);
-                        }}
-                    >
-                        상담이력
-                    </button>
+            <KindTabSection companyId={companyId} />
 
-                    <button
-                        type="button"
-                        role="tab"
-                        aria-selected={kind === 'inquiry_reply'}
-                        className={`${styles.kindTab} ${kind === 'inquiry_reply' ? styles.kindTabActive : ''}`}
-                        onClick={() => {
-                            setKind('inquiry_reply');
-                            setShowSaveBox(false);
-                        }}
-                    >
-                        1:1 문의 답변
-                    </button>
-
-                    <button
-                        type="button"
-                        role="tab"
-                        aria-selected={kind === 'sms_reply'}
-                        className={`${styles.kindTab} ${kind === 'sms_reply' ? styles.kindTabActive : ''}`}
-                        onClick={() => {
-                            setKind('sms_reply');
-                            setShowSaveBox(false);
-                        }}
-                    >
-                        문자 답변
-                    </button>
-                </div>
-
-                <div className={styles.kindRight}>
-                    <span className={styles.badgeLabel}>company</span>
-                    <span className={styles.badgeValue}>{companyId}</span>
-                </div>
-            </section>
-
-            {/* 좌/우 2컬럼 */}
             <div className={styles.twoCols}>
-                {/* 좌: 프롬프트 */}
+                {/* 좌 */}
                 <section className={styles.card}>
                     <div className={styles.cardHeader}>
                         <div>
@@ -256,7 +261,7 @@ export default function DefaultContent() {
                     />
                 </section>
 
-                {/* 우: 생성 결과 */}
+                {/* 우 */}
                 <section className={styles.card}>
                     <div className={styles.cardHeader}>
                         <div>
@@ -267,12 +272,7 @@ export default function DefaultContent() {
                         </div>
 
                         <div className={styles.cardHeaderActions}>
-                            <button
-                                type="button"
-                                className={styles.btnOutline}
-                                onClick={copyGenerated}
-                                disabled={!generated.trim()}
-                            >
+                            <button type="button" className={styles.btnOutline} onClick={copyGenerated} disabled={!generated.trim()}>
                                 복사
                             </button>
                             <button
@@ -323,18 +323,20 @@ export default function DefaultContent() {
                 </section>
             </div>
 
-            {/* 하단: 현재 kind의 저장 목록 */}
+            {/* 하단 리스트 */}
             <section className={styles.card}>
                 <div className={styles.cardHeader}>
                     <div>
                         <div className={styles.cardTitle}>저장된 템플릿</div>
-                        <div className={styles.cardHint}>
-                            현재 선택한 종류({KIND_LABEL[kind]})의 템플릿 목록입니다.
-                        </div>
+                        <div className={styles.cardHint}>현재 선택한 종류({KIND_LABEL[kind]})의 템플릿 목록입니다.</div>
                     </div>
                 </div>
 
-                {saved.length === 0 ? (
+                {listLoading ? (
+                    <div className={styles.emptyText}>불러오는 중...</div>
+                ) : listError ? (
+                    <div className={styles.emptyText}>{listError}</div>
+                ) : saved.length === 0 ? (
                     <div className={styles.emptyText}>저장된 템플릿이 없습니다.</div>
                 ) : (
                     <div className={styles.list}>

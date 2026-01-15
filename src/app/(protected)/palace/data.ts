@@ -1,5 +1,3 @@
-// src/app/palace/data.ts
-
 export type TodayMyTicketSummaryData = {
     /** 전화 채널로 생성된 티켓 수 */
     phoneTicketCount: number;
