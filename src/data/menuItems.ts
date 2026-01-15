@@ -52,7 +52,7 @@ export const submenuRegistry: Record<SubMenuGroup, SubMenuItem[]> = {
     ],
     '/palace/stats': [
         { label: '일별 통계', icon: FaRegDotCircle, path: '/palace/stats/daily' },
-        { label: '상담원 통계', icon: FaRegDotCircle, path: '/palace/stats/agent' },
+        { label: '상담원 통계', icon: FaRegDotCircle, path: '/palace/stats/agents' },
     ],
     '/palace/settings': [
         { label: '환경 설정', icon: FaRegCircle, path: '/palace/settings/env' },
