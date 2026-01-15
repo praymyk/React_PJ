@@ -21,7 +21,7 @@
                   rgba(17, 24, 39, 0.85)
   );
   color: #f9fafb;
-  box-shadow: var(--shadow-elevated);
+  box-shadow: var(--shadow-panel);
 
   @extend %themeTransition;
 }
@@ -57,7 +57,7 @@
 }
 
 .subText {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   opacity: 0.88;
 }
 
@@ -126,7 +126,7 @@
   padding: 1rem 1.25rem;
   border-radius: 0.75rem;
   background-color: var(--color-bg-surface);
-  box-shadow: var(--shadow-elevated);
+  box-shadow: var(--shadow-panel);
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
@@ -167,7 +167,7 @@
 .fieldInput:focus {
   outline: none;
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 1px rgba(88, 101, 242, 0.5);
+  box-shadow: var(--shadow-elevated);
 }
 
 .mono {
@@ -207,7 +207,7 @@
   height: 0.9rem;
   border-radius: 999px;
   background-color: #f9fafb;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.4);
+  box-shadow: var(--shadow-elevated);
   transition: transform 0.15s ease-out;
 }
 

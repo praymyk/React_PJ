@@ -1,3 +1,5 @@
+@use '@styles/base/mixins' as *;
+
 .root {
   display: flex;
   flex: 1;
@@ -5,268 +7,319 @@
   gap: 1rem;
 }
 
-/* 상단 헤더 */
-.header {
+/* ===== kindBar: 탭 스트립 ===== */
+.kindBar {
   display: flex;
-  justify-content: space-between;
   align-items: flex-end;
-  gap: 1rem;
-}
-
-.title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin: 0 0 0.25rem;
-}
-
-.description {
-  margin: 0;
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-}
-
-/* 헤더 오른쪽 영역 */
-.headerRight {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.kindSelect {
-  padding: 0.35rem 0.75rem;
-  border-radius: 999px;
-  border: 1px solid var(--color-border-subtle);
-  background-color: var(--color-bg-input);
-  font-size: 0.875rem;
-}
-
-.primaryButton {
-  padding: 0.45rem 0.9rem;
-  border-radius: 999px;
-  border: none;
-  background-color: var(--color-accent);
-  color: #fff;
-  font-size: 0.875rem;
-  cursor: pointer;
-}
-
-/* 툴바 */
-.toolbar {
-  display: flex;
   justify-content: space-between;
+  gap: 1rem;
+
+  /* 박스 느낌 제거 */
+  padding: 0 0.25rem;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+
+  /* 탭 전체 기준선 */
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+/* 탭 그룹 */
+.kindTabs {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+/* 개별 탭 */
+.kindTab {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+
+  padding: 0.55rem 0.65rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+
+  position: relative;
+  border-radius: 0.6rem 0.6rem 0 0;
+
+  @extend %themeTransition;
+
+  line-height: 1;
+}
+
+.kindTab:hover {
+  color: var(--color-text-main);
+  background-color: rgba(148, 163, 184, 0.10);
+}
+
+/* 활성 탭 */
+.kindTabActive {
+  color: var(--color-text-main);
+  font-weight: 600;
+}
+
+.kindTabActive::after {
+  content: '';
+  position: absolute;
+  left: 0.5rem;
+  right: 0.5rem;
+  bottom: -1px;
+  height: 2px;
+  background: var(--color-accent);
+  border-radius: 999px;
+}
+
+/* 오른쪽 company 뱃지 영역 (탭 라인과 높이 맞추기) */
+.kindRight {
+  display: inline-flex;
   align-items: center;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.75rem;
-  background-color: var(--color-bg-surface);
-  box-shadow: var(--shadow-elevated);
+  gap: 0.5rem;
+
+  padding-bottom: 0.55rem;
+  color: var(--color-text-muted);
 }
 
 .badgeLabel {
   font-size: 0.75rem;
   color: var(--color-text-muted);
-  margin-right: 0.5rem;
 }
 
 .badgeValue {
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-main);
 }
 
-.toolbarRight {
-  display: flex;
-  gap: 0.5rem;
+.twoCols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: stretch;
 }
 
-.secondaryButton {
-  padding: 0.4rem 0.8rem;
-  border-radius: 999px;
-  border: 1px solid var(--color-border-subtle);
-  background-color: var(--color-bg-surface);
-  font-size: 0.875rem;
-  cursor: pointer;
 
-  &:disabled {
-    opacity: 0.4;
-    cursor: default;
-  }
-}
+/* ===== 공통 카드 ===== */
 
-/* ===== 본문: 4단계 컬럼 ===== */
-
-.body {
+.card {
   border-radius: 0.75rem;
   background-color: var(--color-bg-surface);
   box-shadow: var(--shadow-elevated);
   padding: 0.75rem;
   display: flex;
   flex-direction: column;
+  gap: 0.6rem;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: 0.75rem;
 }
 
-.columnHeaderRow {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-  padding: 0 0.25rem;
-}
-
-.columnHeaderCell {
-  padding: 0.25rem 0.25rem;
-}
-
-.columns {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+.cardHeaderActions {
+  display: inline-flex;
+  align-items: center;
   gap: 0.5rem;
-  min-height: 240px;
+  flex-wrap: wrap;
 }
 
-.column {
+.cardTitle {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.cardHint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  line-height: 1.35;
+}
+
+/* ===== 입력 요소 ===== */
+.textarea {
+  width: 100%;
+  max-width: 100%;
+  display: block;
+
+  min-height: 200px;
+  resize: vertical;
+
+  padding: 0.65rem 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-border-subtle);
+
+  background-color: var(--color-bg-input);
+  color: var(--color-text-main);
+
+  font-size: var(--font-size-sm);
+  line-height: 1.35;
+  outline: none;
+}
+
+.textarea:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.twoCols .textarea {
+  flex: 1 1 auto;
+  resize: none;
+}
+
+.input {
+  width: 100%;
+  max-width: 100%;
+  display: block;
+
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-border-subtle);
+
+  background-color: var(--color-bg-input);
+  color: var(--color-text-main);
+
+  font-size: var(--font-size-sm);
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.fieldLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* ===== 저장 박스 ===== */
+
+.saveBox {
   border-radius: 0.75rem;
   border: 1px solid var(--color-border-subtle);
   background-color: var(--color-bg-surface);
+  padding: 0.65rem;
   display: flex;
   flex-direction: column;
-  min-height: 0;
+  gap: 0.65rem;
 }
 
-.columnTop {
+.saveActions {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.25rem 0.5rem;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+  justify-content: flex-end;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
-.columnTitle {
-  font-size: 0.8rem;
-  font-weight: 500;
-}
+/* ===== 버튼 ===== */
 
-.columnAddButton {
-  padding: 0.2rem 0.6rem;
-  border-radius: 999px;
-  border: 1px dashed var(--color-border-subtle);
+.btnOutline {
+  @extend %buttonBase;
+
+  border-color: var(--color-border-subtle);
   background-color: var(--color-bg-surface);
-  font-size: 0.75rem;
-  cursor: pointer;
-
-  &:disabled {
-    opacity: 0.4;
-    cursor: default;
-  }
+  color: var(--color-text-main);
 }
 
-.columnList {
-  padding: 0.25rem;
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.item {
-  border-radius: 0.5rem;
-  border: 1px solid transparent;
-  padding: 0.3rem 0.4rem;
-  font-size: 0.8rem;
-  text-align: left;
-  background-color: transparent;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.item:hover {
-  background-color: rgba(148, 163, 184, 0.12);
-}
-
-.itemSelected {
+.btnOutline:hover:not(:disabled) {
   background-color: var(--color-accent-soft);
   border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 
-.itemInactive {
+.btnPrimary {
+  @extend %buttonBase;
+
+  border-color: transparent;
+  background-color: var(--color-accent);
+  color: #fff;
+}
+
+.btnPrimary:hover:not(:disabled) {
+  filter: brightness(1.03);
+}
+
+.btnDanger {
+  @extend %buttonBase;
+
+  border-color: var(--color-text-danger);
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-danger);
+}
+
+.btnDanger:hover:not(:disabled) {
+  background-color: var(--color-bg-danger-soft);
+}
+
+/* disabled 공통 */
+.btnOutline:disabled,
+.btnPrimary:disabled,
+.btnDanger:disabled {
+  opacity: 0.45;
+  cursor: default;
+  transform: none;
+  filter: none;
+}
+
+/* ===== 리스트 ===== */
+
+.emptyText {
+  font-size: var(--font-size-sm);
   color: var(--color-text-muted);
-  text-decoration: line-through;
+  padding: 0.25rem 0.1rem;
 }
 
-.itemName {
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.listItem {
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-border-subtle);
+  background-color: var(--color-bg-surface);
+  padding: 0.65rem 0.75rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.listLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.listTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.emptyColumnText {
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-  padding: 0.25rem 0.4rem;
-}
-
-/* 하단: 선택 경로 + 액션 */
-
-.bottomArea {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.75rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid rgba(148, 163, 184, 0.16);
-}
-
-.selectedPathBox {
-  flex: 1;
-  min-height: 2.25rem;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-  font-size: 0.8rem;
-}
-
-.selectedPathEmpty {
+.listMeta {
+  font-size: var(--font-size-xs);
   color: var(--color-text-muted);
 }
 
-.breadcrumbItem {
+.listActions {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-}
-
-.breadcrumbSeparator {
-  color: var(--color-text-muted);
-}
-
-.breadcrumbLabel {
-  padding: 0.2rem 0.5rem;
-  border-radius: 999px;
-  background-color: var(--color-accent-soft);
-  color: var(--color-accent);
-  font-size: 0.75rem;
-}
-
-.bottomActions {
-  display: flex;
+  gap: 0.35rem;
   flex-wrap: wrap;
-  gap: 0.25rem;
-  justify-content: flex-end;
-}
-
-.iconButtonDanger {
-  padding: 0.4rem 0.8rem;
-  border-radius: 999px;
-  border: 1px solid var(--color-text-danger);
-  background-color: var(--color-bg-surface);
-  font-size: 0.8rem;
-  cursor: pointer;
-  color: var(--color-text-danger);
-
-  &:disabled {
-    opacity: 0.4;
-    cursor: default;
-  }
 }
