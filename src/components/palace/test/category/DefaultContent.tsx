@@ -2,6 +2,7 @@
 
 import { useMemo, useRef, useState } from 'react';
 import styles from '@components/palace/test/category/DefaultContent.module.scss';
+import HeaderSection from "@components/common/SubContentForm/headerSection/HeaderSection";
 
 export type CategoryKind = 'consult' | 'reserve' | 'etc';
 export type CategoryLevel = 1 | 2 | 3 | 4; // 대/중/소/세분류
@@ -293,13 +294,13 @@ export default function DefaultContent({
 
     return (
         <div className={styles.root}>
+
+            <HeaderSection
+                title="카테고리 관리"
+                description="상담 / 예약 등 카테고리 종류별로 1~4차 분류 구조와 순서를 관리합니다."
+            />
+
             <header className={styles.header}>
-                <div>
-                    <h1 className={styles.title}>카테고리 관리</h1>
-                    <p className={styles.description}>
-                        상담 / 예약 등 카테고리 종류별로 1~4차 분류 구조와 순서를 관리합니다.
-                    </p>
-                </div>
 
                 <div className={styles.headerRight}>
                     <select

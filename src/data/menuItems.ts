@@ -48,7 +48,7 @@ export const submenuRegistry: Record<SubMenuGroup, SubMenuItem[]> = {
     '/palace/test': [
         { label: '고객정보 관리', icon: FaRegCircle, path: '/palace/test/customers' },
         { label: '카테고리 관리', icon: FaRegCircle, path: '/palace/test/category' },
-        { label: '다', icon: FaRegCircle, path: '/palace/test/c' },
+        { label: '이력폼 생성(AI)', icon: FaRegCircle, path: '/palace/test/ai-case-notes' },
     ],
     '/palace/stats': [
         { label: '일별 통계', icon: FaRegDotCircle, path: '/palace/stats/daily' },

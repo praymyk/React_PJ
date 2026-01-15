@@ -1,0 +1,325 @@
+@use '@styles/base/mixins' as *;
+
+.root {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ===== kindBar: 탭 스트립 ===== */
+.kindBar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+
+  /* 박스 느낌 제거 */
+  padding: 0 0.25rem;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+
+  /* 탭 전체 기준선 */
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+/* 탭 그룹 */
+.kindTabs {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+/* 개별 탭 */
+.kindTab {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+
+  padding: 0.55rem 0.65rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+
+  position: relative;
+  border-radius: 0.6rem 0.6rem 0 0;
+
+  @extend %themeTransition;
+
+  line-height: 1;
+}
+
+.kindTab:hover {
+  color: var(--color-text-main);
+  background-color: rgba(148, 163, 184, 0.10);
+}
+
+/* 활성 탭 */
+.kindTabActive {
+  color: var(--color-text-main);
+  font-weight: 600;
+}
+
+.kindTabActive::after {
+  content: '';
+  position: absolute;
+  left: 0.5rem;
+  right: 0.5rem;
+  bottom: -1px;
+  height: 2px;
+  background: var(--color-accent);
+  border-radius: 999px;
+}
+
+/* 오른쪽 company 뱃지 영역 (탭 라인과 높이 맞추기) */
+.kindRight {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  padding-bottom: 0.55rem;
+  color: var(--color-text-muted);
+}
+
+.badgeLabel {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.badgeValue {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.twoCols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+
+/* ===== 공통 카드 ===== */
+
+.card {
+  border-radius: 0.75rem;
+  background-color: var(--color-bg-surface);
+  box-shadow: var(--shadow-elevated);
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.cardHeaderActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.cardTitle {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.cardHint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  line-height: 1.35;
+}
+
+/* ===== 입력 요소 ===== */
+.textarea {
+  width: 100%;
+  max-width: 100%;
+  display: block;
+
+  min-height: 200px;
+  resize: vertical;
+
+  padding: 0.65rem 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-border-subtle);
+
+  background-color: var(--color-bg-input);
+  color: var(--color-text-main);
+
+  font-size: var(--font-size-sm);
+  line-height: 1.35;
+  outline: none;
+}
+
+.textarea:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.twoCols .textarea {
+  flex: 1 1 auto;
+  resize: none;
+}
+
+.input {
+  width: 100%;
+  max-width: 100%;
+  display: block;
+
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-border-subtle);
+
+  background-color: var(--color-bg-input);
+  color: var(--color-text-main);
+
+  font-size: var(--font-size-sm);
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.fieldLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* ===== 저장 박스 ===== */
+
+.saveBox {
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-border-subtle);
+  background-color: var(--color-bg-surface);
+  padding: 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.saveActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* ===== 버튼 ===== */
+
+.btnOutline {
+  @extend %buttonBase;
+
+  border-color: var(--color-border-subtle);
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-main);
+}
+
+.btnOutline:hover:not(:disabled) {
+  background-color: var(--color-accent-soft);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.btnPrimary {
+  @extend %buttonBase;
+
+  border-color: transparent;
+  background-color: var(--color-accent);
+  color: #fff;
+}
+
+.btnPrimary:hover:not(:disabled) {
+  filter: brightness(1.03);
+}
+
+.btnDanger {
+  @extend %buttonBase;
+
+  border-color: var(--color-text-danger);
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-danger);
+}
+
+.btnDanger:hover:not(:disabled) {
+  background-color: var(--color-bg-danger-soft);
+}
+
+/* disabled 공통 */
+.btnOutline:disabled,
+.btnPrimary:disabled,
+.btnDanger:disabled {
+  opacity: 0.45;
+  cursor: default;
+  transform: none;
+  filter: none;
+}
+
+/* ===== 리스트 ===== */
+
+.emptyText {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  padding: 0.25rem 0.1rem;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.listItem {
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-border-subtle);
+  background-color: var(--color-bg-surface);
+  padding: 0.65rem 0.75rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.listLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.listTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.listMeta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.listActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import styles from '@components/palace/settings/env/DefaultContent.module.scss';
+import HeaderSection from "@components/common/SubContentForm/headerSection/HeaderSection";
 
 type EnvPreferences = {
     darkMode: boolean;
@@ -129,14 +130,14 @@ export default function DefaultContent() {
     };
 
     return (
-        <div className={styles.root}>
-            <div>
-                <h1 className={styles.pageTitle}>환경 설정</h1>
-                <p className={styles.pageSub}>
+        <div>
+            <HeaderSection
+                title="환경 설정"
+                description="
                     다크 모드와 기본 목록 크기 등을 설정하면 다음 접속부터 동일한
-                    환경으로 사용할 수 있습니다.
-                </p>
-            </div>
+                    환경으로 사용할 수 있습니다
+                    ."
+            />
 
             <div className={styles.sectionGrid}>
                 {/* 좌측: 테마 / 표시 환경 */}

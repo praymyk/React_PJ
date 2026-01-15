@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import {useMemo, useState} from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 import styles from '@components/palace/test/customers/DefaultContent.module.scss';
@@ -13,6 +13,10 @@ import { searchRegistry } from '@/app/(protected)/palace/test/customers/searchFi
 import { tableColumns } from '@/app/(protected)/palace/test/customers/tableColumns';
 
 import type { CustomerRow } from '@/lib/db/reactpj/customers';
+import HeaderSection from "@components/common/SubContentForm/headerSection/HeaderSection";
+import CustomerCreateModal, {
+    type CustomerCreateValues
+} from "@components/palace/test/customers/modal/CustomerCreateModal";
 
 type Props = {
     customer: CustomerRow;
@@ -102,8 +106,42 @@ export default function DetailContent({
         router.push(`${pathname}?${sp.toString()}`, { scroll: false });
     };
 
+    /** 고객 등록 **/
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
+
+    const handleCreate = async (values: CustomerCreateValues) => {
+        // 1) API 호출
+        const res = await fetch('/api/common/customers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(values),
+        });
+
+        if (!res.ok) {
+            // TODO: 에러 처리
+            alert('고객 등록 실패');
+            return;
+        }
+
+        // 2) 목록 새로 고침 (SSR 목록 다시 가져오기)
+        router.refresh();
+    };
+
     return (
         <div className={styles.root}>
+            {/* 고객정보 페이지 헤더 [목록 / 상세+목록 페이지 구분], 고객 등록 버튼 */}
+            <HeaderSection
+                title="고객 목록 / 상세 보기"
+                description="고객 정보를 조회·등록할 수 있습니다."
+                onClickCreate={() => setIsCreateOpen(true)}
+            />
+
+            <CustomerCreateModal
+                isOpen={isCreateOpen}
+                onClose={() => setIsCreateOpen(false)}
+                onSubmit={handleCreate}
+            />
+
             {/* 상단: 선택된 유저 상세 */}
             <DetailSection row={customer} />
 

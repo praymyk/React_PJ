@@ -6,7 +6,10 @@ $font-sans: var(--font-geist-sans);
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
 }
+
+
 
 body {
   background-color: var(--color-bg-body);
@@ -27,4 +30,10 @@ main {
   min-height: 100vh;
   display: flex;
   box-sizing: border-box;
+
+  /* 모듈 내부 요소들 width:100% overflow 방지*/
+  * {
+    box-sizing: border-box;
+    min-width: 0;
+  }
 }

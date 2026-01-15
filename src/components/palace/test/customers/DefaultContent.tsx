@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useState } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
-import HeaderSection from "@components/palace/test/customers/headerSection/HeaderSection";
+import HeaderSection from "@components/common/SubContentForm/headerSection/HeaderSection";
 import CustomerCreateModal, {
     type CustomerCreateValues } from "@components/palace/test/customers/modal/CustomerCreateModal"
 import SearchForm from '@components/common/SearchForm/SearchForm';
@@ -109,7 +109,7 @@ export default function DefaultContent({
         <div className={styles.root}>
             {/* 고객정보 페이지 헤더 [목록 / 상세+목록 페이지 구분], 고객 등록 버튼 */}
             <HeaderSection
-                title="테스트 / 고객 목록"
+                title="고객 목록"
                 description="고객 정보를 조회·등록할 수 있습니다."
                 onClickCreate={() => setIsCreateOpen(true)}
             />

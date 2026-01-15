@@ -17,7 +17,7 @@ export default async function Page({ searchParams }: PageProps) {
     // 1) URL 쿼리 언래핑
     const resolved = await searchParams;
 
-    // 2) 서버에서 DB 조회 (SSR)
+    // 2) DB 조회 (SSR)
     const { rows, total, page, pageSize } = await getDefaultPageData(resolved);
 
     // 3) 클라 컴포넌트에 "조회 결과"를 props로 전달
@@ -27,7 +27,7 @@ export default async function Page({ searchParams }: PageProps) {
             page={page}
             total={total}
             pageSize={pageSize}
-            // 검색폼 초기값 유지를 위해 전달 (선택)
+            // 검색폼 초기값 유지를 위해 전달
             initialKeyword={resolved.keyword ?? ''}
             initialStatus={resolved.status ?? ''}
         />

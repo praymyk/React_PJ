@@ -6,6 +6,7 @@ import styles from '@components/palace/profile/DefaultContent.module.scss';
 import { MainCard } from '@components/palace/profile/MainCard';
 import { ActivityCard } from '@components/palace/profile/ActivityCard';
 import { DetailPanel } from '@components/palace/profile/DetailPanel';
+import HeaderSection from "@components/common/SubContentForm/headerSection/HeaderSection";
 
 export type Profile = {
     id: number;
@@ -71,19 +72,21 @@ export default function DefaultContent() {
     }
 
     return (
-        <div className={styles.profileLayout}>
-            {/* 좌측: 프로필 + 활동 현황 */}
-            <div className={styles.mainColumn}>
-                <MainCard
-                    profile={profile}
-                    onProfileChange={setProfile}   // 저장 성공 시 상위 상태 업데이트용
-                />
-                <ActivityCard userId={profile.id} />
-            </div>
+        <div>
+            <HeaderSection
+                title="내 정보 관리"
+                description="내 프로필 정보를 확인하고 관리합니다."
+            />
 
-            {/* 우측: 상세 정보 / 확장 영역 */}
-            <div className={styles.detailColumn}>
-                <DetailPanel userId={profile.id} />
+            <div className={styles.profileLayout}>
+                <div className={styles.mainColumn}>
+                    <MainCard profile={profile} onProfileChange={setProfile} />
+                    <ActivityCard userId={profile.id} />
+                </div>
+
+                <div className={styles.detailColumn}>
+                    <DetailPanel userId={profile.id} />
+                </div>
             </div>
         </div>
     );

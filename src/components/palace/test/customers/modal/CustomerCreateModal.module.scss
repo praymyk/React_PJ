@@ -130,7 +130,7 @@
   border: 1px solid var(--color-border-subtle);
   background-color: var(--color-bg-input);
   color: var(--color-text-main);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-sm);
 
   @extend %themeTransition;
 
