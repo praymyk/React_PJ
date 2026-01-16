@@ -140,7 +140,7 @@ export default function DetailSection({ ticket, statusClassOf }: Props) {
                                         <div className={styles.timelinePlaceholder}>
                                             C 이벤트 이력.
                                             <br />
-                                            나중에 여기에 표시하면 됩니다.
+                                            나중에 여기에 넣기
                                         </div>
                                     )}
                                 </>
