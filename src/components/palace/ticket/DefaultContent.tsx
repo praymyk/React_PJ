@@ -178,7 +178,7 @@ export default function DefaultContent() {
         return () => {
             abortController.abort();
         };
-    }, [searchParams, selectedId]);
+    }, [searchParams]);
 
     // --------------------------------------------------
     // 페이지 이동 헬퍼
