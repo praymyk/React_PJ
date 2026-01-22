@@ -3,6 +3,33 @@
 
 $font-sans: var(--font-geist-sans);
 
+body {
+  background-color: var(--color-bg-body);
+  color: var(--color-text-main);
+}
+
+/* 글로벌 리셋 */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+main {
+  padding-top: var(--layout-header-height, 0px);
+  padding-bottom: var(--layout-footer-height, 0px);
+  min-height: 100vh;
+  display: flex;
+  box-sizing: border-box;
+
+  /* 모듈 내부 요소들 width:100% overflow 방지*/
+  * {
+    box-sizing: border-box;
+    min-width: 0;
+  }
+}
+
 /* ===== 스크롤바 (맥 스타일 기준) ===== */
 
 /* Firefox */
@@ -38,29 +65,19 @@ $font-sans: var(--font-geist-sans);
   --foreground: #171717;
 }
 
-body {
-  background-color: var(--color-bg-body);
-  color: var(--color-text-main);
+/* ===== 로딩 스피너 ===== */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
-/* 글로벌 리셋 */
-body,
-html {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-main {
-  padding-top: var(--layout-header-height, 0px);
-  padding-bottom: var(--layout-footer-height, 0px);
-  min-height: 100vh;
-  display: flex;
-  box-sizing: border-box;
-
-  /* 모듈 내부 요소들 width:100% overflow 방지*/
-  * {
-    box-sizing: border-box;
-    min-width: 0;
-  }
+/* 전역 유틸 클래스 */
+.uSpinner {
+  display: inline-block;
+  width: 1.2em;
+  height: 1.2em;
+  border: 2px solid var(--color-border-subtle);
+  border-radius: 50%;
+  border-top-color: currentColor;
+  animation: spin 0.8s linear infinite;
 }

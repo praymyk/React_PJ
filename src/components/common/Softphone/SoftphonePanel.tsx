@@ -4,6 +4,9 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import * as JsSIP from 'jssip';
 import styles from './SoftphonePanel.module.scss';
 
+import SockJS from 'sockjs-client';
+import { Client as StompClient, IMessage } from '@stomp/stompjs';
+
 /** SIP 연결 상태 */
 type ConnectionStatus = 'disconnected' | 'connecting' | 'registered';
 
@@ -44,6 +47,8 @@ export default function SoftphonePanel() {
     // 원격 오디오 재생용 audio 엘리먼트
     const remoteAudioRef = useRef<HTMLAudioElement | null>(null);
 
+    const stompClientRef = useRef<StompClient | null>(null);
+
     /** 로그 한 줄 추가 */
     const appendLog = useCallback((msg: string) => {
         setLog((prev) => [
@@ -51,6 +56,46 @@ export default function SoftphonePanel() {
             `[${new Date().toLocaleTimeString()}] ${msg}`,
         ]);
     }, []);
+
+    const connectStomp = useCallback((extension: string) => {
+        const stompClient = new StompClient({
+            brokerURL: undefined, // SockJS 사용 시 undefined
+            webSocketFactory: () => new SockJS('https://dev-ari.metapbx.co.kr/ws-stomp'),
+            reconnectDelay: 5000,
+            heartbeatIncoming: 10000,
+            heartbeatOutgoing: 10000,
+            debug: (msg) => appendLog(`[STOMP 디버그] ${msg}`),
+            onConnect: (frame) => {
+                appendLog('[STOMP] 연결 완료');
+                appendLog(`[STOMP] 서버 Frame: ${frame?.headers['server'] || 'N/A'}`);
+
+                // 내선번호 기반 구독
+                const topic = `/topic/agent/${extension}`;
+                stompClient.subscribe(topic, (message: IMessage) => {
+                    try {
+                        const parsed = JSON.parse(message.body);
+                        appendLog(`[STOMP 수신] ${JSON.stringify(parsed)}`);
+                    } catch {
+                        appendLog(`[STOMP 수신] ${message.body}`);
+                    }
+                });
+
+                appendLog(`[STOMP] 구독 시작: ${topic}`);
+            },
+            onStompError: (frame) => {
+                appendLog(`[STOMP 오류] ${frame.headers['message']}`);
+            },
+            onWebSocketError: (error) => {
+                appendLog(`[STOMP 소켓 오류] ${error}`);
+            },
+            onWebSocketClose: (event) => {
+                appendLog(`[STOMP 연결 종료] code=${event.code}, reason=${event.reason}`);
+            }
+        });
+
+        stompClient.activate();
+        stompClientRef.current = stompClient;
+    }, [appendLog]);
 
     /** 언마운트 시 UA 정리 */
     useEffect(() => {
@@ -115,6 +160,8 @@ export default function SoftphonePanel() {
             ua.on('registered', () => {
                 appendLog('SIP 등록 완료');
                 setStatus('registered');
+
+                connectStomp(sipUri);
             });
 
             ua.on('unregistered', () => {
@@ -123,10 +170,9 @@ export default function SoftphonePanel() {
             });
 
             // NOTE:
-            // JsSIP의 `registrationFailed` 이벤트 payload는 공식 타입 정의가 거의 없고
-            // 실제 런타임에서도 형태가 들쭉날쭉해서 강하게 타입을 좁히기가 애매하다.
-            // 여기서는 `e.cause` 정도만 로그에 찍어서 확인하는 용도라
-            // 과도한 커스텀 이벤트 타입을 정의하기보다는, 의도적으로 `any`를 사용
+            // JsSIP의 `registrationFailed` 이벤트 payload는 공식 타입 정의가 거의 없dma
+            // `e.cause` 정도만 로그에 찍어서 확인하는 용도라
+            // 과도한 커스텀 이벤트 타입을 정의 x, 의도적으로 `any`를 사용
             ua.on('registrationFailed', (e: any) => {
                 console.warn('SIP 등록 실패', e);
                 appendLog(`SIP 등록 실패: ${e?.cause || '알 수 없는 오류'}`);
@@ -147,6 +193,8 @@ export default function SoftphonePanel() {
                         // TODO:
                         //  - Asterisk 쪽에서 인바운드 콜의 발신번호를 어디에 실을지(From.user / P-Asserted-Identity / 커스텀 헤더 등)
                         //    최종 합의 후, 그 헤더 기준으로 displayNumber 파싱 로직 확정 필요.
+                        //    => "현재는 STOMP WEBSOCKET 으로 연락처 외 정보 수집중"
+                        // .     *jsSIP 부터 콜 인입 이벤트를 받는 순간 구독한 STOMP WEBSOCKET으로 부터 해당 콜에대한 고객 정보를 받는식 *
                         const fromUri: any = request?.from?.uri;
                         const displayNumber: string =
                             fromUri?.user ||

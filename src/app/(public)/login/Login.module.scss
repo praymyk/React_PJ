@@ -92,28 +92,26 @@
 
 .loginButton {
   @extend %buttonBase;
+
+  min-height: 2rem ;
   padding: 0.55rem 1.1rem;
+
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  background-color: var(--color-accent);
-  color: #ffffff;
+  line-height: 1;
   width: 100%;
-  margin-top: 0.25rem;
+
+  background-color: var(--color-accent);
+  color: #fff;
+
   justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
 
-  &:hover {
-    background-color: var(--color-accent-soft-strong);
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: default;
-    box-shadow: none;
-  }
+  &:hover { background-color: var(--color-accent-soft-strong); }
+  &:disabled { opacity: 0.6; cursor: default; box-shadow: none; }
 }
 
-.errorText {
-  margin: 0.25rem 0 0;
-  font-size: var(--font-size-xs);
-  color: var(--color-text-danger);
+.spinner {
+  flex: 0 0 auto;
 }

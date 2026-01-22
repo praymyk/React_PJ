@@ -11,6 +11,8 @@ const api = axios.create({
 
 // 2. 요청 인터셉터 > 토큰 헤더 탑제
 api.interceptors.request.use((config) => {
+    if (typeof window === 'undefined') return config;
+
     // 1. 로컬 스토리지에서 토큰 꺼내기
     const token = localStorage.getItem('accessToken');
 
@@ -18,7 +20,6 @@ api.interceptors.request.use((config) => {
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
-
     // 3. 토큰이 없으면(로그인 시도 중이면) 그냥 원본 config 그대로 리턴 -> 헤더 없이 날아감
     return config;
 });

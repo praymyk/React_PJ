@@ -1,5 +1,6 @@
 'use client';
 
+import api from '@/lib/axios'
 import { useEffect, useState } from 'react';
 import styles from '@components/palace/profile/DefaultContent.module.scss';
 
@@ -29,25 +30,27 @@ export default function DefaultContent() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        let cancelled = false;
+
         (async () => {
             try {
                 setLoading(true);
                 setError(null);
 
-                const res = await fetch('/api/common/users/me');
-                if (!res.ok) {
-                    throw new Error(`HTTP ${res.status}`);
-                }
+                const res = await api.get<Profile>('/api/common/users/me');
 
-                const profileData: Profile = await res.json();
-                setProfile(profileData);
+                if (!cancelled) setProfile(res.data);
             } catch (e) {
                 console.error('[Profile] /api/common/users/me error', e);
                 setError('프로필 정보를 불러오지 못했습니다.');
                 setProfile(null);
             } finally {
-                setLoading(false);
+                if (!cancelled) setLoading(false);
             }
+
+            return () => {
+                cancelled = true;
+            };
         })();
     }, []);
 

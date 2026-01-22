@@ -1,5 +1,6 @@
 'use client';
 
+import '@/styles/theme/globals.scss';
 import styles from '@/app/(public)/login/Login.module.scss';
 import { useLogin } from '@hooks/useLogin/useLogin';
 
@@ -49,7 +50,17 @@ export default function LoginPage() {
                         className={styles.loginButton}
                         disabled={loading}
                     >
-                        {loading ? '로그인 중...' : '로그인'}
+                        {loading ? (
+                            <>
+                                {/* 1. 아까 만든 SCSS의 .spinner 스타일이 적용될 태그 */}
+                                <span className='${styles.spinner} uSpinner'></span>
+
+                                {/* 2. 문구 */}
+                                <span>로그인 중...</span>
+                            </>
+                        ) : (
+                            '로그인'
+                        )}
                     </button>
 
                     <div className={styles.loginActions}>
