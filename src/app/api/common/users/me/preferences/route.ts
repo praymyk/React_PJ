@@ -3,7 +3,6 @@ import {
     getUserPreferences,
     upsertUserPreferences,
 } from '@lib/db/reactpj/userPreferences';
-import { getUserFromRequest } from '@lib/auth/session';
 
 // TODO: 사용자 환경설정의 싱글 엔드포인트.
 //    계정별 커스텀 값이 생기면 이 엔드포인트의 GET/POST 응답 스키마를 확장 필요
@@ -28,7 +27,7 @@ export async function GET(req: NextRequest) {
         const prefs = await getUserPreferences(userId);
 
         // TODO: 새로운 환경설정 필드를 userPreferences 테이블에 추가시
-        //       아래 JSON 응답에도 함께 포함해서 클라이언트에서 한번에 로드하도록!
+        //       JSON 응답에도 함께 포함해서 클라이언트에서 한번에 로드 필요
         return NextResponse.json({
             userId: prefs.userId,
             darkMode: prefs.darkMode,

@@ -1,3 +1,4 @@
+import api from '@/lib/axios';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -27,35 +28,24 @@ export function useLogin() {
         setLoading(true);
         setError('');
 
-        const BASE_URL = process.env.NEXT_PUBLIC_API_URL
-
         try {
-            const response = await fetch(`${BASE_URL}/api/auth/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify({ username, password }),
+
+            const response = await api.post('/api/auth/login', {
+                username,
+                password
+            }, {
+                withCredentials: true
             });
 
-            const data = await response.json().catch(() => null);
-
-            if (!response.ok) {
-                const msg =
-                    (data && data.message) ||
-                    '로그인에 실패했습니다. 아이디/비밀번호를 확인해주세요.';
-                throw new Error(msg);
-            }
+            const data = response.data;
 
             // ★ JWT 토큰 저장
-            if (data.token && typeof window !== 'undefined') {
+            // (인터셉터가 'accessToken' 키를 보고 헤더에 넣으므로 키 이름 일치 확인)
+            if (data.token) {
                 localStorage.setItem('accessToken', data.token);
             }
 
-            // TODO: 로그인 직후 클라이언트에서 적용할 계정별 설정들을 처리하는 위치.
-            //  - 현재는 darkMode만 반영 중
-            //    여기에서 data.preferences.* 를 읽어 전역 상태/스토어에 저장 필요
+            // 사용자 설정(다크모드) 처리
             const darkModeFromServer = Boolean(data.preferences?.darkMode);
             if (typeof window !== 'undefined') {
                 document.documentElement.classList.toggle('dark', darkModeFromServer);
@@ -65,32 +55,31 @@ export function useLogin() {
                 );
             }
 
-            // ★ 쿠키 기반 세션
-            // 아이디 저장 옵션 처리(로그인ID > Cookie)
+            // ★ 쿠키 기반 아이디 저장 (클라이언트 로직)
             if (rememberId) {
-                // 30일 유지
                 document.cookie = [
                     `rememberedLoginId=${encodeURIComponent(username)}`,
                     'path=/',
                     'max-age=' + 60 * 60 * 24 * 30,
                 ].join('; ');
             } else {
-                // 쿠키 삭제
                 document.cookie = [
                     'rememberedLoginId=',
                     'path=/',
                     'max-age=0',
                 ].join('; ');
             }
-            // 로그인 후 이동
+
             router.push('/palace');
 
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
+
             const msg =
-                err instanceof Error
-                    ? err.message
-                    : '로그인 실패. 다시 시도해주세요.';
+                err.response?.data?.message ||
+                err.message ||
+                '로그인 실패. 다시 시도해주세요.';
+
             setError(msg);
         } finally {
             setLoading(false);

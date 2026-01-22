@@ -1,10 +1,10 @@
 'use client';
 
+import api from '@/lib/axios';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from '@components/layout/header/Header.module.scss';
 import { FiSun, FiMoon } from 'react-icons/fi';
-import { fetchWithAuth } from '@/lib/api/client';
 
 export default function Header() {
     const router = useRouter();
@@ -34,14 +34,10 @@ export default function Header() {
 
         // (2) DB 환경설정 업데이트
         try {
-            await fetchWithAuth('/api/common/users/me/preferences', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({
-                    darkMode: next,
-
-                }),
+            await api.post('/api/common/users/me/preferences', {
+                darkMode: next,
+            }, {
+                withCredentials: true // credentials: 'include' 대응 (쿠키 전송)
             });
         } catch (e) {
             console.warn('[Header] 테마 설정 저장 실패 (화면 상태만 유지)', e);

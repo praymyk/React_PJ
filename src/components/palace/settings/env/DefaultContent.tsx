@@ -1,10 +1,9 @@
 'use client';
 
+import api from '@/lib/axios'
 import { useEffect, useState } from 'react';
 import styles from '@components/palace/settings/env/DefaultContent.module.scss';
 import HeaderSection from "@components/common/SubContentForm/headerSection/HeaderSection";
-
-import { fetchWithAuth } from '@/lib/api/client';
 
 type EnvPreferences = {
     darkMode: boolean;
@@ -28,14 +27,11 @@ export default function DefaultContent() {
         (async () => {
             try {
                 setLoading(true);
-                const res = await fetchWithAuth('/api/common/users/me/preferences');
+                const response = await api.get('/api/common/users/me/preferences');
 
-                if (!res.ok) {
-                    throw new Error(`HTTP ${res.status}`);
-                }
-
-                const data = await res.json();
                 if (aborted) return;
+
+                const data = response.data;
 
                 const darkMode = Boolean(data.darkMode);
                 const pageSize = Number(data.defaultPageSize ?? 20) || 20;
@@ -98,18 +94,7 @@ export default function DefaultContent() {
                 defaultPageSize: prefs.defaultPageSize,
             };
 
-            const res = await fetchWithAuth('/api/common/users/me/preferences', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(payload),
-                },
-            );
-
-            if (!res.ok) {
-                throw new Error(`HTTP ${res.status}`);
-            }
+            await api.post('/api/common/users/me/preferences', payload);
 
             // 저장 성공 시 테마 반영
             if (prefs.darkMode) {
