@@ -27,8 +27,10 @@ export function useLogin() {
         setLoading(true);
         setError('');
 
+        const BASE_URL = process.env.NEXT_PUBLIC_API_URL
+
         try {
-            const response = await fetch('/api/auth/login', {
+            const response = await fetch(`${BASE_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -44,6 +46,11 @@ export function useLogin() {
                     (data && data.message) ||
                     '로그인에 실패했습니다. 아이디/비밀번호를 확인해주세요.';
                 throw new Error(msg);
+            }
+
+            // ★ JWT 토큰 저장
+            if (data.token && typeof window !== 'undefined') {
+                localStorage.setItem('accessToken', data.token);
             }
 
             // TODO: 로그인 직후 클라이언트에서 적용할 계정별 설정들을 처리하는 위치.

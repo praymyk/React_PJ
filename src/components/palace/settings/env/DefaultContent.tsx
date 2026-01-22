@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import styles from '@components/palace/settings/env/DefaultContent.module.scss';
 import HeaderSection from "@components/common/SubContentForm/headerSection/HeaderSection";
 
+import { fetchWithAuth } from '@/lib/api/client';
+
 type EnvPreferences = {
     darkMode: boolean;
     defaultPageSize: number;
@@ -26,7 +28,7 @@ export default function DefaultContent() {
         (async () => {
             try {
                 setLoading(true);
-                const res = await fetch('/api/common/users/me/preferences');
+                const res = await fetchWithAuth('/api/common/users/me/preferences');
 
                 if (!res.ok) {
                     throw new Error(`HTTP ${res.status}`);
@@ -96,7 +98,7 @@ export default function DefaultContent() {
                 defaultPageSize: prefs.defaultPageSize,
             };
 
-            const res = await fetch('/api/common/users/me/preferences', {
+            const res = await fetchWithAuth('/api/common/users/me/preferences', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

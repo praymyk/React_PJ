@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from '@components/layout/header/Header.module.scss';
 import { FiSun, FiMoon } from 'react-icons/fi';
+import { fetchWithAuth } from '@/lib/api/client';
 
 export default function Header() {
     const router = useRouter();
@@ -33,7 +34,7 @@ export default function Header() {
 
         // (2) DB 환경설정 업데이트
         try {
-            await fetch('/api/common/users/me/preferences', {
+            await fetchWithAuth('/api/common/users/me/preferences', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -47,17 +48,16 @@ export default function Header() {
         }
     };
 
-    const handleLogout = async () => {
-        try {
-            await fetch('/api/auth/logout', {
-                method: 'POST',
-                credentials: 'include',
-            });
-        } catch (e) {
-            console.warn('logout error (무시 가능)', e);
-        } finally {
-            router.push('/login');
-        }
+    const handleLogout = () => {
+        // 1. 토큰 삭제
+        localStorage.removeItem('accessToken');
+
+        // 2. 개인 설정 삭제 (다크모드)
+        localStorage.removeItem('theme');
+        document.documentElement.classList.remove('dark');
+
+        // 3. 로그인 페이지로 이동
+        router.replace('/login');
     };
 
     // 3) 다크 모드 렌더:서버/클라이언트 모두 동일한 마크업을 내보내도록
