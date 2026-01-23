@@ -36,7 +36,7 @@ export function normalizeKind(rawKind: string | null | undefined): TemplateKind 
 /** sortBy string → TemplateSortKey 정제 */
 export function normalizeSortBy(rawSortBy: string | null | undefined): TemplateSortKey | undefined {
     const v = rawSortBy?.trim();
-    return v === 'id' || v === 'title' || v === 'created_at' || v === 'updated_at'
+    return v === 'id' || v === 'title' || v === 'createdAt' || v === 'updated_at'
         ? (v as TemplateSortKey)
         : undefined;
 }

@@ -50,6 +50,12 @@
   font-weight: var(--font-weight-bold);
 }
 
+.metaRow {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 .tag {
   font-size: var(--font-size-sm);
   opacity: 0.9;

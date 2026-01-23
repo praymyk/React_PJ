@@ -1,12 +1,10 @@
 'use client';
 
-import { useMemo } from 'react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 import HeaderSection from "@components/common/SubContentForm/headerSection/HeaderSection";
-import CustomerCreateModal, {
-    type CustomerCreateValues } from "@components/palace/test/customers/modal/CustomerCreateModal"
+import CustomerCreateModal from "@components/palace/test/customers/modal/CustomerCreateModal"
 import SearchForm from '@components/common/SearchForm/SearchForm';
 import TableSection from '@components/palace/test/customers/tableSection/TableSection';
 import { searchRegistry } from '@/app/(protected)/palace/test/customers/searchFields';
@@ -87,24 +85,6 @@ export default function DefaultContent({
     /** 고객 등록 **/
     const [isCreateOpen, setIsCreateOpen] = useState(false);
 
-    const handleCreate = async (values: CustomerCreateValues) => {
-        // 1) API 호출
-        const res = await fetch('/api/common/customers', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(values),
-        });
-
-        if (!res.ok) {
-            // TODO: 에러 처리
-            alert('고객 등록 실패');
-            return;
-        }
-
-        // 2) 목록 새로 고침 (SSR 목록 다시 가져오기)
-        router.refresh();
-    };
-
     return (
         <div className={styles.root}>
             {/* 고객정보 페이지 헤더 [목록 / 상세+목록 페이지 구분], 고객 등록 버튼 */}
@@ -117,7 +97,6 @@ export default function DefaultContent({
             <CustomerCreateModal
                 isOpen={isCreateOpen}
                 onClose={() => setIsCreateOpen(false)}
-                onSubmit={handleCreate}
             />
 
             <SearchForm

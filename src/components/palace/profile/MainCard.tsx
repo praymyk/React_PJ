@@ -1,6 +1,7 @@
 import { useState, ChangeEvent } from 'react';
+import api from '@utils/axios'
 import styles from '@components/palace/profile/MainCard.module.scss';
-import type { Profile } from '@components/palace/profile/DefaultContent';
+import type { Profile } from '@/types/user'
 
 type Props = {
     profile: Profile;
@@ -29,33 +30,25 @@ export function MainCard({ profile, onProfileChange }: Props) {
             setSaving(true);
             setSaveError(null);
 
-            const res = await fetch('/api/common/users/me', {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
+            const res = await api.patch('/api/common/users/me', {
+                    companyId: draft.companyId,
                     account: draft.account,
                     name: draft.name,
                     profile_name: draft.profile_name,
                     email: draft.email,
                     status: draft.status,
-                }),
-            });
+                });
 
-            if (!res.ok) {
-                throw new Error(`HTTP ${res.status}`);
-            }
-
-            const updated: Profile = await res.json();
+            const updated = res.data;
 
             // 상위(DefaultContent)의 profile 상태 갱신
             onProfileChange?.(updated);
-
             setIsEditing(false);
-        } catch (e) {
+        } catch (e: any) {
             console.error('[MainCard] saveEdit error', e);
-            setSaveError('프로필 저장에 실패했습니다.');
+
+            const serverMessage = e.response?.data?.message;
+            setSaveError(serverMessage || '프로필 저장에 실패했습니다.');
         } finally {
             setSaving(false);
         }
@@ -80,9 +73,10 @@ export function MainCard({ profile, onProfileChange }: Props) {
                     <span className={styles.profileName}>
                         {profile.profile_name ?? profile.name}
                     </span>
-                    <span className={styles.tag}>
-                        #{profile.id}
-                    </span>
+                    <div className={styles.metaRow}>
+                        <span className={styles.tag}>#USER {profile.id}</span>
+                        <span className={styles.tag}>#COMPANY {profile.companyId}</span>
+                    </div>
                     <div className={styles.subText}>
                         내 프로필 정보를 확인하고 편집할 수 있습니다.
                     </div>
@@ -205,11 +199,11 @@ export function MainCard({ profile, onProfileChange }: Props) {
                             <input
                                 type="date"
                                 className={styles.fieldInput}
-                                value={draft.created_at.slice(0, 10)}
-                                onChange={handleChange('created_at')}
+                                value={draft.createdAt.slice(0, 10)}
+                                onChange={handleChange('createdAt')}
                             />
                         ) : (
-                            <span>{profile.created_at}</span>
+                            <span>{profile.createdAt}</span>
                         )}
                     </div>
                 </div>

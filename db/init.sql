@@ -28,7 +28,8 @@ VALUES ('Nyam_Company', 'active')
 -- 2. 시스템 사용자(상담사/관리자 등) 테이블
 CREATE TABLE IF NOT EXISTS users (
                                      id             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-                                     account        VARCHAR(50)    NOT NULL,
+    company_id            BIGINT UNSIGNED NOT NULL,
+    account        VARCHAR(50)    NOT NULL,
     public_id      VARCHAR(100)   NOT NULL,
     name           VARCHAR(100)   NOT NULL,
     profile_name   VARCHAR(100)       NULL,
@@ -50,9 +51,9 @@ CREATE TABLE IF NOT EXISTS users (
     ) ENGINE=InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 -- 테스트용 시스템 사용자
-INSERT INTO users (account, public_id, name, profile_name, email, extension, password_hash, status)
+INSERT INTO users (company_id, account, public_id, name, profile_name, email, extension, password_hash, status)
 VALUES (
-           'admin', 'u-0001', '정윤석', '냠냠', 'admin@example.com', '6001',
+           '1', 'admin', 'u-0001', '정윤석', '냠냠', 'admin@example.com', '6001',
            '$2b$10$qykjsIxU9K6Wbp9t5RNoz.IBpbcy2vi7GifaDqgX0Cs1wzLyvxybC',
            'active' -- 문자열로 잘 들어감
        );
@@ -61,6 +62,7 @@ VALUES (
 -- 3. 고객 정보 테이블
 CREATE TABLE IF NOT EXISTS customers (
                                          id         BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                                         company_id            BIGINT UNSIGNED NOT NULL,
                                          name       VARCHAR(100)    NOT NULL,
     email      VARCHAR(255)    NOT NULL,
     -- [변경] ENUM -> VARCHAR
@@ -71,10 +73,10 @@ CREATE TABLE IF NOT EXISTS customers (
     UNIQUE KEY uq_customers_email (email)
     ) ENGINE=InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
-INSERT INTO customers (name, email, status) VALUES
-                                                ('홍냐냐', 'hong@example.com', 'active'),
-                                                ('김냐냐', 'kim@example.com',  'inactive'),
-                                                ('이냐냐', 'lee@example.com',  'active');
+INSERT INTO customers (company_id, name, email, status) VALUES
+                                                (1, '홍냐냐', 'hong@example.com', 'active'),
+                                                (1, '김냐냐', 'kim@example.com',  'inactive'),
+                                                (1, '이냐냐', 'lee@example.com',  'active');
 
 
 -- 4. 티켓 테이블

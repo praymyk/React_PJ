@@ -1,5 +1,5 @@
-import api from '@/lib/axios';
 import { useState, useEffect } from 'react';
+import api from '@utils/axios';
 import { useRouter } from 'next/navigation';
 
 export function useLogin() {
@@ -33,8 +33,6 @@ export function useLogin() {
             const response = await api.post('/api/auth/login', {
                 username,
                 password
-            }, {
-                withCredentials: true
             });
 
             const data = response.data;

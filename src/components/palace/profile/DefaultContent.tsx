@@ -1,7 +1,7 @@
 'use client';
 
-import api from '@/lib/axios'
 import { useEffect, useState } from 'react';
+import api from '@utils/axios'
 import styles from '@components/palace/profile/DefaultContent.module.scss';
 
 import { MainCard } from '@components/palace/profile/MainCard';
@@ -9,20 +9,7 @@ import { ActivityCard } from '@components/palace/profile/ActivityCard';
 import { DetailPanel } from '@components/palace/profile/DetailPanel';
 import HeaderSection from "@components/common/SubContentForm/headerSection/HeaderSection";
 
-export type Profile = {
-    id: number;
-    account: string;
-    public_id: string;
-    name: string;
-    profile_name: string | null;
-    email: string;
-    username: string;
-    extension: string | null;
-    status: 'active' | 'inactive' | 'hidden';
-    created_at: string;
-    deactivated_at: string | null;
-    updated_at: string;
-};
+import type { Profile } from '@/types/user'
 
 export default function DefaultContent() {
     const [profile, setProfile] = useState<Profile | null>(null);

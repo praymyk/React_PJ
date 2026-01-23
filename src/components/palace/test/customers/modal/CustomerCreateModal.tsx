@@ -1,28 +1,29 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState,  useEffect, FormEvent } from 'react';
+import api from '@utils/axios'
 import styles from '@components/palace/test/customers/modal/CustomerCreateModal.module.scss'
 
-export type CustomerCreateValues = {
+interface Company {
+    id: number;
     name: string;
-    email: string;
-    status: 'active' | 'inactive';
-    phone?: string;
-    organization?: string;
-    memo?: string;
-};
+}
 
 type CustomerCreateModalProps = {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (values: CustomerCreateValues) => Promise<void> | void;
+    onSuccess?: () => void;
 };
+
 
 export default function CustomerCreateModal({
                                                 isOpen,
                                                 onClose,
-                                                onSubmit,
+                                                onSuccess,
                                             }: CustomerCreateModalProps) {
+
+    const [companies, setCompanies] = useState<Company[]>([]); // 업체 목록
+    const [companyId, setCompanyId] = useState<number | ''>(''); // 선택된 업체 ID
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [status, setStatus] = useState<'active' | 'inactive'>('active');
@@ -31,11 +32,32 @@ export default function CustomerCreateModal({
     const [memo, setMemo] = useState('');
 
     const [submitting, setSubmitting] = useState(false);
+    const [loadingCompanies, setLoadingCompanies] = useState(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const fetchCompanies = async () => {
+            setLoadingCompanies(true);
+            try {
+                const res = await api.get('/api/companies');
+                setCompanies(res.data);
+            } catch (err) {
+                console.error('업체 목록 로드 실패:', err);
+                setErrorMsg('업체 정보를 불러오지 못했습니다.');
+            } finally {
+                setLoadingCompanies(false);
+            }
+        };
+
+        fetchCompanies();
+    }, [isOpen]);
 
     if (!isOpen) return null;
 
     const resetForm = () => {
+        setCompanyId('');
         setName('');
         setEmail('');
         setStatus('active');
@@ -69,7 +91,8 @@ export default function CustomerCreateModal({
         setSubmitting(true);
 
         try {
-            await onSubmit({
+            await api.post('/api/customers', {
+                companyId: Number(companyId),
                 name: name.trim(),
                 email: email.trim(),
                 status,
@@ -79,8 +102,13 @@ export default function CustomerCreateModal({
             });
 
             // 성공 시 폼 리셋 + 모달 닫기
+            alert('고객이 등록되었습니다.');
             resetForm();
             onClose();
+
+            // TODO : 고객 정보 등록 후 이벤트 추가 영역
+            if (onSuccess) onSuccess();
+
         } catch (err) {
             console.error(err);
             setErrorMsg('저장 중 오류가 발생했습니다. 다시 시도해 주세요.');
@@ -107,6 +135,32 @@ export default function CustomerCreateModal({
 
                 {/* 바디 */}
                 <form className={styles.body} onSubmit={handleSubmit}>
+                    <div className={styles.formRow}>
+                        <label className={styles.label}>
+                            업체<span className={styles.requiredMark}>*</span>
+                        </label>
+                        <select
+                            className={styles.select}
+                            value={companyId}
+                            onChange={(e) => setCompanyId(Number(e.target.value))}
+                            required
+                            // 1. 로딩 중일 때
+                            disabled={loadingCompanies}
+                        >
+                            {/* 2. 로딩 상태에 따라 안내 문구를 다르게 표시 */}
+                            <option value="">
+                                {loadingCompanies ? '목록을 불러오는 중...' : '업체를 선택해 주세요'}
+                            </option>
+
+                            {/* 3. 데이터가 있을 때만 렌더링 */}
+                            {!loadingCompanies && companies.map((company) => (
+                                <option key={company.id} value={company.id}>
+                                    {company.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
                     <div className={styles.formRow}>
                         <label className={styles.label}>
                             이름<span className={styles.requiredMark}>*</span>

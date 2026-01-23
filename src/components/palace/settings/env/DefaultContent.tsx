@@ -1,7 +1,7 @@
 'use client';
 
-import api from '@/lib/axios'
 import { useEffect, useState } from 'react';
+import api from '@utils/axios'
 import styles from '@components/palace/settings/env/DefaultContent.module.scss';
 import HeaderSection from "@components/common/SubContentForm/headerSection/HeaderSection";
 
@@ -104,6 +104,9 @@ export default function DefaultContent() {
                 document.documentElement.classList.remove('dark');
                 window.localStorage.setItem('theme', 'light');
             }
+
+            // 헤더 토글 버튼 동기화
+            window.dispatchEvent(new Event('theme-change'));
 
             setStatusKind('ok');
             setStatusMessage('환경설정이 저장되었습니다.');

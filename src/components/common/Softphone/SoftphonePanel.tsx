@@ -173,16 +173,16 @@ export default function SoftphonePanel() {
             // JsSIP의 `registrationFailed` 이벤트 payload는 공식 타입 정의가 거의 없dma
             // `e.cause` 정도만 로그에 찍어서 확인하는 용도라
             // 과도한 커스텀 이벤트 타입을 정의 x, 의도적으로 `any`를 사용
-            ua.on('registrationFailed', (e: any) => {
+            ua.on('registrationFailed', (e) => {
                 console.warn('SIP 등록 실패', e);
                 appendLog(`SIP 등록 실패: ${e?.cause || '알 수 없는 오류'}`);
                 setStatus('disconnected');
             });
 
             // 새 RTC 세션 생성 이벤트 (인바운드/아웃바운드 공통 진입점)
-            ua.on('newRTCSession', (data: any) => {
+            ua.on('newRTCSession', (data) => {
                 const { originator, session, request } = data || {};
-                const rtcSession = session as any;
+                const rtcSession = session;
 
                 // 인/아웃바운드 공통: 원격 오디오 스트림 바인딩
                 setupRemoteAudio(rtcSession);
@@ -195,7 +195,7 @@ export default function SoftphonePanel() {
                         //    최종 합의 후, 그 헤더 기준으로 displayNumber 파싱 로직 확정 필요.
                         //    => "현재는 STOMP WEBSOCKET 으로 연락처 외 정보 수집중"
                         // .     *jsSIP 부터 콜 인입 이벤트를 받는 순간 구독한 STOMP WEBSOCKET으로 부터 해당 콜에대한 고객 정보를 받는식 *
-                        const fromUri: any = request?.from?.uri;
+                        const fromUri = request?.from?.uri;
                         const displayNumber: string =
                             fromUri?.user ||
                             request?.from?.display_name ||
@@ -565,7 +565,7 @@ export default function SoftphonePanel() {
                             peerNumber: sanitizedTarget,
                         });
                     },
-                    failed: (e: any) => {
+                    failed: (e) => {
                         appendLog(`통화 실패: ${e?.cause || '알 수 없는 오류'}`);
                         sessionRef.current = null;
                         fireCallEvent({

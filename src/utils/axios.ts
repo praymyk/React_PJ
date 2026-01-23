@@ -3,6 +3,7 @@ import axios from 'axios';
 // 1. Axios 인스턴스 생성
 const api = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL, // .env에서 주소 가져옴
+    withCredentials: true, // 전역 설정으로 추가 (모든 요청에 쿠키 포함)
     headers: {
         'Content-Type': 'application/json',
     },
@@ -26,13 +27,11 @@ api.interceptors.request.use((config) => {
 
 // 3. 응답 인터셉터 (401 에러 감지 및 처리)
 api.interceptors.response.use(
-    (response) => response, // 성공하면 그냥 통과
+    (res) => res,
     (error) => {
-        // 401 에러 (토큰 만료/위조) 발생 시
-        if (error.response && error.response.status === 401) {
+        if (error.response?.status === 401) {
             if (typeof window !== 'undefined') {
-                // alert('로그인 만료');
-                localStorage.removeItem('accessToken');
+
                 window.location.href = '/login';
             }
         }

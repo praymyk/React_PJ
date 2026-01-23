@@ -3,8 +3,8 @@
 import styles from './DetailSideItem.module.scss';
 import { useEffect, useState } from 'react';
 
-import type { CustomerRow } from '@/lib/db/reactpj/customers';
-import type { CustomerTicketRow } from '@/lib/db/reactpj/tickets';
+import type { CustomerRow } from '@/types/customer';
+import type { CustomerTicketRow } from '@/types/ticket';
 
 type Props = {
     row: CustomerRow;
