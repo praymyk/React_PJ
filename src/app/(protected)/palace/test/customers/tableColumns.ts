@@ -1,7 +1,7 @@
 import type { Column } from '@components/common/TableForm/Table';
-import type { Row } from '@/app/(protected)/palace/test/customers/data';
+import type { CustomerRow } from '@/types/customer';
 
-export const tableColumns: Column<Row>[] = [
+export const tableColumns: Column<CustomerRow>[] = [
     {
         header: 'ID',
         render: (row) => row.id,

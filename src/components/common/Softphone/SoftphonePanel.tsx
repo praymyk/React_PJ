@@ -180,7 +180,7 @@ export default function SoftphonePanel() {
             });
 
             // 새 RTC 세션 생성 이벤트 (인바운드/아웃바운드 공통 진입점)
-            ua.on('newRTCSession', (data) => {
+            ua.on('newRTCSession', (data: { originator: string; session: any; request: any }) => {
                 const { originator, session, request } = data || {};
                 const rtcSession = session;
 
@@ -565,7 +565,7 @@ export default function SoftphonePanel() {
                             peerNumber: sanitizedTarget,
                         });
                     },
-                    failed: (e) => {
+                    failed: (e:any) => {
                         appendLog(`통화 실패: ${e?.cause || '알 수 없는 오류'}`);
                         sessionRef.current = null;
                         fireCallEvent({

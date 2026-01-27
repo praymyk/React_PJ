@@ -9,11 +9,11 @@ import SearchForm from '@components/common/SearchForm/SearchForm';
 import TableSection from '@components/palace/test/customers/tableSection/TableSection';
 import { searchRegistry } from '@/app/(protected)/palace/test/customers/searchFields';
 import { tableColumns } from '@/app/(protected)/palace/test/customers/tableColumns';
-import type { Row } from '@/app/(protected)/palace/test/customers/data';
+import type { CustomerRow } from '@/types/customer';
 import styles from '@components/palace/test/customers/DefaultContent.module.scss';
 
 type Props = {
-    initialRows: Row[];
+    initialRows: CustomerRow[];
     total: number;
     page: number;
     pageSize: number;
