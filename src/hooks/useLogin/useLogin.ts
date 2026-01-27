@@ -37,12 +37,6 @@ export function useLogin() {
 
             const data = response.data;
 
-            // ★ JWT 토큰 저장
-            // (인터셉터가 'accessToken' 키를 보고 헤더에 넣으므로 키 이름 일치 확인)
-            if (data.token) {
-                localStorage.setItem('accessToken', data.token);
-            }
-
             // 사용자 설정(다크모드) 처리
             const darkModeFromServer = Boolean(data.preferences?.darkMode);
             if (typeof window !== 'undefined') {

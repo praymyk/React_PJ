@@ -2,8 +2,10 @@ import type { Metadata } from 'next';
 import '@styles/theme/tokens.scss';
 import '@styles/theme/globals.scss';
 
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+
 import MainLayout from '@components/layout/main/MainLayout';
-import AuthGuard from "@components/auth/AuthGuard";
 
 export const metadata: Metadata = {
     title: 'IPCC React',
@@ -17,13 +19,22 @@ export default async function RootLayout({
     children: React.ReactNode;
 }) {
 
+    const cookieHeader = (await cookies())
+        .getAll()
+        .map(c => `${c.name}=${c.value}`)
+        .join('; ');
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
+        headers: { Cookie: cookieHeader },
+        cache: 'no-store',
+    });
+
+    if (!res.ok) redirect('/login');
+
     return (
         <html lang="ko">
         <body>
-        {/*  AuthGuard로 토큰이 있는지 검사  */}
-        <AuthGuard>
-            <MainLayout>{children}</MainLayout>
-        </AuthGuard>
+        <MainLayout>{children}</MainLayout>
         </body>
         </html>
     );

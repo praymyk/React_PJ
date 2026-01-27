@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, {AxiosInstance, InternalAxiosRequestConfig} from 'axios';
 
 // 1. Axios 인스턴스 생성
 const api = axios.create({
@@ -10,18 +10,44 @@ const api = axios.create({
     timeout: 10000, // 10초 대기 후 응답 없으면 에러 처리
 });
 
-// 2. 요청 인터셉터 > 토큰 헤더 탑제
-api.interceptors.request.use((config) => {
-    if (typeof window === 'undefined') return config;
+// 로깅 on/off ( TODO : 운영에선 0 필수 )
+const HTTP_LOG = process.env.NEXT_PUBLIC_HTTP_LOG === '1';
 
-    // 1. 로컬 스토리지에서 토큰 꺼내기
-    const token = localStorage.getItem('accessToken');
+function fullUrl(config: InternalAxiosRequestConfig) {
+    const base = config.baseURL ?? '';
+    const url = config.url ?? '';
+    return `${base}${url}`;
+}
 
-    // 2. 토큰이 '존재할 때만' 헤더에 추가
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+function safeParams(params: any) {
+    try {
+        if (!params) return undefined;
+        if (typeof params === 'string') return params;
+        if (params instanceof URLSearchParams) return params.toString();
+        return params;
+    } catch {
+        return '[unserializable params]';
     }
-    // 3. 토큰이 없으면(로그인 시도 중이면) 그냥 원본 config 그대로 리턴 -> 헤더 없이 날아감
+}
+
+// 2. 요청 인터셉터 ( 로깅 용도 )
+api.interceptors.request.use((config) => {
+    if (!HTTP_LOG) return config;
+
+    // 소요시간 측정용
+    (config as any).meta = { startAt: Date.now() };
+
+    const isServer = typeof window === 'undefined';
+    const url = fullUrl(config);
+
+    console.log('[HTTP REQ]', {
+        env: isServer ? 'SSR' : 'CSR',
+        method: (config.method ?? 'GET').toUpperCase(),
+        url,
+        params: safeParams(config.params),
+        data: config.data,
+    });
+
     return config;
 });
 
@@ -38,5 +64,17 @@ api.interceptors.response.use(
         return Promise.reject(error);
     }
 );
+
+// SSR(서버)에서 쓸 인스턴스 팩토리
+export function createServerApi(cookieHeader?: string): AxiosInstance {
+    return axios.create({
+        baseURL: process.env.NEXT_PUBLIC_API_URL,
+        headers: {
+            'Content-Type': 'application/json',
+            ...(cookieHeader ? { Cookie: cookieHeader } : {}),
+        },
+        timeout: 10000,
+    });
+}
 
 export default api;

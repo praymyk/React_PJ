@@ -46,6 +46,8 @@ export default function DefaultContent({
     const handleSearch = (values: Record<string, string>) => {
         const sp = new URLSearchParams(searchParams.toString());
 
+        console.log(sp);
+
         Object.entries(values).forEach(([key, val]) => {
             const v = (val ?? '').trim();
             if (v) {

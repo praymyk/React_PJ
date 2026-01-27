@@ -1,7 +1,6 @@
-import { getCustomersPaged } from '@lib/db/reactpj/customers';
-import type { CustomerSortKey, CustomerSearchParams, CustomerRow} from '@/types/customer';
-
-export type Row = CustomerRow;
+import { cookies } from 'next/headers';
+import { getCustomersPaged } from '@/api/customers';
+import type { CustomerRow } from '@/types/customer';
 
 type RawSearchParams = {
     page?: string;
@@ -12,6 +11,14 @@ type RawSearchParams = {
     sortDir?: string;
 };
 
+async function buildCookieHeader() {
+    const store = await cookies();
+    return store
+        .getAll()
+        .map(({ name, value }) => `${name}=${value}`)
+        .join('; ');
+}
+
 export async function getDefaultPageData(raw: RawSearchParams) {
     const page = Number(raw.page ?? '1') || 1;
     const pageSize = Number(raw.pageSize ?? '10') || 10;
@@ -20,7 +27,9 @@ export async function getDefaultPageData(raw: RawSearchParams) {
     const rawSortBy = raw.sortBy?.trim();
     const rawSortDir = raw.sortDir?.trim();
 
-    const filters: CustomerSearchParams = {
+    const params = {
+        page,
+        pageSize,
         keyword: raw.keyword?.trim() || undefined,
         status:
             rawStatus === 'active' || rawStatus === 'inactive'
@@ -32,7 +41,7 @@ export async function getDefaultPageData(raw: RawSearchParams) {
             rawSortBy === 'email' ||
             rawSortBy === 'status' ||
             rawSortBy === 'created_at'
-                ? (rawSortBy as CustomerSortKey)
+                ? (rawSortBy as any)
                 : undefined,
         sortDir:
             rawSortDir === 'asc' || rawSortDir === 'desc'
@@ -40,9 +49,9 @@ export async function getDefaultPageData(raw: RawSearchParams) {
                 : undefined,
     };
 
-    return getCustomersPaged({
-        page,
-        pageSize,
-        ...filters,
-    });
+    // SSR 환경 >  쿠키 API로 포워딩
+    const cookieHeader = await buildCookieHeader();
+    console.log('[SSR cookieHeader]', cookieHeader); // <-- 이거
+
+    return getCustomersPaged<CustomerRow>(params, { cookie: cookieHeader });
 }
