@@ -20,6 +20,8 @@ export default async function Page({ searchParams }: PageProps) {
     // 2) DB 조회 (SSR)
     const { rows, total, page, pageSize } = await getDefaultPageData(resolved);
 
+    console.log(await getDefaultPageData(resolved));
+
     // 3) 클라 컴포넌트에 "조회 결과"를 props로 전달
     return (
         <DefaultContent

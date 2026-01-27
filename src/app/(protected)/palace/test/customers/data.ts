@@ -1,4 +1,5 @@
-import { cookies } from 'next/headers';
+import { buildCookieHeader } from '@/utils/ssrCookie';
+import { getCompanyIdSSR } from '@/api/auth';
 import { getCustomersPaged } from '@/api/customers';
 import type { CustomerRow } from '@/types/customer';
 
@@ -11,15 +12,10 @@ type RawSearchParams = {
     sortDir?: string;
 };
 
-async function buildCookieHeader() {
-    const store = await cookies();
-    return store
-        .getAll()
-        .map(({ name, value }) => `${name}=${value}`)
-        .join('; ');
-}
-
 export async function getDefaultPageData(raw: RawSearchParams) {
+    const cookieHeader = await buildCookieHeader();
+    const companyId = await getCompanyIdSSR(cookieHeader);
+
     const page = Number(raw.page ?? '1') || 1;
     const pageSize = Number(raw.pageSize ?? '10') || 10;
 
@@ -28,6 +24,7 @@ export async function getDefaultPageData(raw: RawSearchParams) {
     const rawSortDir = raw.sortDir?.trim();
 
     const params = {
+        companyId,
         page,
         pageSize,
         keyword: raw.keyword?.trim() || undefined,
@@ -49,9 +46,8 @@ export async function getDefaultPageData(raw: RawSearchParams) {
                 : undefined,
     };
 
-    // SSR 환경 >  쿠키 API로 포워딩
-    const cookieHeader = await buildCookieHeader();
-    console.log('[SSR cookieHeader]', cookieHeader); // <-- 이거
-
-    return getCustomersPaged<CustomerRow>(params, { cookie: cookieHeader });
+    return getCustomersPaged<CustomerRow>(
+        { ...params, companyId },
+        { cookie: cookieHeader }
+    );
 }

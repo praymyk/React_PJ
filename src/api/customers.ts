@@ -1,6 +1,7 @@
 import api, { createServerApi } from '@utils/axios';
 
 export type CustomersPagedParams = {
+    companyId: number;
     page: number;
     pageSize: number;
     keyword?: string;
@@ -30,8 +31,6 @@ export async function getCustomersPaged<Row>(
     const res = await client.get<CustomersPagedResponse<Row>>('/api/customers', {
         params,
     });
-
-
 
     return res.data;
 }

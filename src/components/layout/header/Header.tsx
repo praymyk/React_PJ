@@ -63,14 +63,11 @@ export default function Header() {
     };
 
     const handleLogout = () => {
-        // 1. 토큰 삭제
-        localStorage.removeItem('accessToken');
-
-        // 2. 개인 설정 삭제 (다크모드)
+        // 1. 개인 설정 삭제 (다크모드)
         localStorage.removeItem('theme');
         document.documentElement.classList.remove('dark');
 
-        // 3. 로그인 페이지로 이동
+        // 2. 로그인 페이지로 이동
         router.replace('/login');
     };
 

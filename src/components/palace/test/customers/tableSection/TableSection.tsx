@@ -5,15 +5,15 @@ import {
     Table,
     type Column,
 } from '@components/common/TableForm/Table';
-import type { Row } from '@/app/(protected)/palace/test/customers/data';
+import type { CustomerRow } from '@/types/customer';
 
 type Mode = 'list' | 'detail';
 
 type Props = {
-    rows: Row[];
+    rows: CustomerRow[];
     mode?: Mode;
     selectedIndex?: number | null;
-    columns: Column<Row>[];
+    columns: Column<CustomerRow>[];
 
     currentPage?: number;
     pageSize?: number;
@@ -32,7 +32,7 @@ export default function TableSection({
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
-    const handleRowClick = (row: Row) => {
+    const handleRowClick = (row: CustomerRow) => {
         const sp = new URLSearchParams(searchParams.toString());
 
         // page / pageSize 유지
@@ -69,7 +69,7 @@ export default function TableSection({
         }
     };
 
-    const handleHeaderClick = (column: Column<Row>, _columnIndex: number) => {
+    const handleHeaderClick = (column: Column<CustomerRow>, _columnIndex: number) => {
         if (!column.sortable || !column.sortKey) return;
 
         const sp = new URLSearchParams(searchParams.toString());
@@ -99,7 +99,7 @@ export default function TableSection({
         sortByParam ? (sortDirParam === 'desc' ? 'desc' : 'asc') : null;
 
     return (
-        <Table<Row>
+        <Table<CustomerRow>
             rows={rows}
             columns={columns}
             getRowKey={(row) => row.id}
