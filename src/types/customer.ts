@@ -32,3 +32,21 @@ export type CustomerSearchParams = {
     sortBy?: CustomerSortKey;
     sortDir?: SortDirection;
 };
+
+/** 고객 정보 리스트 검색&정렬&페이징용 type */
+export type CustomersPagedParams = {
+    companyId: number;
+    page: number;
+    pageSize: number;
+    keyword?: string;
+    status?: 'active' | 'inactive';
+    sortBy?: 'id' | 'name' | 'email' | 'status' | 'created_at';
+    sortDir?: 'asc' | 'desc';
+};
+
+export type CustomersPagedResponse<Row> = {
+    rows: Row[];
+    total: number;
+    page: number;
+    pageSize: number;
+};

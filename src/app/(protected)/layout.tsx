@@ -6,6 +6,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import MainLayout from '@components/layout/main/MainLayout';
+import { getMeSSR } from '@/api/auth'
 
 export const metadata: Metadata = {
     title: 'IPCC React',
@@ -13,26 +14,23 @@ export const metadata: Metadata = {
 };
 
 
-export default async function RootLayout({
-                                             children,
-                                         }: {
-    children: React.ReactNode;
-}) {
-
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
     const cookieHeader = (await cookies())
         .getAll()
         .map(c => `${c.name}=${c.value}`)
         .join('; ');
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
-        headers: { Cookie: cookieHeader },
-        cache: 'no-store',
-    });
+    let me;
+    try {
+        me = await getMeSSR(cookieHeader);
+    } catch {
+        redirect('/login');
+    }
 
-    if (!res.ok) redirect('/login');
+    const isDark = Boolean(me.preferences?.darkMode);
 
     return (
-        <html lang="ko">
+        <html lang="ko" className={isDark ? 'dark' : ''}>
         <body>
         <MainLayout>{children}</MainLayout>
         </body>

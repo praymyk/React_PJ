@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import api from '@utils/axios';
+import { login } from '@/api/auth';
 import { useRouter } from 'next/navigation';
 
 export function useLogin() {
@@ -29,13 +29,7 @@ export function useLogin() {
         setError('');
 
         try {
-
-            const response = await api.post('/api/auth/login', {
-                username,
-                password
-            });
-
-            const data = response.data;
+            const data = await login({ username, password });
 
             // 사용자 설정(다크모드) 처리
             const darkModeFromServer = Boolean(data.preferences?.darkMode);

@@ -1,21 +1,6 @@
 import api, { createServerApi } from '@utils/axios';
-
-export type CustomersPagedParams = {
-    companyId: number;
-    page: number;
-    pageSize: number;
-    keyword?: string;
-    status?: 'active' | 'inactive';
-    sortBy?: 'id' | 'name' | 'email' | 'status' | 'created_at';
-    sortDir?: 'asc' | 'desc';
-};
-
-export type CustomersPagedResponse<Row> = {
-    rows: Row[];
-    total: number;
-    page: number;
-    pageSize: number;
-};
+import type {CustomersPagedParams} from '@/types/customer';
+import type {CustomersPagedResponse} from '@/types/customer';
 
 // 서버에서 호출할 때 쿠키 값 > options 제공
 export async function getCustomersPaged<Row>(
