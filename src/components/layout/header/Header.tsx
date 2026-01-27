@@ -9,10 +9,9 @@ import { FiSun, FiMoon } from 'react-icons/fi';
 export default function Header() {
     const router = useRouter();
 
-    // 브라우저에서 계정 다크 모드 상태를 못 읽은 초기
+    // 브라우저에서 계정 다크 모드 상태를 못 읽은 상태 초기화
     const [darkMode, setDarkMode] = useState<boolean | null>(null);
 
-    // 1) 서버 > <html class="dark"> 기준
     useEffect(() => {
         if (typeof document === 'undefined') return;
 
@@ -62,13 +61,24 @@ export default function Header() {
         }
     };
 
-    const handleLogout = () => {
-        // 1. 개인 설정 삭제 (다크모드)
-        localStorage.removeItem('theme');
-        document.documentElement.classList.remove('dark');
+    const handleLogout = async () => {
+        try {
+            await api.post('/api/auth/logout');
+        } catch (e) {
+            console.warn('[Header] logout request failed', e);
+        } finally {
+            // 개인 설정 삭제 (다크모드)
+            try {
+                localStorage.removeItem('theme');
+            } catch (_) {}
+            if (typeof document !== 'undefined') {
+                document.documentElement.classList.remove('dark');
+            }
 
-        // 2. 로그인 페이지로 이동
-        router.replace('/login');
+            // 2. 로그인 페이지로 이동 + SSR 레이아웃 재검증 트리거
+            router.replace('/login');
+            router.refresh();
+        }
     };
 
     // 3) 다크 모드 렌더:서버/클라이언트 모두 동일한 마크업을 내보내도록
