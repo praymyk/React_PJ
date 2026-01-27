@@ -1,4 +1,4 @@
-import axios, {AxiosInstance, InternalAxiosRequestConfig} from 'axios';
+import axios, {AxiosInstance} from 'axios';
 
 // 1. Axios 인스턴스 생성
 const api = axios.create({
@@ -10,44 +10,9 @@ const api = axios.create({
     timeout: 10000, // 10초 대기 후 응답 없으면 에러 처리
 });
 
-// 로깅 on/off ( TODO : 운영에선 0 필수 )
-const HTTP_LOG = process.env.NEXT_PUBLIC_HTTP_LOG === '1';
-
-function fullUrl(config: InternalAxiosRequestConfig) {
-    const base = config.baseURL ?? '';
-    const url = config.url ?? '';
-    return `${base}${url}`;
-}
-
-function safeParams(params: any) {
-    try {
-        if (!params) return undefined;
-        if (typeof params === 'string') return params;
-        if (params instanceof URLSearchParams) return params.toString();
-        return params;
-    } catch {
-        return '[unserializable params]';
-    }
-}
-
-// 2. 요청 인터셉터 ( 로깅 용도 )
+// 2. 요청 인터셉터  ( TODO: 로깅 용도로 활용 가능 )
 api.interceptors.request.use((config) => {
-    if (!HTTP_LOG) return config;
-
-    // 소요시간 측정용
-    (config as any).meta = { startAt: Date.now() };
-
-    const isServer = typeof window === 'undefined';
-    const url = fullUrl(config);
-
-    console.log('[HTTP REQ]', {
-        env: isServer ? 'SSR' : 'CSR',
-        method: (config.method ?? 'GET').toUpperCase(),
-        url,
-        params: safeParams(config.params),
-        data: config.data,
-    });
-
+    if (typeof window === 'undefined') return config;
     return config;
 });
 
