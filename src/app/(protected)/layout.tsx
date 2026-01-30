@@ -15,19 +15,39 @@ export const metadata: Metadata = {
 
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+    // 1. [임시 주석] 쿠키 파싱 부분 주석 처리 (에러 방지)
+    /*
     const cookieHeader = (await cookies())
         .getAll()
         .map(c => `${c.name}=${c.value}`)
         .join('; ');
+    */
 
     let me;
+
     try {
-        me = await getMeSSR(cookieHeader);
+        // 2. [임시 주석] 실제 서버 통신 막기
+        // me = await getMeSSR(cookieHeader);
+
+        // 3. [임시 추가] 강제로 로그인된 척 가짜 데이터 넣기
+        // (preferences.darkMode를 읽어야 하므로 최소한의 구조는 맞춰줍니다)
+        me = {
+            id: 'temp-user',
+            username: '개발용임시계정',
+            preferences: {
+                darkMode: true // 테스트하고 싶은 테마(true: 다크, false: 라이트)로 변경 가능
+            }
+        };
+
     } catch {
-        redirect('/login');
+        // 4. [임시 주석] 로그인 실패 시 리다이렉트 막기
+        // redirect('/login');
+
+        // 혹시 모를 에러 대비
+        me = { preferences: { darkMode: false } };
     }
 
-    const isDark = Boolean(me.preferences?.darkMode);
+    const isDark = Boolean(me?.preferences?.darkMode);
 
     return (
         <html lang="ko" className={isDark ? 'dark' : ''}>
