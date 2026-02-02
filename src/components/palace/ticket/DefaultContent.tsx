@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, Suspense } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import styles from '@components/palace/ticket/DefaultContent.module.scss';
@@ -40,7 +40,7 @@ const DEFAULT_SEARCH_VALUES: Record<string, string> = {
 // ======================================================
 const EVENTS_PAGE_SIZE = 3;
 
-export default function DefaultContent() {
+function DefaultContentInner() {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -321,5 +321,13 @@ export default function DefaultContent() {
                 onPageChange={setEventsPage}
             />
         </div>
+    );
+}
+
+export default function DefaultContent() {
+    return (
+        <Suspense fallback={<div>Loading tickets...</div>}>
+            <DefaultContentInner />
+        </Suspense>
     );
 }

@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useState, useCallback } from 'react';
+// 1. Suspense 추가 (react에서 import)
+import { useEffect, useMemo, useState, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import styles from '@components/palace/test/ai-case-notes/DefaultContent.module.scss';
@@ -32,7 +33,9 @@ const KIND_LABEL: Record<TemplateKind, string> = {
     sms_reply: '문자 답변',
 };
 
-export default function DefaultContent() {
+// 2. 기존 컴포넌트 이름 변경: DefaultContent -> DefaultContentInner
+// (export default 제거)
+function DefaultContentInner() {
     const companyId = 1;
     const sp = useSearchParams();
 
@@ -363,5 +366,13 @@ export default function DefaultContent() {
                 )}
             </section>
         </div>
+    );
+}
+
+export default function DefaultContent() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <DefaultContentInner />
+        </Suspense>
     );
 }
