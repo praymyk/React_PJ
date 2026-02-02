@@ -56,6 +56,7 @@ export function useLogin() {
                 ].join('; ');
             }
 
+            router.refresh();
             router.push('/palace');
 
         } catch (err: any) {
