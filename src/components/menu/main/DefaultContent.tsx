@@ -251,11 +251,26 @@ export default function DefaultContent({ items, offsetTop = 0 }: MainMenuProps) 
                             const isRootPalace = path === '/palace';
 
                             const isActive = isRootPalace
-                                ? pathname === '/palace' // 정확히 /palace 일 때만 활성
+                                ? pathname === '/palace'
                                 : pathname === path || pathname.startsWith(path + '/');
 
                             const hasSub = hasSubmenu(path);
                             const isLast = index === items.length - 1;
+
+                            // 공통으로 들어갈 내부 콘텐츠 (아이콘 + 라벨)
+                            const MenuContent = (
+                                <>
+                                    <Icon className={styles.menuIcon} />
+                                    <span className={styles.menuLabel}>
+                {label}
+            </span>
+                                </>
+                            );
+
+                            // 공통 클래스 이름
+                            const itemClass = isActive
+                                ? `${styles.menuItem} ${styles['menuItem--active']}`
+                                : styles.menuItem;
 
                             return (
                                 <li
@@ -266,30 +281,26 @@ export default function DefaultContent({ items, offsetTop = 0 }: MainMenuProps) 
                                         setIsLastItemHovered(isLast);
                                     }}
                                 >
-                                    <Link
-                                        href={path}
-                                        className={
-                                            isActive
-                                                ? `${styles.menuItem} ${styles['menuItem--active']}`
-                                                : styles.menuItem
-                                        }
-                                        onClick={e => {
-                                            // /palace 는 라우팅 O
-                                            if (isRootPalace) {
-                                                return;
-                                            }
-                                            // 서브메뉴 있는 나머지 메인 메뉴는 라우팅 막기
-                                            if (hasSub) {
-                                                e.preventDefault();
-                                            }
-                                            // 서브메뉴 없는 메뉴라면 그대로 라우팅 (확장용)
-                                        }}
-                                    >
-                                        <Icon className={styles.menuIcon} />
-                                        <span className={styles.menuLabel}>
-                                            {label}
-                                        </span>
-                                    </Link>
+                                    {/* [핵심 수정 부분]
+               서브메뉴가 있으면(hasSub): 단순 div로 렌더링 (프리페칭 방지)
+               서브메뉴가 없으면(!hasSub): Link로 렌더링 (페이지 이동)
+            */}
+                                    {hasSub ? (
+                                        <div className={itemClass} style={{ cursor: 'default' }}>
+                                            {MenuContent}
+                                        </div>
+                                    ) : (
+                                        <Link
+                                            href={path}
+                                            className={itemClass}
+                                            // Link인 경우에만 클릭 이벤트 처리 (ex: 대시보드)
+                                            onClick={(e) => {
+                                                // 필요한 경우 추가 로직
+                                            }}
+                                        >
+                                            {MenuContent}
+                                        </Link>
+                                    )}
                                 </li>
                             );
                         })}
