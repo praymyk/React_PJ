@@ -2,6 +2,7 @@
 
 import styles from './DetailSideItem.module.scss';
 import { useEffect, useState } from 'react';
+import api from '@utils/axios'
 
 import type { CustomerRow } from '@/types/customer';
 import type { CustomerTicketRow } from '@/types/ticket';
@@ -28,14 +29,10 @@ export default function DetailSideItemA({ row }: Props) {
             setError(null);
 
             try {
-                const res = await fetch(
-                    `/api/common/customers/${encodeURIComponent(row.id)}/tickets`,
+                const { data } = await api.get<CustomerTicketRow[]>(
+                    `/api/common/customers/${encodeURIComponent(row.id)}/tickets`
                 );
-                if (!res.ok) {
-                    throw new Error(`HTTP ${res.status}`);
-                }
 
-                const data: CustomerTicketRow[] = await res.json();
                 if (!cancelled) {
                     setHistoryItems(data);
                 }

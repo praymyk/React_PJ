@@ -19,26 +19,34 @@ export default function DefaultContent() {
     useEffect(() => {
         let cancelled = false;
 
-        (async () => {
+        const fetchProfile = async () => {
+            setLoading(true);
+            setError(null);
+
             try {
-                setLoading(true);
-                setError(null);
+                const { data } = await api.get<Profile>('/api/common/users/me');
 
-                const res = await api.get<Profile>('/api/common/users/me');
-
-                if (!cancelled) setProfile(res.data);
+                if (!cancelled) {
+                    setProfile(data);
+                }
             } catch (e) {
-                console.error('[Profile] /api/common/users/me error', e);
-                setError('프로필 정보를 불러오지 못했습니다.');
-                setProfile(null);
+                console.error('[Profile] fetch error', e);
+                if (!cancelled) {
+                    setError('프로필 정보를 불러오지 못했습니다.');
+                    setProfile(null);
+                }
             } finally {
-                if (!cancelled) setLoading(false);
+                if (!cancelled) {
+                    setLoading(false);
+                }
             }
+        };
 
-            return () => {
-                cancelled = true;
-            };
-        })();
+        fetchProfile();
+
+        return () => {
+            cancelled = true;
+        };
     }, []);
 
     if (loading) {

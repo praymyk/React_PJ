@@ -281,10 +281,6 @@ export default function DefaultContent({ items, offsetTop = 0 }: MainMenuProps) 
                                         setIsLastItemHovered(isLast);
                                     }}
                                 >
-                                    {/* [핵심 수정 부분]
-               서브메뉴가 있으면(hasSub): 단순 div로 렌더링 (프리페칭 방지)
-               서브메뉴가 없으면(!hasSub): Link로 렌더링 (페이지 이동)
-            */}
                                     {hasSub ? (
                                         <div className={itemClass} style={{ cursor: 'default' }}>
                                             {MenuContent}
