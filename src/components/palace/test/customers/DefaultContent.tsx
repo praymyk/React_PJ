@@ -18,7 +18,6 @@ type Props = {
     page: number;
     pageSize: number;
 
-    // 검색폼 초기값 유지용 (선택)
     initialKeyword?: string;
     initialStatus?: string;
 };

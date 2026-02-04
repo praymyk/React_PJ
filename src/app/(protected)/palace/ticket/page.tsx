@@ -1,7 +1,6 @@
-import { cookies } from 'next/headers';
 import DefaultContent from '@components/palace/ticket/DefaultContent';
 import { getCompanyIdSSR } from '@/api/auth';
-import {buildCookieHeader} from "@utils/ssrCookie";
+import { buildCookieHeader } from "@utils/ssrCookie";
 
 export default async function Page() {
 

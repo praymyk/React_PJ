@@ -17,7 +17,7 @@ export default async function Page({ searchParams }: PageProps) {
     // 1) URL 쿼리 언래핑
     const resolved = await searchParams;
 
-    // 2) DB 조회 (SSR)
+    // 2) DB 조회 (SSR***)
     const { rows, total, page, pageSize } = await getDefaultPageData(resolved);
 
     console.log(await getDefaultPageData(resolved));

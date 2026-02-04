@@ -1,86 +1,67 @@
-// 이미 있는 내용
+import { buildCookieHeader } from '@/utils/ssrCookie';
+import { getCompanyIdSSR } from '@/api/auth';
+import { createServerApi } from '@utils/axios';
+import {AxiosInstance} from "axios";
+
+import type { CustomerRow, CustomerSearchParams } from '@/types/customer';
+
 import {
-    getCustomersPaged,
-    type CustomerSortKey,
-    type CustomerSearchParams,
-    type CustomerRow,
-    getCustomerById,
-} from '@lib/db/reactpj/customers';
+    fetchCustomerList,
+    parseSearchParams
+} from '../data';
 
-export type Row = CustomerRow;
+// ======================================================
+// 상세 페이지용 데이터 로더 (SSR)
+// ======================================================
 
-export type RawSearchParams = {
-    page?: string;
-    pageSize?: string;
-    keyword?: string;
-    status?: string;
-    sortBy?: string;
-    sortDir?: string;
-};
+export async function getDetailPageData(id: string, raw: CustomerSearchParams) {
+    const cookieHeader = await buildCookieHeader();
+    const companyId = await getCompanyIdSSR(cookieHeader);
 
-// 상세 페이지에서도 panel 같은 거 쓸 수 있으면 여기 같이 넣어도 됨
-export type DetailRawSearchParams = RawSearchParams & {
-    panel?: string;
-};
+    if (!companyId) return null;
 
-export async function getDefaultPageData(raw: RawSearchParams) {
-    const page = Number(raw.page ?? '1') || 1;
-    const pageSize = Number(raw.pageSize ?? '10') || 10;
+    const client = createServerApi(cookieHeader);
 
-    const rawStatus = raw.status?.trim();
-    const rawSortBy = raw.sortBy?.trim();
-    const rawSortDir = raw.sortDir?.trim();
+    const listParams = parseSearchParams(raw, companyId);
 
-    const filters: CustomerSearchParams = {
-        keyword: raw.keyword?.trim() || undefined,
-        status:
-            rawStatus === 'active' || rawStatus === 'inactive'
-                ? (rawStatus as 'active' | 'inactive')
-                : undefined,
-        sortBy:
-            rawSortBy === 'id' ||
-            rawSortBy === 'name' ||
-            rawSortBy === 'email' ||
-            rawSortBy === 'status' ||
-            rawSortBy === 'created_at'
-                ? (rawSortBy as CustomerSortKey)
-                : undefined,
-        sortDir:
-            rawSortDir === 'asc' || rawSortDir === 'desc'
-                ? (rawSortDir as 'asc' | 'desc')
-                : undefined,
-    };
+    try {
+        // 3. [핵심] 병렬 호출 (리스트 + 상세정보 동시 요청)
+        const [listResponse, detailData] = await Promise.all([
+            fetchCustomerList(client, listParams),
+            fetchCustomerDetail(client, id)
+        ]);
 
-    return getCustomersPaged({
-        page,
-        pageSize,
-        ...filters,
-    });
+        // 상세 데이터가 없으면 null 반환 (404 처리용)
+        if (!detailData) return null;
+
+        return {
+            customer: detailData,           // 상세 정보
+            customerList: listResponse.rows,// 사이드바 목록용 리스트
+
+            // 페이징 유지를 위한 메타 정보
+            page: listResponse.page,
+            pageSize: listResponse.pageSize,
+            total: listResponse.total,
+        };
+
+    } catch (error) {
+        console.error(`[SSR] 상세 페이지 로딩 에러 (id=${id}):`, error);
+        return null;
+    }
 }
 
-// 상세 페이지용 데이터 로더 ( 정렬 )
-export async function getDetailPageData(
-    id: string,
-    raw: DetailRawSearchParams,
-) {
-    // 1) 리스트 데이터 (정렬/검색/페이지네이션 포함)
-    const list = await getDefaultPageData(raw);
-
-    // 2) 선택된 고객 찾기 (현재 페이지 rows에서 먼저 찾고, 없으면 DB에서 직접 조회)
-    let customer = list.rows.find((c) => c.id === Number(id)) ?? null;
-
-    if (!customer) {
-        customer = await getCustomerById(id);
-        if (!customer) {
-            return null;
-        }
+// ======================================================
+// 상세 조회 API 호출 (Private)
+// =================================
+async function fetchCustomerDetail(
+    client: AxiosInstance,
+    id: string
+): Promise<CustomerRow | null> {
+    try {
+        const { data } = await client.get<CustomerRow>(`/api/customers/${id}`);
+        return data;
+    } catch (error) {
+        // 404나 권한 없음 등 에러 시 null 반환
+        return null;
     }
-
-    return {
-        customer,
-        customerList: list.rows,
-        page: list.page,
-        pageSize: list.pageSize,
-        total: list.total,
-    };
 }

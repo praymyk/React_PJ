@@ -17,6 +17,7 @@ type Props = {
 
     currentPage?: number;
     pageSize?: number;
+
 };
 
 export default function TableSection({
@@ -35,7 +36,6 @@ export default function TableSection({
     const handleRowClick = (row: CustomerRow) => {
         const sp = new URLSearchParams(searchParams.toString());
 
-        // page / pageSize 유지
         if (currentPage && currentPage > 1) {
             sp.set('page', String(currentPage));
         } else {
@@ -49,7 +49,6 @@ export default function TableSection({
 
 
         if (mode === 'list') {
-            // 상세페이지 이동
             const query = sp.toString();
             const href = query
                 ? `/palace/test/customers/${row.id}?${query}`
@@ -57,7 +56,6 @@ export default function TableSection({
 
             router.push(href);
         } else {
-            // 상세페이지 안 > 검색 조건 유지
             const query = sp.toString();
 
             const basePath = pathname.replace(/\/[^/]+$/, '');
@@ -105,7 +103,7 @@ export default function TableSection({
             getRowKey={(row) => row.id}
             onRowClick={handleRowClick}
             onHeaderClick={handleHeaderClick}
-            currentSortKey={currentSortKey}      // 예: 'id' | 'name' | 'email'
+            currentSortKey={currentSortKey}      //  'id' | 'name' | 'email'
             currentSortDir={currentSortDir}      // 'asc' | 'desc' | null
             initialSelectedIndex={selectedIndex}
         />

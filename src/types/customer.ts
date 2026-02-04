@@ -1,52 +1,28 @@
-import type { RowDataPacket } from "mysql2/promise";
-
-export type CustomerRow = RowDataPacket & {
+export type CustomerRow = {
     id: number;
     name: string;
     email: string;
     status: 'active' | 'inactive';
-    created_at: Date;
+    createdAt: string;
 };
 
-type CreateCustomerInput = {
-    name: string;
-    email: string;
-    status: 'active' | 'inactive';
-};
-
-/** 페이징 결과 타입 */
-export type PagedResult<T> = {
-    rows: T[];
-    total: number;
-    page: number;
-    pageSize: number;
-};
-
-/** 검색 조건 **/
-export type CustomerSortKey = 'id' | 'name' | 'email' | 'status' | 'created_at';
-export type SortDirection = 'asc' | 'desc';
-
+// 검색 파라미터 타입
 export type CustomerSearchParams = {
+    page?: string;
+    pageSize?: string;
     keyword?: string;
-    status?: 'active' | 'inactive';
-    sortBy?: CustomerSortKey;
-    sortDir?: SortDirection;
-};
-
-/** 고객 정보 리스트 검색&정렬&페이징용 type */
-export type CustomersPagedParams = {
-    companyId: number;
-    page: number;
-    pageSize: number;
-    keyword?: string;
-    status?: 'active' | 'inactive';
-    sortBy?: 'id' | 'name' | 'email' | 'status' | 'created_at';
+    status?: string;
+    sortBy?: string;
     sortDir?: 'asc' | 'desc';
 };
 
-export type CustomersPagedResponse<Row> = {
-    rows: Row[];
-    total: number;
-    page: number;
-    pageSize: number;
+export const CUSTOMER_STATUS_CONFIG = {
+    active: {
+        label: '활성',
+        color: 'var(--color-status-active)',
+    },
+    inactive: {
+        label: '비활성',
+        color: 'var(--color-status-inactive)',
+    },
 };

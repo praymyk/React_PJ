@@ -1,20 +1,19 @@
 'use client';
 
-import {useMemo, useState} from 'react';
+import { useMemo, useState } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
-import styles from '@components/palace/test/customers/DefaultContent.module.scss';
+import styles from './DefaultContent.module.scss';
 
 import DetailSection from '@components/palace/test/customers/detailSection/DetailSection';
 import SearchForm from '@components/common/SearchForm/SearchForm';
 import TableSection from '@components/palace/test/customers/tableSection/TableSection';
+import HeaderSection from "@components/common/SubContentForm/headerSection/HeaderSection";
+import CustomerCreateModal from "@components/palace/test/customers/modal/CustomerCreateModal";
 
 import { searchRegistry } from '@/app/(protected)/palace/test/customers/searchFields';
 import { tableColumns } from '@/app/(protected)/palace/test/customers/tableColumns';
-
 import type { CustomerRow } from '@/types/customer';
-import HeaderSection from "@components/common/SubContentForm/headerSection/HeaderSection";
-import CustomerCreateModal from "@components/palace/test/customers/modal/CustomerCreateModal";
 
 type Props = {
     customer: CustomerRow;
@@ -25,20 +24,17 @@ type Props = {
 };
 
 export default function DetailContent({
-    customer,
-    customerList,
-    page,
-    pageSize,
-    total,
-}: Props) {
+                                          customer,
+                                          customerList,
+                                          page,
+                                          pageSize,
+                                          total,
+                                      }: Props) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
-    // 선택된 유저 id > props
     const selectedId = customer.id;
-
-    // 리스트에서 하이라이트용 인덱스
     const selectedIndex = customerList.findIndex((u) => u.id === selectedId);
     const safeSelectedIndex = selectedIndex >= 0 ? selectedIndex : null;
 
@@ -53,8 +49,7 @@ export default function DetailContent({
     );
 
     const currentPage = useMemo(() => {
-        const fromUrl = Number(searchParams.get('page') ?? page) || page || 1;
-        return fromUrl;
+        return Number(searchParams.get('page') ?? page) || 1;
     }, [searchParams, page]);
 
     const totalPages = useMemo(
@@ -64,55 +59,34 @@ export default function DetailContent({
 
     const goToPage = (nextPage: number) => {
         const safePage = Math.min(Math.max(nextPage, 1), totalPages);
-
         const sp = new URLSearchParams(searchParams.toString());
-        if (safePage === 1) {
-            sp.delete('page');
-        } else {
-            sp.set('page', String(safePage));
-        }
+
+        sp.set('page', String(safePage));
         sp.set('pageSize', String(pageSize));
 
         router.push(`${pathname}?${sp.toString()}`, { scroll: false });
     };
 
-    const handlePrevPage = () => {
-        goToPage(currentPage - 1);
-    };
-
-    const handleNextPage = () => {
-        goToPage(currentPage + 1);
-    };
-
     const handleSearch = (values: Record<string, string>) => {
-        console.log('검색 값:', values);
-        // TODO: 검색값으로 API 호출
         const sp = new URLSearchParams(searchParams.toString());
 
         Object.entries(values).forEach(([key, val]) => {
             const v = (val ?? '').trim();
-            if (v) {
-                sp.set(key, v);
-            } else {
-                sp.delete(key);
-            }
+            if (v) sp.set(key, v);
+            else sp.delete(key);
         });
 
-        // 검색하면 항상 1페이지로 초기화
         sp.delete('page');
-
         router.push(`${pathname}?${sp.toString()}`, { scroll: false });
     };
 
-    /** 고객 등록 **/
     const [isCreateOpen, setIsCreateOpen] = useState(false);
 
     return (
         <div className={styles.root}>
-            {/* 고객정보 페이지 헤더 [목록 / 상세+목록 페이지 구분], 고객 등록 버튼 */}
             <HeaderSection
-                title="고객 목록 / 상세 보기"
-                description="고객 정보를 조회·등록할 수 있습니다."
+                title="고객 상세 정보"
+                description={`${customer.name} (${customer.email}) 고객님의 상세 정보입니다.`}
                 onClickCreate={() => setIsCreateOpen(true)}
             />
 
@@ -121,17 +95,16 @@ export default function DetailContent({
                 onClose={() => setIsCreateOpen(false)}
             />
 
-            {/* 상단: 선택된 유저 상세 */}
             <DetailSection row={customer} />
 
-            {/* 중간: 검색 폼 */}
+            <div className={styles.divider} style={{ margin: '20px 0' }} />
+
             <SearchForm
                 fields={fields}
                 onSearch={handleSearch}
                 initialValues={initialSearchValues}
             />
 
-            {/* 하단: 유저 리스트 테이블 (선택된 행 하이라이트) */}
             <TableSection
                 rows={customerList}
                 columns={tableColumns}
@@ -144,7 +117,7 @@ export default function DetailContent({
             <div className={styles.paginationBar}>
                 <button
                     type="button"
-                    onClick={handlePrevPage}
+                    onClick={() => goToPage(currentPage - 1)}
                     disabled={currentPage <= 1}
                 >
                     이전
@@ -157,7 +130,7 @@ export default function DetailContent({
 
                 <button
                     type="button"
-                    onClick={handleNextPage}
+                    onClick={() => goToPage(currentPage + 1)}
                     disabled={currentPage >= totalPages}
                 >
                     다음

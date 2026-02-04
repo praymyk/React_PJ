@@ -2,7 +2,7 @@
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import styles from './DetailSection.module.scss';
-import type { CustomerRow } from '@/lib/db/reactpj/customers';
+import { CustomerRow, CUSTOMER_STATUS_CONFIG} from '@/types/customer';
 
 import DetailSideActions, {
     type DetailSideAction,
@@ -56,6 +56,8 @@ export default function DetailSection({ row }: Props) {
         },
     ];
 
+    const config = CUSTOMER_STATUS_CONFIG[row.status];
+
     return (
         <div className={styles.detailSectionRoot}>
             {/* 1) 상단: 기본정보 카드 + 버튼들 */}
@@ -70,7 +72,15 @@ export default function DetailSection({ row }: Props) {
                     </p>
                     <p>
                         <strong>상태:</strong>{' '}
-                        {row.status === 'active' ? '활성' : '비활성'}
+                        <span
+                            style={{
+                                color: config.color, // CSS 변수가 적용됨
+                                fontWeight: 600,
+                                // 만약 뱃지 형태라면 backgroundColor도 설정 필요
+                            }}
+                        >
+                            {config.label}
+                        </span>
                     </p>
                 </div>
 

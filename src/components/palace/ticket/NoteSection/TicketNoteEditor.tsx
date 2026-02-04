@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import RichTextEditor from '@components/common/Editor/RichTextEditor';
+import api from '@utils/axios';
+
 import styles from './TicketNoteEditor.module.scss';
 
 type Props = {
@@ -57,28 +59,19 @@ export default function TicketNoteEditor({ ticketId, value, onChange, onSaved, m
         try {
             setSaving(true);
 
-            const res = await fetch(
-                `/api/common/tickets/${encodeURIComponent(ticketId)}/events`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        content: trimmed,
-                        eventType: '상담사메모',
-                        // TODO: 추후 로그인/세션 연동해서 authorUserId 채우기
-                        authorUserId: null,
-                        meta: meta ?? null,
-                    }),
-                },
-            );
+            await api.post(`/api/common/tickets/${ticketId}/events`, {
+                content: trimmed,
 
-            if (!res.ok) {
-                throw new Error(`HTTP ${res.status}`);
-            }
+                eventType: 'NOTE_AGENT',
 
-            // 성공 시 에디터 비우기
+                // TODO: 로그인된 사용자 ID 연동 필요 (일단 null or 테스트용 ID)
+                authorUserId: 1,
+
+                // meta가 객체라면 문자열로 변환해서 전송 (백엔드가 String으로 받는 경우)
+                // 만약 백엔드 DTO가 Map으로 받는다면 JSON.stringify 제거 가능
+                meta: meta ? JSON.stringify(meta) : null,
+            });
+
             if (onChange) {
                 onChange('');
             } else {

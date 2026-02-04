@@ -41,6 +41,10 @@
   --color-status-connecting: #d97706; /* 연결 중 */
   --color-status-registered: #059669; /* 정상 등록 */
 
+  /* 활성/비활성 상태 */
+  --color-status-active: #16a34a;   /* 선명한 녹색 (Green-600) */
+  --color-status-inactive: #6b7280; /* 차분한 회색 (Gray-500) */
+
   /* 상태 뱃지: Open (Blue) */
   --bg-badge-open: rgba(59, 130, 246, 0.12);
   --text-badge-open: #1d4ed8; /* 짙은 파랑 */
@@ -115,6 +119,10 @@ html.dark {
   /* 상태 표시용 색상 */
   --color-status-connecting: #fbbf24;
   --color-status-registered: #34d399;
+
+  /* 활성/비활성 상태 */
+  --color-status-active: #4ade80;
+  --color-status-inactive: #9ca3af;
 
   /* 상태 뱃지: Open (Blue) - 파스텔 블루 텍스트 */
   --bg-badge-open: rgba(59, 130, 246, 0.25); /* 투명도 약간 올림 */
