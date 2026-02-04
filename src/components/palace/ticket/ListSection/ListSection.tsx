@@ -2,15 +2,15 @@
 
 import common from '@components/palace/ticket/DefaultContent.module.scss';
 import styles from '@components/palace/ticket/ListSection/ListSection.module.scss';
-import type { Row } from '@/app/(protected)/palace/ticket/data';
+import { TICKET_STATUS_LABELS, type TicketApiRow } from '@/app/(protected)/palace/ticket/data';
 import SearchForm from "@components/common/SearchForm/MiniSearchForm";
 import { searchRegistry } from "@/app/(protected)/palace/ticket/searchFields";
 
 type Props = {
-    rows: Row[];
+    rows: TicketApiRow[];
     selectedId: string | null;
     onSelect: (id: string) => void;
-    statusClassOf: (status: Row['status']) => string;
+    statusClassOf: (status: TicketApiRow['status']) => string;
     /** 검색 조건이 바뀔 때 상위(DefaultContent)로 전달 */
     onSearch: (values: Record<string, string>) => void;
     /** 목록 로딩 여부 */
@@ -43,7 +43,7 @@ export default function ListSection({
     initialSearchValues,
 }: Props) {
     const fields = searchRegistry.searchItems;
-
+    
     return (
         <section className={common.listPane}>
             <header className={common.paneHeader}>
@@ -75,7 +75,7 @@ export default function ListSection({
                 ) : (
                     <ul className={styles.ticketList}>
                         {rows.map((row) => {
-                            const isActive = row.id === selectedId;
+                            const isActive = String(row.id) === selectedId;
                             return (
                                 <li
                                     key={row.id}
@@ -84,7 +84,7 @@ export default function ListSection({
                                             ? `${styles.ticketItem} ${styles.ticketItemActive}`
                                             : styles.ticketItem
                                     }
-                                    onClick={() => onSelect(row.id)}
+                                    onClick={() => onSelect(String(row.id))}
                                 >
                                     <div className={styles.ticketItemHeader}>
                                         <span className={styles.ticketId}>{row.id}</span>
@@ -93,14 +93,16 @@ export default function ListSection({
                                                 row.status,
                                             )}`}
                                         >
-                                {row.status}
-                            </span>
+                                            {TICKET_STATUS_LABELS[row.status]}
+                                        </span>
                                     </div>
                                     <div className={styles.ticketTitle}>{row.title}</div>
                                     <div className={styles.ticketMeta}>
-                            <span className={styles.ticketAssignee}>
-                                담당: {row.assignee}
-                            </span>
+                                    <span className={styles.ticketAssignee}>
+                                        {row.assigneeId
+                                            ? `담당자 ${row.assigneeId}`
+                                            : '미배정'}
+                                    </span>
                                     </div>
                                 </li>
                             );

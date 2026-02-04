@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, Suspense } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import api from '@utils/axios';
 
 import styles from '@components/palace/ticket/DefaultContent.module.scss';
 
@@ -11,7 +12,7 @@ import NoteSection from '@components/palace/ticket/NoteSection/NoteSection';
 import InquirySection from '@components/palace/ticket/InquirySection/InquirySection';
 
 import type {
-    Row,
+    TicketApiRow,
     TicketListApiResponse,
     TicketDetailApiResponse,
     TicketEventListApiResponse,
@@ -20,13 +21,13 @@ import type {
 // ======================================================
 // 상태별 뱃지 스타일 매핑
 // ======================================================
-const STATUS_CLASS: Record<Row['status'], string> = {
-    접수: styles.statusOpen,
-    진행중: styles.statusInProgress,
-    종료: styles.statusDone,
-    취소: styles.statusCanceled,
+const STATUS_CLASS: Record<TicketApiRow['status'], string> = {
+    OPEN: styles.statusOpen,
+    IN_PROGRESS: styles.statusInProgress,
+    DONE: styles.statusDone,
+    CANCELED: styles.statusCanceled,
 };
-const statusClassOf = (status: Row['status']) => STATUS_CLASS[status];
+const statusClassOf = (status: TicketApiRow['status']) => STATUS_CLASS[status];
 
 // ======================================================
 // 첫 방문 기본 검색값 (MiniSearchForm 과 동기화 필요)
@@ -40,7 +41,11 @@ const DEFAULT_SEARCH_VALUES: Record<string, string> = {
 // ======================================================
 const EVENTS_PAGE_SIZE = 3;
 
-function DefaultContentInner() {
+type InnerProps = {
+    initialCompanyId: number;
+}
+
+function DefaultContentInner({ initialCompanyId }: InnerProps) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -48,7 +53,7 @@ function DefaultContentInner() {
     // --------------------------------------------------
     // 티켓 목록(리스트) 영역 상태
     // --------------------------------------------------
-    const [rows, setRows] = useState<Row[]>([]);
+    const [rows, setRows] = useState<TicketApiRow[]>([]);
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(20);
     const [total, setTotal] = useState(0);
@@ -67,8 +72,7 @@ function DefaultContentInner() {
     const [selectedId, setSelectedId] = useState<string | null>(null);
 
     //TODO : 티켓 선택 이벤트 처리 예정
-    const selectedTicket =
-        rows.find((row) => row.id === selectedId) ?? null;
+    const selectedTicket = rows.find((row) => String(row.id) === selectedId) ?? null;
 
     // --------------------------------------------------
     // 검색폼 → URL 쿼리 동기화
@@ -93,7 +97,7 @@ function DefaultContentInner() {
 
         // TODO : companyId 는 추후 받는 방식 확정 필요
         if (!sp.get('companyId')) {
-            sp.set('companyId', '1');
+            sp.set('companyId', String(initialCompanyId));
         }
 
         router.push(`${pathname}?${sp.toString()}`, { scroll: false });
@@ -105,6 +109,7 @@ function DefaultContentInner() {
     //    - URL 쿼리 /api/common/tickets 호출
     // --------------------------------------------------
     useEffect(() => {
+
         const abortController = new AbortController();
 
         const fetchTickets = async () => {
@@ -119,57 +124,43 @@ function DefaultContentInner() {
                     sp.set('companyId', '1');
                 }
 
-                // 정렬(at) ! > 기본값으로 채움
                 if (!sp.get('at')) {
                     sp.set('at', DEFAULT_SEARCH_VALUES.at);
                 }
 
-                // page 기본값 처리 (숫자만)
                 const pageParam = Number(sp.get('page') ?? '1') || 1;
                 sp.set('page', String(pageParam));
 
-                // pageSize (all 문자 처리 가능)
-                const pageSizeParam =
-                    sp.get('pageSize') ?? DEFAULT_SEARCH_VALUES.pageSize;
+                const pageSizeParam = sp.get('pageSize') ?? DEFAULT_SEARCH_VALUES.pageSize;
                 sp.set('pageSize', pageSizeParam);
 
-                const res = await fetch(
-                    `/api/common/tickets?${sp.toString()}`,
-                    { signal: abortController.signal },
-                );
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const { data } = await api.get<TicketListApiResponse>('/api/common/tickets', {
+                    params: sp,
+                    signal: abortController.signal,
+                });
 
-                const data: TicketListApiResponse = await res.json();
-
-                const mapped: Row[] = data.rows.map((r) => ({
-                    id: r.id,
-                    title: r.title,
-                    description: r.description,
-                    assignee: r.assignee_id
-                        ? `담당자 ${r.assignee_id}`
-                        : '미배정',
-                    status: r.status,
-                }));
-
-                setRows(mapped);
+                setRows(data.rows);
                 setPage(data.page);
                 setPageSize(data.pageSize);
                 setTotal(data.total);
 
-                // 첫 로딩 시 아무것도 선택되어 있지 않으면 첫 번째 티켓 자동 선택
-                if (!selectedId && mapped.length > 0) {
-                    setSelectedId(mapped[0].id);
+                // 첫 로딩 시 자동 선택
+                if (!selectedId && data.rows.length > 0) {
+                    setSelectedId(String(data.rows[0].id));
                 }
+
             } catch (err: any) {
-                if (err?.name === 'AbortError') return;
-                console.error(
-                    '[DefaultContent] /api/common/tickets error:',
-                    err,
-                );
+                if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') {
+                    return;
+                }
+
+                console.error('[DefaultContent] /api/common/tickets error:', err);
                 setError('티켓 목록을 불러오지 못했습니다.');
                 setRows([]);
             } finally {
-                setLoading(false);
+                if (!abortController.signal.aborted) {
+                    setLoading(false);
+                }
             }
         };
 
@@ -195,7 +186,7 @@ function DefaultContentInner() {
 
         // TODO : companyId 는 추후 받는 방식 확정 필요
         if (!sp.get('companyId')) {
-            sp.set('companyId', '1');
+            sp.set('companyId', String(initialCompanyId));
         }
 
         if (safePage === 1) {
@@ -235,46 +226,52 @@ function DefaultContentInner() {
     }, [selectedId]);
 
     useEffect(() => {
+
         if (!selectedId) {
             setDetail(null);
             setEvents(null);
             return;
         }
 
-        let aborted = false;
+        const abortController = new AbortController();
 
-        (async () => {
+        const fetchDetailAndEvents = async () => {
             try {
                 const [detailRes, eventRes] = await Promise.all([
-                    fetch(`/api/common/tickets/${encodeURIComponent(selectedId)}`),
-                    fetch(
-                        `/api/common/tickets/${encodeURIComponent(
-                            selectedId,
-                        )}/events?page=${eventsPage}&pageSize=${EVENTS_PAGE_SIZE}`,
+                    api.get<TicketDetailApiResponse>(
+                        `/api/common/tickets/${encodeURIComponent(selectedId)}`,
+                        { signal: abortController.signal }
+                    ),
+                    api.get<TicketEventListApiResponse>(
+                        `/api/common/tickets/${encodeURIComponent(selectedId)}/events`,
+                        {
+                            params: {
+                                page: eventsPage,
+                                pageSize: EVENTS_PAGE_SIZE,
+                            },
+                            signal: abortController.signal,
+                        }
                     ),
                 ]);
 
-                if (!detailRes.ok) throw new Error(`detail HTTP ${detailRes.status}`);
-                if (!eventRes.ok) throw new Error(`events HTTP ${eventRes.status}`);
+                setDetail(detailRes.data);
+                setEvents(eventRes.data);
 
-                const detailData: TicketDetailApiResponse = await detailRes.json();
-                const eventData: TicketEventListApiResponse = await eventRes.json();
+            } catch (err: any) {
+                if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') {
+                    return;
+                }
 
-                if (!aborted) {
-                    setDetail(detailData);
-                    setEvents(eventData);
-                }
-            } catch (err) {
-                console.error('[Detail] ticket or events fetch error', err);
-                if (!aborted) {
-                    setDetail(null);
-                    setEvents(null);
-                }
+                console.error('[Detail] fetch error:', err);
+                setDetail(null);
+                setEvents(null);
             }
-        })();
+        };
+
+        fetchDetailAndEvents();
 
         return () => {
-            aborted = true;
+            abortController.abort();
         };
     }, [selectedId, eventsPage, eventReloadKey]);
 
@@ -310,7 +307,7 @@ function DefaultContentInner() {
 
             <InquirySection
                 ticket={detail}
-                events={events?.events ?? []}
+                events={events?.rows ?? []}
                 page={events?.page ?? 1}
                 totalPages={
                     events
@@ -324,10 +321,14 @@ function DefaultContentInner() {
     );
 }
 
-export default function DefaultContent() {
+type Props = {
+    initialCompanyId: number;
+}
+
+export default function DefaultContent({ initialCompanyId }: Props) {
     return (
         <Suspense fallback={<div>Loading tickets...</div>}>
-            <DefaultContentInner />
+            <DefaultContentInner initialCompanyId={initialCompanyId} />
         </Suspense>
     );
 }

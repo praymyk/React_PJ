@@ -23,19 +23,19 @@ export default function InquirySection(
     /* TODO : 티켓 연관 문의 타입별 클래스 부여용 (css) */
     const eventTypeClassOf = (eventType: TicketEventRow['eventType']) => {
         switch (eventType) {
-            case '문의접수':
+            case 'CREATED':
                 return styles['ticketId--received'];
-            case '상담기록':
+            case 'LOG':
                 return styles['ticketId--call'];
-            case '상담사메모':
-            case '고객메모':
+            case 'NOTE_AGENT':
+            case 'NOTE_CUSTOMER':
                 return styles['ticketId--etc'];
-            case '상태변경':
+            case 'STATUS_CHANGED':
                 return styles['ticketId--status'];
-            case '티켓병합':
-            case '티켓분리':
+            case 'MERGED':
+            case 'SPLIT':
                 return styles['ticketId--merge'];
-            case '시스템':
+            case 'SYSTEM':
             default:
                 return styles['ticketId--system'] ?? '';
         }

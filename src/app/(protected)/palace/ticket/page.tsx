@@ -1,7 +1,12 @@
-'use client';
-
+import { cookies } from 'next/headers';
 import DefaultContent from '@components/palace/ticket/DefaultContent';
+import { getCompanyIdSSR } from '@/api/auth';
+import {buildCookieHeader} from "@utils/ssrCookie";
 
-export default function Page() {
-    return <DefaultContent />;
+export default async function Page() {
+
+    const cookieHeader = await buildCookieHeader();
+    const companyId = await getCompanyIdSSR(cookieHeader);
+
+    return <DefaultContent initialCompanyId={companyId} />;
 }

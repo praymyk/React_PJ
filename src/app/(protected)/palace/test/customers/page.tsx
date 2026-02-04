@@ -22,7 +22,7 @@ export default async function Page({ searchParams }: PageProps) {
 
     console.log(await getDefaultPageData(resolved));
 
-    // 3) 클라 컴포넌트에 "조회 결과"를 props로 전달
+    // 3) 클라 컴포넌트에 "조회 결과" props로 전달
     return (
         <DefaultContent
             initialRows={rows}

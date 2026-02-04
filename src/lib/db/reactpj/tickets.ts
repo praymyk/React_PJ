@@ -1,55 +1,20 @@
 import type { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
 import { reactpjPool } from './pool';
 
-/** 고객 티켓 리스트 Row */
-export type CustomerTicketRow = RowDataPacket & {
-    id: number;
-    customer_id: number;
-    submitted_at: Date;
-    title: string;
-    description: string;
-    status: string;
-    created_at: Date;
-};
-
-/**
- * 고객별 티켓 Row
- */
-export async function getCustomerTicket(customerId: number): Promise<CustomerTicketRow[]> {
-    const [rows] = await reactpjPool.query<CustomerTicketRow[]>(
-        `
-            SELECT
-                id,
-                assignee_id,
-                submitted_at,
-                title,
-                description,
-                status,
-                created_at
-            FROM tickets
-            WHERE customer_id = ?
-            ORDER BY submitted_at DESC, id DESC
-        `,
-        [customerId],
-    );
-
-    return rows;
-}
-
 /** 티켓 테이블 행 타입 */
 export type TicketRow = RowDataPacket & {
     id: number;
     title: string;
     description: string;
-    company_id: number;
-    customer_id: number;
-    assignee_id: number | null;
+    companyId: number;
+    customerId: number;
+    assigneeId: number | null;
     status: '접수' | '진행중' | '종료' | '취소';
     channel: '전화' | '채팅' | '이메일' | '기타';
-    submitted_at: Date;
-    closed_at: Date | null;
-    created_at: Date;
-    updated_at: Date;
+    submittedAt: Date;
+    closedAt: Date | null;
+    createdAt: Date;
+    updatedAt: Date;
 };
 
 // ====== 페이징 + 정렬 옵션 타입 ======

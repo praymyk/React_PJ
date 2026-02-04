@@ -93,7 +93,7 @@ export default function DetailSideItemA({ row }: Props) {
                             <li key={item.id} className={styles.historyItem}>
                                 <div className={styles.historyRowTop}>
                                     <span className={styles.historyDate}>
-                                        {new Date(item.submitted_at)
+                                        {new Date(item.submittedAt)
                                             .toLocaleDateString('ko-KR')}
                                     </span>
                                     <span className={styles.historyStatus}>

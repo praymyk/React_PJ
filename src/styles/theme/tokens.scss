@@ -41,6 +41,22 @@
   --color-status-connecting: #d97706; /* 연결 중 */
   --color-status-registered: #059669; /* 정상 등록 */
 
+  /* 상태 뱃지: Open (Blue) */
+  --bg-badge-open: rgba(59, 130, 246, 0.12);
+  --text-badge-open: #1d4ed8; /* 짙은 파랑 */
+
+  /* 상태 뱃지: In Progress (Yellow/Amber) */
+  --bg-badge-progress: rgba(234, 179, 8, 0.18);
+  --text-badge-progress: #92400e; /* 짙은 갈색/주황 */
+
+  /* 상태 뱃지: Done (Green) */
+  --bg-badge-done: rgba(34, 197, 94, 0.18);
+  --text-badge-done: #047857; /* 짙은 초록 */
+
+  /* 상태 뱃지: Canceled (Gray) */
+  --bg-badge-canceled: rgba(148, 163, 184, 0.18);
+  --text-badge-canceled: #374151; /* 짙은 회색 */
+
   /* 버튼/카드 그림자 */
   --shadow-elevated: 0 8px 24px rgba(15, 23, 42, 0.05);
 
@@ -99,6 +115,22 @@ html.dark {
   /* 상태 표시용 색상 */
   --color-status-connecting: #fbbf24;
   --color-status-registered: #34d399;
+
+  /* 상태 뱃지: Open (Blue) - 파스텔 블루 텍스트 */
+  --bg-badge-open: rgba(59, 130, 246, 0.25); /* 투명도 약간 올림 */
+  --text-badge-open: #93c5fd; /* 밝은 하늘색 (Blue-300) */
+
+  /* 상태 뱃지: In Progress (Yellow) - 밝은 노랑 텍스트 */
+  --bg-badge-progress: rgba(234, 179, 8, 0.25);
+  --text-badge-progress: #fde047; /* 밝은 노랑 (Yellow-300) */
+
+  /* 상태 뱃지: Done (Green) - 민트/연두 텍스트 */
+  --bg-badge-done: rgba(34, 197, 94, 0.25);
+  --text-badge-done: #86efac; /* 밝은 녹색 (Green-300) */
+
+  /* 상태 뱃지: Canceled (Gray) - 밝은 회색 텍스트 */
+  --bg-badge-canceled: rgba(148, 163, 184, 0.25);
+  --text-badge-canceled: #cbd5e1; /* 밝은 회색 (Slate-300) */
 
   /* 패널/테두리/그림자 */
   --color-panel-bg: #23262e;

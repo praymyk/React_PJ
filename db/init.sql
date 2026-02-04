@@ -137,11 +137,11 @@ CREATE TABLE IF NOT EXISTS ticket_events (
 -- 티켓 더미 데이터
 INSERT INTO tickets (company_id, customer_id, assignee_id, status, merged_into_ticket_id, title, description, channel, submitted_at, closed_at)
 VALUES
-    (1, 1, NULL, '접수', NULL, '상담 이력 내보내기 오류', '오류발생', '전화', '2025-03-01 10:15:00', NULL),
-    (1, 2, NULL, '진행중', NULL, '내선 사용량 불일치', '통계 다름', '이메일', '2025-03-02 09:30:00', NULL),
-    (1, 3, NULL, '종료', NULL, '화면 깜빡임', '흰색 깜빡임', '채팅', '2025-03-03 14:05:00', '2025-03-04 11:20:00'),
-    (1, 1, NULL, '접수', 2, '필터 미동작', '갱신 안됨', '전화', '2025-03-04 16:40:00', NULL),
-    (1, 2, NULL, '취소', NULL, '중복 문의', '취소 요청', '기타', '2025-03-05 09:10:00', '2025-03-05 09:30:00');
+    (1, 1, NULL, 'OPEN', NULL, '상담 이력 내보내기 오류', '오류발생', 'CALL', '2025-03-01 10:15:00', NULL),
+    (1, 2, NULL, 'IN_PROGRESS', NULL, '내선 사용량 불일치', '통계 다름', 'EMAIL', '2025-03-02 09:30:00', NULL),
+    (1, 3, NULL, 'DONE', NULL, '화면 깜빡임', '흰색 깜빡임', 'CHAT', '2025-03-03 14:05:00', '2025-03-04 11:20:00'),
+    (1, 1, NULL, 'OPEN', 2, '필터 미동작', '갱신 안됨', 'CALL', '2025-03-04 16:40:00', NULL),
+    (1, 2, NULL, 'CANCELED', NULL, '중복 문의', '취소 요청', 'ETC', '2025-03-05 09:10:00', '2025-03-05 09:30:00');
 
 -- 티켓 이벤트 더미 데이터
 INSERT INTO ticket_events (ticket_id, company_id, event_type, channel, author_user_id, customer_id, content, meta)

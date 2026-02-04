@@ -18,8 +18,8 @@ export default function DetailSection({ ticket, statusClassOf }: Props) {
     const [activeTab, setActiveTab] = useState<TabKey>('events');
 
     // 담당자 라벨 (티켓 없을 때도 안전하게)
-    const assigneeLabel = ticket?.assignee_id
-        ? `담당 ${ticket.assignee_id}`
+    const assigneeLabel = ticket?.assigneeId
+        ? `담당 ${ticket.assigneeId}`
         : '미배정';
 
     const hasTicket = !!ticket;

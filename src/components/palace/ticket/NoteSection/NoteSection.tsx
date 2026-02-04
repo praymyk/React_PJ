@@ -20,8 +20,8 @@ export default function NoteSection({ ticket, onEventsReload }: Props) {
     const hasTicket = !!ticket;
 
     // 담당자 라벨
-    const assigneeLabel = ticket?.assignee_id
-        ? `담당 ${ticket.assignee_id}`
+    const assigneeLabel = ticket?.assigneeId
+        ? `담당 ${ticket.assigneeId}`
         : '미배정';
 
     // TicketNoteEditor 전달 (티켓 편집)
