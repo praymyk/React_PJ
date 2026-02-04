@@ -2,7 +2,7 @@
 
 import common from '@components/palace/ticket/DefaultContent.module.scss';
 import styles from '@components/palace/ticket/InquirySection/InquirySection.module.scss';
-import { type TicketDetailApiResponse, TicketEventRow } from '@/app/(protected)/palace/ticket/data';
+import { type TicketDetailApiResponse, TicketEventRow, TICKET_EVENT_LABELS, TICKET_CHANNEL_LABELS } from '@/app/(protected)/palace/ticket/data';
 
 type Props = {
     ticket: TicketDetailApiResponse | null;
@@ -81,13 +81,13 @@ export default function InquirySection(
                                             ev.eventType,
                                         )}`}
                                     >
-                                        {ev.eventType}
+                                        {TICKET_EVENT_LABELS[ev.eventType]}
                                     </span>
 
                                     <span className={styles.ticketMeta}>
                                         {ev.createdAt}
                                         {ev.channel && (
-                                            <> · 채널: {ev.channel}</>
+                                            <> · 채널: {TICKET_CHANNEL_LABELS[ev.channel]}</>
                                         )}
                                     </span>
                                 </div>

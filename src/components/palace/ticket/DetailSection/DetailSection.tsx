@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import common from '@components/palace/ticket/DefaultContent.module.scss';
 import styles from '@components/palace/ticket/DetailSection/Detail.module.scss';
-import type { TicketDetailApiResponse } from '@/app/(protected)/palace/ticket/data';
+import {TICKET_STATUS_LABELS, TicketDetailApiResponse} from '@/app/(protected)/palace/ticket/data';
 
 type Props = {
     ticket: TicketDetailApiResponse | null;
@@ -39,7 +39,7 @@ export default function DetailSection({ ticket, statusClassOf }: Props) {
                                 <span
                                     className={`${common.statusBadge} ${statusClassOf(ticket!.status)}`}
                                 >
-                                    {ticket!.status}
+                                    {TICKET_STATUS_LABELS[ticket!.status]}
                                 </span>
                             )}
                         </div>
