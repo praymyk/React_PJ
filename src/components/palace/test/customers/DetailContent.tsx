@@ -82,6 +82,20 @@ export default function DetailContent({
 
     const [isCreateOpen, setIsCreateOpen] = useState(false);
 
+    const handleCreateSuccess = () => {
+        // 1. 모달 닫기
+        setIsCreateOpen(false);
+
+        // 2. 서버 데이터 갱신 (SSR 다시 실행 -> initialRows 업데이트됨)
+        router.refresh();
+
+        // 3.  등록된 최신 글 확인 > 1페이지 이동
+        const sp = new URLSearchParams();
+        sp.set('page', '1');
+        sp.set('pageSize', String(pageSize));
+        router.push(`${pathname}?${sp.toString()}`);
+    };
+
     return (
         <div className={styles.root}>
             <HeaderSection
@@ -93,6 +107,7 @@ export default function DetailContent({
             <CustomerCreateModal
                 isOpen={isCreateOpen}
                 onClose={() => setIsCreateOpen(false)}
+                onSuccess={handleCreateSuccess}
             />
 
             <DetailSection row={customer} />

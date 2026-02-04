@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import api from '@utils/axios'
 
 import type { CustomerRow } from '@/types/customer';
-import type { CustomerTicketRow } from '@/types/ticket';
+import { CustomerTicketRow, TICKET_STATUS_CONFIG } from '@/types/ticket';
 
 type Props = {
     row: CustomerRow;
@@ -60,28 +60,21 @@ export default function DetailSideItemA({ row }: Props) {
         <div className={styles.bottomPanel}>
             <h3 className={styles.bottomPanelTitle}>현재 진행중인 이력</h3>
 
-            {/* 1) 로딩 상태 */}
             {loading && (
                 <div className={styles.bottomPanelLoading}>
                     <span className={styles.loadingLabel}>
                         이력 정보를 불러오는 중이에요
                     </span>
                     <span className={styles.typingDots}>
-                        <span />
-                        <span />
-                        <span />
+                        <span /><span /><span />
                     </span>
                 </div>
             )}
 
-            {/* 2) 에러 상태 */}
             {!loading && error && (
-                <p className={styles.bottomPanelError}>
-                    {error}
-                </p>
+                <p className={styles.bottomPanelError}>{error}</p>
             )}
 
-            {/* 3) 정상 데이터 / 빈 데이터 */}
             {!loading && !error && (
                 historyItems.length === 0 ? (
                     <p className={styles.bottomPanelEmpty}>
@@ -89,22 +82,36 @@ export default function DetailSideItemA({ row }: Props) {
                     </p>
                 ) : (
                     <ul className={styles.historyList}>
-                        {historyItems.map((item) => (
-                            <li key={item.id} className={styles.historyItem}>
-                                <div className={styles.historyRowTop}>
-                                    <span className={styles.historyDate}>
-                                        {new Date(item.submittedAt)
-                                            .toLocaleDateString('ko-KR')}
-                                    </span>
-                                    <span className={styles.historyStatus}>
-                                        {item.status}
-                                    </span>
-                                </div>
-                                <div className={styles.historyTitle}>
-                                    {item.title}
-                                </div>
-                            </li>
-                        ))}
+                        {historyItems.map((item) => {
+
+                            const ticketConfig = TICKET_STATUS_CONFIG[item.status] || {
+                                label: item.status,
+                                textVar: 'inherit'
+                            };
+
+                            return (
+                                <li key={item.id} className={styles.historyItem}>
+                                    <div className={styles.historyRowTop}>
+                                        <span className={styles.historyDate}>
+                                            {new Date(item.submittedAt)
+                                                .toLocaleDateString('ko-KR')}
+                                        </span>
+                                        {/* 상태 뱃지 */}
+                                        <span
+                                            className={styles.historyStatus}
+                                            style={{
+                                                color: `var(${ticketConfig.textVar})`
+                                            }}
+                                        >
+                                            {ticketConfig.label}
+                                        </span>
+                                    </div>
+                                    <div className={styles.historyTitle}>
+                                        {item.title}
+                                    </div>
+                                </li>
+                            );
+                        })}
                     </ul>
                 )
             )}

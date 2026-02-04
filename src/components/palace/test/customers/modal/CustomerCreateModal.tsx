@@ -104,10 +104,13 @@ export default function CustomerCreateModal({
             // 성공 시 폼 리셋 + 모달 닫기
             alert('고객이 등록되었습니다.');
             resetForm();
-            onClose();
 
             // TODO : 고객 정보 등록 후 이벤트 추가 영역
-            if (onSuccess) onSuccess();
+            if (onSuccess) {
+                onSuccess();
+            } else {
+                onClose();
+            }
 
         } catch (err) {
             console.error(err);
