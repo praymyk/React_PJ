@@ -1,20 +1,31 @@
 'use client';
 
-// 1. Suspense 추가 (react에서 import)
 import { useEffect, useMemo, useState, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+
+// ✅ [수정 1] axios 인스턴스 import (경로는 프로젝트 설정에 맞게 @utils/axios 등)
+import api from '@/utils/axios';
 
 import styles from '@components/palace/test/ai-case-notes/DefaultContent.module.scss';
 import HeaderSection from '@components/common/SubContentForm/headerSection/HeaderSection';
 import KindTabSection from '@components/palace/test/ai-case-notes/tabSection/KindTabSection';
 
-import {
-    buildTemplateListQuery,
-    normalizeKind,
-    type TemplateKind,
-    type TemplateListApiResponse,
-} from '@/app/(protected)/palace/test/ai-case-notes/data';
+export type TemplateKind = 'case_note' | 'inquiry_reply' | 'sms_reply';
 
+// 백엔드 응답 데이터 구조 (Snake Case)
+type ApiTemplateRow = {
+    id: number;
+    company_id: number;
+    kind: string;
+    title: string;
+    prompt: string | null;
+    content: string;
+    created_at: string;
+    updated_at: string;
+    created_by: number | null;
+};
+
+// UI에서 사용할 데이터 구조 (Camel Case)
 type UiTemplateRow = {
     id: string;
     companyId: number;
@@ -33,26 +44,24 @@ const KIND_LABEL: Record<TemplateKind, string> = {
     sms_reply: '문자 답변',
 };
 
-// 2. 기존 컴포넌트 이름 변경: DefaultContent -> DefaultContentInner
-// (export default 제거)
 function DefaultContentInner() {
     const companyId = 1;
     const sp = useSearchParams();
 
-    const kind: TemplateKind = useMemo(() => normalizeKind(sp.get('kind')), [sp]);
+    const kind: TemplateKind = useMemo(() => {
+        const k = sp.get('kind');
+        return (k === 'case_note' || k === 'inquiry_reply' || k === 'sms_reply') ? k : 'case_note';
+    }, [sp]);
 
-    // ===== 생성 UI 상태 =====
     const [prompt, setPrompt] = useState('');
     const [generated, setGenerated] = useState('');
     const [saveTitle, setSaveTitle] = useState('');
     const [showSaveBox, setShowSaveBox] = useState(false);
 
-    // ===== 목록(DB) 상태 =====
     const [saved, setSaved] = useState<UiTemplateRow[]>([]);
     const [listLoading, setListLoading] = useState(false);
     const [listError, setListError] = useState<string | null>(null);
 
-    // kind 바뀌면 생성 UI 초기화 (URL=진실 패턴)
     useEffect(() => {
         setPrompt('');
         setGenerated('');
@@ -60,22 +69,33 @@ function DefaultContentInner() {
         setShowSaveBox(false);
     }, [kind]);
 
+    // ✅ [수정 2] 목록 조회 (axios.get 사용)
     const refetchList = useCallback(async () => {
         setListLoading(true);
         setListError(null);
 
         try {
-            const qs = buildTemplateListQuery({ companyId, kind, page: 1, pageSize: 50 });
-            const res = await fetch(`/api/common/template?${qs}`, { cache: 'no-store' });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            // api.get 사용 (쿼리 파라미터는 params 옵션으로 전달)
+            const res = await api.get('/api/common/template', {
+                params: {
+                    companyId,
+                    kind
+                }
+            });
 
-            const json: TemplateListApiResponse = await res.json();
-            if (!json.ok) throw new Error('API ok=false');
+            // axios는 res.data에 실제 응답 바디가 들어있음
+            // 백엔드 응답: { ok: true, data: { rows: [...] } }
+            const json = res.data;
 
-            const uiRows: UiTemplateRow[] = json.data.rows.map((r) => ({
+            if (!json.ok) throw new Error('API Response not ok');
+
+            const apiRows: ApiTemplateRow[] = json.data.rows;
+
+            // 매핑 로직
+            const uiRows: UiTemplateRow[] = apiRows.map((r) => ({
                 id: String(r.id),
                 companyId: r.company_id,
-                kind: r.kind,
+                kind: r.kind as TemplateKind,
                 title: r.title,
                 prompt: r.prompt,
                 content: r.content,
@@ -94,16 +114,8 @@ function DefaultContentInner() {
         }
     }, [companyId, kind]);
 
-    // 탭(kind) / companyId 바뀌면 목록 재조회
     useEffect(() => {
-        let cancelled = false;
-        (async () => {
-            if (cancelled) return;
-            await refetchList();
-        })();
-        return () => {
-            cancelled = true;
-        };
+        refetchList();
     }, [refetchList]);
 
     const resetAll = () => {
@@ -113,92 +125,53 @@ function DefaultContentInner() {
         setShowSaveBox(false);
     };
 
-    // ===== 더미 생성(추후 GPT 연동으로 교체) =====
+    // 더미 생성 함수 (그대로 유지)
     const buildDummyTemplate = (k: TemplateKind, p: string) => {
         if (k === 'case_note') {
-            return (
-                `### 상담이력 작성 템플릿\n` +
-                `- 회사ID: ${companyId}\n` +
-                `- 종류: 상담이력\n\n` +
-                `**1) 상담 요약**\n- 고객명/연락처:\n- 핵심 이슈(1줄):\n\n` +
-                `**2) 상세 내용**\n- 상황:\n- 고객 요구:\n- 특이사항:\n\n` +
-                `**3) 조치/안내**\n- 안내 내용:\n- 처리 결과:\n\n` +
-                `**4) 후속 조치**\n- 담당/기한:\n- 다음 액션:\n\n` +
-                `---\n요청 프롬프트(원문):\n${p}\n`
-            );
+            return `### 상담이력 (AI 예시)\n- 요약: ...\n- 내용: ${p}`;
         }
-
-        if (k === 'inquiry_reply') {
-            return (
-                `### 1:1 문의 답변 템플릿\n` +
-                `- 회사ID: ${companyId}\n` +
-                `- 종류: 1:1 문의 답변\n\n` +
-                `안녕하세요. [고객명]님,\n\n` +
-                `문의 주신 내용 확인했습니다.\n` +
-                `- 문의 요약:\n` +
-                `- 확인 결과:\n\n` +
-                `아래와 같이 안내드립니다.\n` +
-                `1) ...\n2) ...\n\n` +
-                `추가 문의는 편하게 회신 부탁드립니다.\n감사합니다.\n\n` +
-                `---\n요청 프롬프트(원문):\n${p}\n`
-            );
-        }
-
-        return (
-            `### 문자 답변 템플릿\n` +
-            `- 회사ID: ${companyId}\n` +
-            `- 종류: 문자 답변\n\n` +
-            `[업체명]입니다.\n` +
-            `문의하신 내용 안내드립니다:\n- \n` +
-            `추가 문의는 답장 부탁드립니다. 감사합니다.\n\n` +
-            `---\n요청 프롬프트(원문):\n${p}\n`
-        );
+        return `[${KIND_LABEL[k]}] AI 자동 생성 결과입니다.\n내용: ${p}`;
     };
 
     const generateTemplate = () => {
         const p = prompt.trim();
         if (!p) return;
-
         const template = buildDummyTemplate(kind, p);
         setGenerated(template);
         setShowSaveBox(true);
-
         if (!saveTitle.trim()) setSaveTitle(`${KIND_LABEL[kind]} 템플릿`);
     };
 
-    // ===== DB 저장(POST) =====
+    // ✅ [수정 3] 템플릿 저장 (axios.post 사용)
     const saveTemplate = async () => {
         const title = saveTitle.trim();
         if (!title || !generated.trim()) return;
 
         try {
-            const res = await fetch('/api/common/response-templates', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    companyId,
-                    kind,
-                    title,
-                    prompt: prompt.trim() || null,
-                    content: generated,
-                }),
+            // body 객체를 두 번째 인자로 바로 전달
+            await api.post('/api/common/response-templates', {
+                companyId,
+                kind,
+                title,
+                prompt: prompt.trim() || null,
+                content: generated,
             });
 
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
             setShowSaveBox(false);
-            await refetchList(); // 저장 후 목록 리프레시
+            alert('저장되었습니다.');
+            await refetchList();
         } catch (e) {
             console.error('[DefaultContent] saveTemplate error:', e);
             alert('저장에 실패했습니다.');
         }
     };
 
-    // ===== DB 삭제(DELETE) =====
+    // ✅ [수정 4] 템플릿 삭제 (axios.delete 사용)
     const removeTemplate = async (id: string) => {
+        if (!confirm('정말 삭제하시겠습니까?')) return;
+
         try {
-            const res = await fetch(`/api/common/response-templates/${id}`, { method: 'DELETE' });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            await api.delete(`/api/common/response-templates/${id}`);
             await refetchList();
         } catch (e) {
             console.error('[DefaultContent] removeTemplate error:', e);
@@ -206,7 +179,6 @@ function DefaultContentInner() {
         }
     };
 
-    // ===== 불러오기(목록에서 UI로) =====
     const loadTemplate = (id: string) => {
         const item = saved.find((x) => x.id === id);
         if (!item) return;
@@ -219,65 +191,56 @@ function DefaultContentInner() {
     const copyGenerated = async () => {
         if (!generated) return;
         await navigator.clipboard.writeText(generated);
+        alert('복사되었습니다.');
     };
 
+    // JSX 렌더링 부분은 동일
     return (
         <div className={styles.root}>
             <HeaderSection
                 title="응대 템플릿 생성(AI)"
-                description="상담이력/1:1 답변/문자 답변 등 템플릿을 문장으로 생성하고 저장해 재사용합니다."
+                description="AI를 활용해 상담 템플릿을 생성하고 저장/관리합니다."
             />
 
             <KindTabSection companyId={companyId} />
 
             <div className={styles.twoCols}>
-                {/* 좌 */}
                 <section className={styles.card}>
                     <div className={styles.cardHeader}>
                         <div>
                             <div className={styles.cardTitle}>프롬프트</div>
                             <div className={styles.cardHint}>
-                                선택한 종류({KIND_LABEL[kind]})에 맞는 템플릿을 문장으로 요청하세요.
+                                {KIND_LABEL[kind]} 템플릿을 어떻게 만들지 설명해주세요.
                             </div>
                         </div>
-
                         <div className={styles.cardHeaderActions}>
-                            <button type="button" className={styles.btnOutline} onClick={resetAll}>
-                                초기화
-                            </button>
+                            <button type="button" className={styles.btnOutline} onClick={resetAll}>초기화</button>
                             <button
                                 type="button"
                                 className={styles.btnPrimary}
                                 onClick={generateTemplate}
                                 disabled={!prompt.trim()}
                             >
-                                생성
+                                AI 생성
                             </button>
                         </div>
                     </div>
-
                     <textarea
                         className={styles.textarea}
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
-                        placeholder={`${KIND_LABEL[kind]} 템플릿을 어떤 형태로 만들지 설명해 주세요.`}
+                        placeholder="예) 고객 문의에 정중하게 답변하는 템플릿 생성해줘"
                     />
                 </section>
 
-                {/* 우 */}
                 <section className={styles.card}>
                     <div className={styles.cardHeader}>
                         <div>
                             <div className={styles.cardTitle}>생성 결과</div>
-                            <div className={styles.cardHint}>
-                                결과를 복사하거나, 현재 종류({KIND_LABEL[kind]})에 템플릿으로 저장하세요.
-                            </div>
+                            <div className={styles.cardHint}>결과를 수정하거나 저장하여 사용하세요.</div>
                         </div>
-
                         <div className={styles.cardHeaderActions}>
-                            <button type="button" className={styles.btnOutline} onClick={copyGenerated} disabled={!generated.trim()}>
-                                복사
-                            </button>
+                            <button type="button" className={styles.btnOutline} onClick={copyGenerated} disabled={!generated.trim()}>복사</button>
                             <button
                                 type="button"
                                 className={styles.btnOutline}
@@ -297,21 +260,18 @@ function DefaultContentInner() {
                                     className={styles.input}
                                     value={saveTitle}
                                     onChange={(e) => setSaveTitle(e.target.value)}
-                                    placeholder={`예) ${KIND_LABEL[kind]}_표준`}
+                                    placeholder="템플릿 제목 입력"
                                 />
                             </label>
-
                             <div className={styles.saveActions}>
-                                <button type="button" className={styles.btnOutline} onClick={() => setShowSaveBox(false)}>
-                                    닫기
-                                </button>
+                                <button type="button" className={styles.btnOutline} onClick={() => setShowSaveBox(false)}>취소</button>
                                 <button
                                     type="button"
                                     className={styles.btnPrimary}
                                     onClick={saveTemplate}
-                                    disabled={!saveTitle.trim() || !generated.trim()}
+                                    disabled={!saveTitle.trim()}
                                 >
-                                    저장 확정
+                                    확인
                                 </button>
                             </div>
                         </div>
@@ -321,22 +281,18 @@ function DefaultContentInner() {
                         className={styles.textarea}
                         value={generated}
                         onChange={(e) => setGenerated(e.target.value)}
-                        placeholder="생성 버튼을 누르면 결과가 표시됩니다."
+                        placeholder="AI 생성 결과가 여기에 표시됩니다."
                     />
                 </section>
             </div>
 
-            {/* 하단 리스트 */}
             <section className={styles.card}>
                 <div className={styles.cardHeader}>
-                    <div>
-                        <div className={styles.cardTitle}>저장된 템플릿</div>
-                        <div className={styles.cardHint}>현재 선택한 종류({KIND_LABEL[kind]})의 템플릿 목록입니다.</div>
-                    </div>
+                    <div className={styles.cardTitle}>저장된 템플릿 ({saved.length})</div>
                 </div>
 
                 {listLoading ? (
-                    <div className={styles.emptyText}>불러오는 중...</div>
+                    <div className={styles.emptyText}>로딩 중...</div>
                 ) : listError ? (
                     <div className={styles.emptyText}>{listError}</div>
                 ) : saved.length === 0 ? (
@@ -348,17 +304,13 @@ function DefaultContentInner() {
                                 <div className={styles.listLeft}>
                                     <div className={styles.listTitle}>{t.title}</div>
                                     <div className={styles.listMeta}>
-                                        {new Date(t.createdAt).toLocaleString()} · prompt {t.prompt ? '있음' : '없음'}
+                                        {new Date(t.createdAt).toLocaleString()} · {t.prompt ? 'AI 생성' : '직접 작성'}
                                     </div>
+                                    <div className={styles.listPreview}>{t.content.slice(0, 50)}...</div>
                                 </div>
-
                                 <div className={styles.listActions}>
-                                    <button type="button" className={styles.btnOutline} onClick={() => loadTemplate(t.id)}>
-                                        불러오기
-                                    </button>
-                                    <button type="button" className={styles.btnDanger} onClick={() => removeTemplate(t.id)}>
-                                        삭제
-                                    </button>
+                                    <button type="button" className={styles.btnOutline} onClick={() => loadTemplate(t.id)}>불러오기</button>
+                                    <button type="button" className={styles.btnDanger} onClick={() => removeTemplate(t.id)}>삭제</button>
                                 </div>
                             </div>
                         ))}

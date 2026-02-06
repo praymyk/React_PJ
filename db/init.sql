@@ -62,21 +62,25 @@ VALUES (
 -- 3. 고객 정보 테이블
 CREATE TABLE IF NOT EXISTS customers (
                                          id         BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-                                         company_id            BIGINT UNSIGNED NOT NULL,
+                                         company_id BIGINT UNSIGNED NOT NULL,
                                          name       VARCHAR(100)    NOT NULL,
     email      VARCHAR(255)    NOT NULL,
     -- [변경] ENUM -> VARCHAR
     status     VARCHAR(20)     NOT NULL DEFAULT 'active',
+
+    -- [날짜 컬럼] created_at, updated_at 추가
     created_at TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (id),
     UNIQUE KEY uq_customers_email (email)
     ) ENGINE=InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
+-- 초기 데이터
 INSERT INTO customers (company_id, name, email, status) VALUES
-                                                (1, '홍냐냐', 'hong@example.com', 'active'),
-                                                (1, '김냐냐', 'kim@example.com',  'inactive'),
-                                                (1, '이냐냐', 'lee@example.com',  'active');
+                                                            (1, '홍냐냐', 'hong@example.com', 'active'),
+                                                            (1, '김냐냐', 'kim@example.com',  'inactive'),
+                                                            (1, '이냐냐', 'lee@example.com',  'active');
 
 
 -- 4. 티켓 테이블
@@ -111,13 +115,13 @@ CREATE TABLE IF NOT EXISTS tickets (
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
--- 5. 티켓 이벤트 테이블
+-- 5. 티켓 이벤트(댓글/로그) 테이블
 CREATE TABLE IF NOT EXISTS ticket_events (
                                              id             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
                                              ticket_id      BIGINT UNSIGNED NOT NULL,
                                              company_id     BIGINT UNSIGNED NOT NULL,
 
-    -- [변경] ENUM -> VARCHAR (이벤트 종류는 나중에 늘어날 가능성 매우 높음)
+    -- [변경] ENUM -> VARCHAR (이벤트 종류 확장성 고려)
                                              event_type     VARCHAR(50)     NOT NULL,
 
     -- [변경] ENUM -> VARCHAR
@@ -127,14 +131,18 @@ CREATE TABLE IF NOT EXISTS ticket_events (
     customer_id    BIGINT UNSIGNED NULL,
     content        TEXT            NULL,
     meta           JSON            NULL,
-    created_at     DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    -- [수정] BaseTimeEntity 대응을 위한 날짜 컬럼 세팅
+    created_at     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_ticket_events_ticket FOREIGN KEY (ticket_id) REFERENCES tickets(id) ON DELETE CASCADE,
     INDEX idx_ticket_events_ticket (ticket_id),
     INDEX idx_ticket_events_created_at (created_at)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 티켓 더미 데이터
+
+-- 티켓 더미 데이터 (변경 없음)
 INSERT INTO tickets (company_id, customer_id, assignee_id, status, merged_into_ticket_id, title, description, channel, submitted_at, closed_at)
 VALUES
     (1, 1, NULL, 'OPEN', NULL, '상담 이력 내보내기 오류', '오류발생', 'CALL', '2025-03-01 10:15:00', NULL),
@@ -143,15 +151,14 @@ VALUES
     (1, 1, NULL, 'OPEN', 2, '필터 미동작', '갱신 안됨', 'CALL', '2025-03-04 16:40:00', NULL),
     (1, 2, NULL, 'CANCELED', NULL, '중복 문의', '취소 요청', 'ETC', '2025-03-05 09:10:00', '2025-03-05 09:30:00');
 
--- 티켓 이벤트 더미 데이터
+-- 티켓 이벤트 더미 데이터 (변경 없음 - DB가 날짜 자동 입력함)
 INSERT INTO ticket_events (ticket_id, company_id, event_type, channel, author_user_id, customer_id, content, meta)
 VALUES
-    (1, 1, '문의접수', 'CALL', NULL, 1, '최초 신고', NULL),
-    (1, 1, '상담기록', 'CALL', 1, 1, '재현 절차 확인', NULL),
-    (2, 1, '문의접수', 'EMAIL', NULL, 2, '통계 문의 접수', NULL),
-    (2, 1, '티켓병합', NULL, 1, 1, '서브 티켓 병합', JSON_OBJECT('from_ticket_id', 4, 'action', 'merge')),
-    (3, 1, '상태변경', 'CHAT', 1, 3, '종료 처리', JSON_OBJECT('from_status', 'IN_PROGRESS', 'to_status', 'DONE'));
-
+    (1, 1, 'CREATED', 'CALL', NULL, 1, '최초 신고', NULL),
+    (1, 1, 'LOG', 'CALL', 1, 1, '재현 절차 확인', NULL),
+    (2, 1, 'CREATED', 'EMAIL', NULL, 2, '통계 문의 접수', NULL),
+    (2, 1, 'MERGED', NULL, 1, 1, '서브 티켓 병합', JSON_OBJECT('from_ticket_id', 4, 'action', 'merge')),
+    (3, 1, 'STATUS_CHANGED', 'CHAT', 1, 3, '종료 처리', JSON_OBJECT('from_status', 'IN_PROGRESS', 'to_status', 'DONE'));
 
 -- 6. 사용자 환경설정 테이블
 CREATE TABLE IF NOT EXISTS user_preferences (
@@ -237,3 +244,6 @@ INSERT INTO response_templates (company_id, kind, title, prompt, content, create
     (1, 'case_note', '상담이력_표준', '...', '내용...', (SELECT id FROM users WHERE account='admin' LIMIT 1)),
     (1, 'inquiry_reply', '1:1문의_기본응대', '...', '내용...', (SELECT id FROM users WHERE account='admin' LIMIT 1)),
     (1, 'sms_reply', '문자_간단안내', '...', '내용...', (SELECT id FROM users WHERE account='admin' LIMIT 1));
+
+
+

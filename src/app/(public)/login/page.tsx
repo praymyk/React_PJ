@@ -52,10 +52,8 @@ export default function LoginPage() {
                     >
                         {loading ? (
                             <>
-                                {/* 1. 아까 만든 SCSS의 .spinner 스타일이 적용될 태그 */}
+                                {/* 로딩 spinner */}
                                 <span className='${styles.spinner} uSpinner'></span>
-
-                                {/* 2. 문구 */}
                                 <span>로그인 중...</span>
                             </>
                         ) : (
