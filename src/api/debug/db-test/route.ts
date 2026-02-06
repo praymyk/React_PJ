@@ -1,6 +1,6 @@
 // root/api/debug/db-test DB 접속 여부 체크
 import { NextResponse } from 'next/server';
-import { reactpjPool } from '@/lib/db/reactpj/pool';
+import { reactpjPool } from '@lib/db/reactpj/pool';
 
 export async function GET() {
     try {

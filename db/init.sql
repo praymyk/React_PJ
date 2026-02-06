@@ -146,11 +146,11 @@ VALUES
 -- 티켓 이벤트 더미 데이터
 INSERT INTO ticket_events (ticket_id, company_id, event_type, channel, author_user_id, customer_id, content, meta)
 VALUES
-    (1, 1, '문의접수', '전화', NULL, 1, '최초 신고', NULL),
-    (1, 1, '상담기록', '전화', 1, 1, '재현 절차 확인', NULL),
-    (2, 1, '문의접수', '이메일', NULL, 2, '통계 문의 접수', NULL),
+    (1, 1, '문의접수', 'CALL', NULL, 1, '최초 신고', NULL),
+    (1, 1, '상담기록', 'CALL', 1, 1, '재현 절차 확인', NULL),
+    (2, 1, '문의접수', 'EMAIL', NULL, 2, '통계 문의 접수', NULL),
     (2, 1, '티켓병합', NULL, 1, 1, '서브 티켓 병합', JSON_OBJECT('from_ticket_id', 4, 'action', 'merge')),
-    (3, 1, '상태변경', '채팅', 1, 3, '종료 처리', JSON_OBJECT('from_status', '진행중', 'to_status', '종료'));
+    (3, 1, '상태변경', 'CHAT', 1, 3, '종료 처리', JSON_OBJECT('from_status', 'IN_PROGRESS', 'to_status', 'DONE'));
 
 
 -- 6. 사용자 환경설정 테이블

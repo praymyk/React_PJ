@@ -1,7 +1,13 @@
-import {
-    getCategoryKinds,
-    getCategoriesByCompany,
-} from '@lib/db/reactpj/category';
+// src/api/category.ts
+import { buildCookieHeader } from '@/utils/ssrCookie';
+import { createServerApi } from '@utils/axios';
+
+import { fetchCategoryPageData } from '@/api/category';
+
+import type {
+    CategoryPageApiResponse,
+} from '@/types/category';
+
 import type {
     CategoryKind,
     CategoryLevel,
@@ -10,7 +16,7 @@ import type {
 } from '@components/palace/test/category/DefaultContent';
 
 type CategoryPageParams = {
-    companyId: string;  // 현재는 required로 강제
+    companyId: string;
 };
 
 export type CategoryPageData = {
@@ -20,37 +26,72 @@ export type CategoryPageData = {
     initialSelectedKind: CategoryKind;
 };
 
+// ======================================================
+// SSR 데이터 로더
+// ======================================================
+
 export async function getCategoryPageData(
     params: CategoryPageParams,
 ): Promise<CategoryPageData> {
     const companyId = Number(params.companyId);
 
-    const [kindRows, categoryRows] = await Promise.all([
-        getCategoryKinds(),
-        getCategoriesByCompany(companyId),
-    ]);
+    // 1. 쿠키 헤더 준비 (SSR 인증용)
+    const cookieHeader = await buildCookieHeader();
 
-    const kindOptions: CategoryKindOption[] = kindRows.map((row) => ({
-        value: row.code as CategoryKind,
-        label: row.name,
+    // 2. SSR용 클라이언트 생성
+    const serverClient = createServerApi(cookieHeader);
+
+    try {
+        // 3. 공통 API 함수 호출 (client 주입)
+        const apiData = await fetchCategoryPageData({ companyId }, serverClient);
+
+        // 4. API 응답(DTO) -> UI용 데이터(initialNodes)로 변환
+        return transformToPageData(apiData);
+
+    } catch (error) {
+        console.error('[SSR] 카테고리 조회 실패:', error);
+        // 에러 시 빈 데이터 반환
+        return {
+            companyId,
+            kindOptions: [],
+            initialNodes: [],
+            initialSelectedKind: 'consult',
+        };
+    }
+}
+
+// ======================================================
+// 데이터 변환 헬퍼 (DTO -> UI Model)
+// ======================================================
+
+function transformToPageData(apiData: CategoryPageApiResponse): CategoryPageData {
+    // 1) Kind 옵션 변환
+    const kindOptions: CategoryKindOption[] = apiData.kinds.map((k) => ({
+        value: k.code as CategoryKind,
+        label: k.name,
     }));
 
-    const initialNodes: CategoryNode[] = categoryRows.map((row) => ({
-        id: row.id,          // clientId = dbId ( 조회 시 동일 )
-        dbId: row.id,        // DB PK
-        kind: (kindRows.find((k) => k.id === row.kind_id)?.code ?? 'consult') as CategoryKind,
-        level: row.level as CategoryLevel,
-        name: row.name,
-        parentId: row.parent_id,  // 부모 clientId = 부모 dbId (초기 로드는 동일)
-        sortOrder: row.sort_order,
-        active: row.is_active === 1,
-    }));
+    // 2) Nodes 변환
+    const initialNodes: CategoryNode[] = apiData.categories.map((row) => {
+        // kindId로 code 찾기
+        const kindCode = apiData.kinds.find((k) => k.id === row.kindId)?.code ?? 'consult';
 
-    const initialSelectedKind: CategoryKind =
-        kindOptions[0]?.value ?? 'consult';
+        return {
+            id: row.id,          // clientId (조회 시엔 DB ID와 동일하게 설정)
+            dbId: row.id,        // DB PK
+            kind: kindCode as CategoryKind,
+            level: row.level as CategoryLevel,
+            name: row.name,
+            parentId: row.parentId,
+            sortOrder: row.sortOrder,
+            active: row.isActive,
+        };
+    });
+
+    const initialSelectedKind: CategoryKind = kindOptions[0]?.value ?? 'consult';
 
     return {
-        companyId,
+        companyId: apiData.companyId,
         kindOptions,
         initialNodes,
         initialSelectedKind,

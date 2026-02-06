@@ -5,22 +5,13 @@ import { AxiosInstance } from 'axios';
 
 import type {
     CustomerRow,
-    CustomerSearchParams
+    CustomerSearchParams,
+    CustomerApiParams
 } from '@/types/customer';
 
 import type {
     PaginatedResponse
 } from '@/types/common'
-
-export type CustomerApiParams = {
-    companyId: number;
-    page: number;
-    pageSize: number;
-    keyword?: string;
-    status?: string;
-    sortBy?: string;
-    sortDir?: 'asc' | 'desc';
-};
 
 // ======================================================
 // 데이터 로더 (SSR)

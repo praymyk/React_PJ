@@ -20,7 +20,17 @@ export default function DefaultContent() {
     const [statusMessage, setStatusMessage] = useState<string | null>(null);
     const [statusKind, setStatusKind] = useState<'ok' | 'error' | null>(null);
 
-    // 초기 로드: DB에 저장된 환경설정 불러오기
+    useEffect(() => {
+        if (prefs.darkMode) {
+            document.documentElement.classList.add('dark');
+            window.localStorage.setItem('theme', 'dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+            window.localStorage.setItem('theme', 'light');
+        }
+    }, [prefs.darkMode]);
+
+    // 초기 로드
     useEffect(() => {
         let aborted = false;
 
@@ -41,14 +51,6 @@ export default function DefaultContent() {
                     defaultPageSize: pageSize,
                 });
 
-                // DB에 저장된 다크모드 값을 실제 문서에도 반영
-                if (darkMode) {
-                    document.documentElement.classList.add('dark');
-                    window.localStorage.setItem('theme', 'dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                    window.localStorage.setItem('theme', 'light');
-                }
             } catch (err) {
                 console.warn(
                     '[EnvSettings] 환경설정 조회 실패 (기본값 사용)',
@@ -147,9 +149,9 @@ export default function DefaultContent() {
                             <div className={styles.toggleLabelBlock}>
                                 <span className={styles.toggleTitle}>다크 모드</span>
                                 <span className={styles.toggleDescription}>
-                  배경을 어둡게 하여 눈부심을 줄이고, 디스코드 스타일 톤으로
-                  전환합니다.
-                </span>
+                                  배경을 어둡게 하여 눈부심을 줄이고, 디스코드 스타일 톤으로
+                                  전환합니다.
+                                </span>
                             </div>
 
                             <button

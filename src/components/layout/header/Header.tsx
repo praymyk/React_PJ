@@ -18,6 +18,7 @@ export default function Header() {
         /** 설정에서 다크모드 변경시 동기화용 함수 */
         const syncThemeState = () => {
             const isDark = document.documentElement.classList.contains('dark');
+
             setDarkMode(isDark);
         };
 

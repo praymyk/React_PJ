@@ -26,3 +26,13 @@ export const CUSTOMER_STATUS_CONFIG = {
         color: 'var(--color-status-inactive)',
     },
 };
+
+export type CustomerApiParams = {
+    companyId: number;
+    page: number;
+    pageSize: number;
+    keyword?: string;
+    status?: string;
+    sortBy?: string;
+    sortDir?: 'asc' | 'desc';
+};

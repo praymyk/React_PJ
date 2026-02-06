@@ -4,6 +4,8 @@ import { useMemo, useRef, useState } from 'react';
 import styles from '@components/palace/test/category/DefaultContent.module.scss';
 import HeaderSection from "@components/common/SubContentForm/headerSection/HeaderSection";
 
+import { saveCategoryTree } from '@/api/category';
+
 export type CategoryKind = 'consult' | 'reserve' | 'etc';
 export type CategoryLevel = 1 | 2 | 3 | 4; // 대/중/소/세분류
 
@@ -200,7 +202,7 @@ export default function DefaultContent({
         );
     };
 
-    /** 하위까지 포함해서 삭제 */
+    /** 하위 포함해서 삭제 */
     const handleDelete = (node: CategoryNode) => {
         const ok = window.confirm(
             `"${node.name}" 및 하위 분류를 모두 삭제하시겠습니까?`,
@@ -254,41 +256,30 @@ export default function DefaultContent({
     const lastSelectedNode =
         selectedPathNodes[selectedPathNodes.length - 1] ?? null;
 
-    /** 저장 버튼 클릭 - 나중에 API 연동 자리 */
     const handleSave = async () => {
         try {
-            const targetNodes = nodes.filter(
-                (n) => n.kind === selectedKind,
-            );
+            // 트리 데이터 가공 (프론트 -> 백엔드 DTO)
+            const nodesPayload = nodes.map(node => ({
+                id: node.dbId,
+                clientId: node.id,
+                parentClientId: node.parentId,
+                level: node.level,
+                name: node.name,
+                sortOrder: node.sortOrder,
+                active: node.active,
+            }));
 
-            const payload = {
+            await saveCategoryTree({
                 companyId,
                 kind: selectedKind,
-                nodes: targetNodes.map((n) => ({
-                    id: n.dbId,             // DB PK, 신규면 null
-                    clientId: n.id,         // 프론트 전용 ID
-                    parentClientId: n.parentId, // 부모 프론트 ID
-                    level: n.level,
-                    name: n.name,
-                    sortOrder: n.sortOrder,
-                    active: n.active,
-                })),
-            };
-
-            const res = await fetch('/api/common/categories/tree', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
+                nodes: nodesPayload
             });
 
-            if (!res.ok) {
-                throw new Error('저장 실패');
-            }
-
-            alert('저장 완료');
-        } catch (err) {
-            console.error(err);
-            alert('저장 중 오류가 발생했습니다.');
+            alert('저장되었습니다.');
+            // 필요 시 리스트 갱신 (router.refresh())
+        } catch (e) {
+            console.error(e);
+            alert('저장 실패');
         }
     };
 
