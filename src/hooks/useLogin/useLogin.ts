@@ -68,6 +68,7 @@ export function useLogin() {
 
             setError(msg);
             setLoading(false);
+        }
     };
 
     return {
