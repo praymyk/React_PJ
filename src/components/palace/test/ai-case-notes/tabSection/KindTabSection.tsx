@@ -7,7 +7,7 @@ export type TemplateKind = 'case_note' | 'inquiry_reply' | 'sms_reply';
 
 type KindTabProps = {
     companyId: number;
-    /** TODO 탭 변경 시 초기화하고 싶은 동작이 있으면  추가*/
+    /** TODO 탭 변경 시 초기화하고 싶은 동작이 있으면  추가 **/
     onKindChange?: () => void;
 };
 
