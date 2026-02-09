@@ -67,9 +67,7 @@ export function useLogin() {
                 '로그인 실패. 다시 시도해주세요.';
 
             setError(msg);
-        } finally {
             setLoading(false);
-        }
     };
 
     return {
