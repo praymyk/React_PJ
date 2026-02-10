@@ -38,7 +38,7 @@ function attachRefreshInterceptor(instance: AxiosInstance, isServer: boolean, co
                         }
                     );
 
-                    // 2. 새 토큰 추출 (백엔드 응답 구조에 따름)
+                    // 2. 새 토큰 추출 (백엔드 응답 구조 참조)
                     const newAccessToken = refreshResponse.data.message || refreshResponse.data.accessToken;
 
                     if (!newAccessToken) {

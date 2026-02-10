@@ -17,6 +17,7 @@
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.3",
     "jssip": "^3.10.6",
+    "lucide-react": "^0.563.0",
     "mysql2": "^3.15.3",
     "next": "^16.0.10",
     "react": "^19.2.3",
