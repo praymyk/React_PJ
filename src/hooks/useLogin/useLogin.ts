@@ -33,8 +33,8 @@ export function useLogin() {
 
             // 사용자 설정(다크모드) 처리
             const darkModeFromServer = Boolean(data.preferences?.darkMode);
+
             if (typeof window !== 'undefined') {
-                document.documentElement.classList.toggle('dark', darkModeFromServer);
                 window.localStorage.setItem(
                     'theme',
                     darkModeFromServer ? 'dark' : 'light',

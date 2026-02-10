@@ -1,3 +1,5 @@
+@use '@styles/base/mixins.scss' as *;
+
 .root {
   display: flex;
   flex: 1;
@@ -17,17 +19,24 @@
   border-radius: 999px;
   border: 1px solid var(--color-border-subtle);
   background-color: var(--color-bg-input);
-  font-size: 0.875rem;
+  color: var(--color-text-main);
+  font-size: var(--font-size-sm);
 }
 
 .primaryButton {
+  @extend %buttonBase;
+
   padding: 0.45rem 0.9rem;
   border-radius: 999px;
   border: none;
   background-color: var(--color-accent);
   color: #fff;
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   cursor: pointer;
+
+  &:hover {
+    background-color: rgba(88, 101, 242, 0.9);
+  }
 }
 
 /* 툴바 */
@@ -48,7 +57,7 @@
 }
 
 .badgeValue {
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
 }
 
@@ -58,18 +67,21 @@
 }
 
 .secondaryButton {
-  padding: 0.4rem 0.8rem;
-  border-radius: 999px;
-  border: 1px solid var(--color-border-subtle);
+  @extend %buttonBase;
   background-color: var(--color-bg-surface);
-  font-size: 0.875rem;
-  cursor: pointer;
+  border-color: var(--color-border-subtle);
+  color: var(--color-text-main);
+
+  &:hover {
+    background-color: rgba(148, 163, 184, 0.12);
+  }
 
   &:disabled {
-    opacity: 0.4;
+    opacity: 0.6;
     cursor: default;
   }
 }
+
 
 /* ===== 본문: 4단계 컬럼 ===== */
 
@@ -129,6 +141,7 @@
   border-radius: 999px;
   border: 1px dashed var(--color-border-subtle);
   background-color: var(--color-bg-surface);
+  color: var(--color-accent);
   font-size: 0.75rem;
   cursor: pointer;
 
@@ -178,6 +191,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--color-text-main);
 }
 
 .emptyColumnText {
@@ -237,6 +251,8 @@
 }
 
 .iconButtonDanger {
+  @extend %buttonBase;
+
   padding: 0.4rem 0.8rem;
   border-radius: 999px;
   border: 1px solid var(--color-text-danger);
@@ -245,8 +261,12 @@
   cursor: pointer;
   color: var(--color-text-danger);
 
+  &:hover {
+    background-color: rgba(148, 163, 184, 0.12);
+  }
+
   &:disabled {
-    opacity: 0.4;
+    opacity: 0.6;
     cursor: default;
   }
 }

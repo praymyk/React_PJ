@@ -58,7 +58,6 @@
 
 .ticketId {
   font-size: var(--font-size-xs);
-  font-family: 'Menlo', 'SF Mono', ui-monospace, monospace;
   color: var(--color-text-muted);
 
   @extend %themeTransition;
