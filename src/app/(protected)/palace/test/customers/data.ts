@@ -16,7 +16,6 @@ import type {
 // ======================================================
 // 데이터 로더 (SSR)
 // ======================================================
-
 export async function getDefaultPageData(raw: CustomerSearchParams) {
     const cookieHeader = await buildCookieHeader();
     const companyId = await getCompanyIdSSR(cookieHeader);
@@ -35,14 +34,13 @@ export async function getDefaultPageData(raw: CustomerSearchParams) {
 // ======================================================
 // 고객 리스트 조회 ( 고객 상세 조회 페이지 내 > 리스트 조회 시 재활용)
 // ======================================================
-
 export async function fetchCustomerList(
     client: AxiosInstance,
     params: CustomerApiParams
 ): Promise<PaginatedResponse<CustomerRow>> {
     try {
         const { data } = await client.get<PaginatedResponse<CustomerRow>>('/api/customers', {
-            params, // axios가 객체를 쿼리스트링으로 변환
+            params,
         });
         return data;
     } catch (error) {
@@ -50,10 +48,6 @@ export async function fetchCustomerList(
         return emptyListResult();
     }
 }
-
-// ------------------------------------------------------
-// 헬퍼
-// ------------------------------------------------------
 
 export function parseSearchParams(raw: CustomerSearchParams, companyId: number): CustomerApiParams {
     const rawStatus = raw.status?.trim();

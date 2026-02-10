@@ -21,30 +21,15 @@ export async function login(req: LoginRequest): Promise<LoginResponse> {
  * - RootLayout/layout.tsx에서 쿠키를 백엔드로 포워딩할 때 사용
  */
 export async function getMeSSR(cookieHeader: string): Promise<MeResponse> {
+
     const serverApi = createServerApi(cookieHeader);
+
     const res = await serverApi.get<MeResponse>('/api/auth/me');
+
     return res.data;
 }
 
 export async function getCompanyIdSSR(cookieHeader: string): Promise<number> {
     const me = await getMeSSR(cookieHeader);
     return me.user.companyId;
-}
-
-/**
- *  TODO : CSR > me 조회 dyd
- * - withCredentials: true > 쿠키 자동 포함
- */
-export async function getMe(): Promise<MeResponse> {
-    const res = await api.get<MeResponse>('/api/auth/me');
-    return res.data;
-}
-
-/**
- * TODO : refresh 엔드포인트 > 쿠키 포워딩해서 호출
- */
-export async function refreshSSR(cookieHeader: string) {
-    const serverApi = createServerApi(cookieHeader);
-    const res = await serverApi.post('/api/auth/refresh');
-    return res.data;
 }

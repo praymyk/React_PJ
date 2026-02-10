@@ -13,7 +13,6 @@ export const metadata: Metadata = {
     description: 'IPCC dashboard powered by Next.js',
 };
 
-
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
 
     const cookieHeader = (await cookies())
