@@ -30,7 +30,6 @@ api.interceptors.response.use(
     }
 );
 
-// SSR(서버)에서 쓸 인스턴스 팩토리
 export function createServerApi(cookieHeader?: string): AxiosInstance {
     return axios.create({
         baseURL: process.env.NEXT_PUBLIC_API_URL,

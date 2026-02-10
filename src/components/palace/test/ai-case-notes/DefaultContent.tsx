@@ -51,6 +51,13 @@ function DefaultContentInner() {
         return (k === 'case_note' || k === 'inquiry_reply' || k === 'sms_reply') ? k : 'case_note';
     }, [sp]);
 
+    // 탭(kind)별 프롬프트 입력 예시
+    const PROMPT_EXAMPLES: Record<TemplateKind, string> = {
+        case_note: '예) 성형외과 고객의 상담 내용을 요약하고 조치사항을 기록할 템플릿을 만들어줘',
+        inquiry_reply: '예) 배송 관련 문의를 접수한 고객에게 보낼 안내 메일 템플릿 작성해줘',
+        sms_reply: '예) 예약 확정 안내 문자를 광고성 없이 70자 이내로 깔끔하게 만들어줘',
+    };
+
     // State 관리
     const [prompt, setPrompt] = useState('');
     const [generated, setGenerated] = useState('');
@@ -134,6 +141,8 @@ function DefaultContentInner() {
             const res = await api.post('/api/ai/generate', {
                 kind: kind,
                 prompt: p
+            }, {
+                timeout: 60000
             });
 
             const result = res.data;
@@ -250,7 +259,7 @@ function DefaultContentInner() {
                         className={styles.textarea}
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
-                        placeholder="예) 화난 고객을 진정시키는 정중한 사과 문자 템플릿 만들어줘"
+                        placeholder={PROMPT_EXAMPLES[kind]}
                         disabled={isGenerating}
                     />
                 </section>
