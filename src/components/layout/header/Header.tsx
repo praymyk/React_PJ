@@ -68,17 +68,10 @@ export default function Header() {
         } catch (e) {
             console.warn('[Header] logout request failed', e);
         } finally {
-            // 개인 설정 삭제 (다크모드)
             try {
                 localStorage.removeItem('theme');
             } catch (_) {}
-            if (typeof document !== 'undefined') {
-                document.documentElement.classList.remove('dark');
-            }
-
-            // 2. 로그인 페이지로 이동 + SSR 레이아웃 재검증 트리거
-            router.replace('/login');
-            router.refresh();
+            window.location.href = '/login';
         }
     };
 
