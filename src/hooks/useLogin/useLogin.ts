@@ -29,45 +29,19 @@ export function useLogin() {
         setError('');
 
         try {
-            const data = await login({ username, password });
 
-            // 사용자 설정(다크모드) 처리
-            const darkModeFromServer = Boolean(data.preferences?.darkMode);
+            await login({ username, password });
 
-            if (typeof window !== 'undefined') {
-                window.localStorage.setItem(
-                    'theme',
-                    darkModeFromServer ? 'dark' : 'light',
-                );
-            }
-
-            // ★ 쿠키 기반 아이디 저장 (클라이언트 로직)
-            if (rememberId) {
-                document.cookie = [
-                    `rememberedLoginId=${encodeURIComponent(username)}`,
-                    'path=/',
-                    'max-age=' + 60 * 60 * 24 * 30,
-                ].join('; ');
-            } else {
-                document.cookie = [
-                    'rememberedLoginId=',
-                    'path=/',
-                    'max-age=0',
-                ].join('; ');
-            }
+            const maxAge = rememberId ? 60 * 60 * 24 * 30 : 0;
+            document.cookie = `rememberedLoginId=${rememberId ? encodeURIComponent(username) : ''}; path=/; max-age=${maxAge}`;
 
             router.push('/palace');
 
         } catch (err: any) {
             console.error(err);
-
-            const msg =
-                err.response?.data?.message ||
-                err.message ||
-                '로그인 실패. 다시 시도해주세요.';
-
+            const msg = err.response?.data?.message || err.message || '로그인 실패.';
             setError(msg);
-            setLoading(false);
+            setLoading(false); // 실패했을 때만 로딩 끔 (다시 입력해야 하니까)
         }
     };
 
