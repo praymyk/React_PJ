@@ -126,7 +126,7 @@ export default function DefaultContentInner({ companyId }: { companyId: number }
             const res = await api.post<DignityAiContent>(
                 '/api/ai/generate/dignity',
                 payload,
-                { timeout: 120000 }
+                { timeout: 180000 }
             );
 
             const content = res.data?.content ?? '{}';
