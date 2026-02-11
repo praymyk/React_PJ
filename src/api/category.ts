@@ -17,15 +17,15 @@ export async function fetchCategoryPageData(
 ): Promise<CategoryPageApiResponse> { // 여기 리턴 타입은 순수 데이터 유지
     const apiClient = client ?? api;
 
-    const { data: responseBody } = await apiClient.get<ApiResponse<CategoryPageApiResponse>>('/api/categories/page-data', {
+    const { data } = await apiClient.get<CategoryPageApiResponse>('/api/categories/page-data', {
         params,
     });
 
-    if (!responseBody.data) {
+    if (!data) {
         throw new Error('응답 데이터가 비어있습니다.');
     }
 
-    return responseBody.data;
+    return data;
 }
 
 export async function saveCategoryTree(payload: CategoryTreeSaveRequest) {

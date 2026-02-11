@@ -40,12 +40,12 @@ export async function fetchCustomerList(
     params: CustomerApiParams
 ): Promise<PaginatedResponse<CustomerRow>> {
     try {
-        const { data: responseBody } = await client.get<ApiResponse<PaginatedResponse<CustomerRow>>>(
+        const { data } = await client.get<PaginatedResponse<CustomerRow>>(
             '/api/customers',
             { params }
         );
 
-        if (!responseBody.data) {
+        if (!data) {
             return {
                 rows: [],
                 total: 0,
@@ -54,7 +54,7 @@ export async function fetchCustomerList(
             };
         }
 
-        return responseBody.data;
+        return data;
 
     } catch (error) {
         console.error('[SSR] 고객 목록 조회 실패:', error);

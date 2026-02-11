@@ -91,18 +91,18 @@ export function DefaultContentInner({ companyId } : Props) {
         setListError(null);
 
         try {
-            const res = await api.get<ApiResponse<{ rows: ApiTemplateRow[] }>>('/api/common/template', {
+            const { data } = await api.get<{ rows: ApiTemplateRow[] }>('/api/common/template', {
                 params: {
                     companyId,
                     kind
                 }
             });
 
-            const responseBody = res.data;
+            if (!Array.isArray(data.rows)) {
+                throw new Error('Invalid response: rows is not an array');
+            }
 
-            if (!responseBody.ok) throw new Error('API Error');
-
-            const apiRows = responseBody.data?.rows || [];
+            const apiRows = data.rows || [];
 
             const uiRows: UiTemplateRow[] = apiRows.map((r) => ({
                 id: String(r.id),
@@ -146,17 +146,16 @@ export function DefaultContentInner({ companyId } : Props) {
 
         try {
             // 백엔드 API 호출
-            const res = await api.post<ApiResponse<TemplateAiContent>>('/api/ai/generate/template', {
-                kind: kind,
-                prompt: p
-            }, {
-                timeout: 60000
-            });
+            const res = await api.post<{ content: string }>(
+                '/api/ai/generate/template',
+                { kind, prompt: p },
+                { timeout: 60000 }
+            );
 
-            const result = res.data;
+            const payload = res.data;
 
-            if (result.ok && result.data?.content) {
-                setGenerated(result.data.content);
+            if (payload?.content) {
+                setGenerated(payload.content);
 
                 // 제목 자동 세팅 (비어있을 경우)
                 if (!saveTitle.trim()) {

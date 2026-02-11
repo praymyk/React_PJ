@@ -60,13 +60,13 @@ async function fetchCustomerDetail(
     id: string
 ): Promise<CustomerRow | null> {
     try {
-        const { data: responseBody } = await client.get<ApiResponse<CustomerRow>>(`/api/customers/${id}`);
+        const { data } = await client.get<CustomerRow>(`/api/customers/${id}`);
 
-        if (!responseBody.data) {
+        if (!data) {
             return null;
         }
 
-        return responseBody.data;
+        return data;
 
     } catch (error) {
         // 404나 권한 없음 등 에러 시 null 반환

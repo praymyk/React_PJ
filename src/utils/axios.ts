@@ -1,4 +1,9 @@
-import axios, {AxiosInstance, AxiosError, InternalAxiosRequestConfig, AxiosResponse} from 'axios';
+import axios, {
+    AxiosInstance,
+    AxiosError,
+    InternalAxiosRequestConfig,
+    AxiosResponse,
+} from 'axios';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -6,81 +11,123 @@ interface CustomRequestConfig extends InternalAxiosRequestConfig {
     _retry?: boolean;
 }
 
-function attachRefreshInterceptor(instance: AxiosInstance, isServer: boolean, cookieHeader?: string) {
+// -----------------------------
+// 백 공통 응답 타입(프론트용)
+// -----------------------------
+type ApiError = { code?: string; message?: string };
+type ApiResponse<T> = { ok: boolean; data: T; error?: ApiError };
 
+// ApiResponse 판별(최소 조건)
+function isApiResponse(x: any): x is ApiResponse<any> {
+    return (
+        x &&
+        typeof x === 'object' &&
+        typeof x.ok === 'boolean' &&
+        'data' in x
+    );
+}
+
+// JSON 응답인지 판단(파일 다운로드/바이너리 응답 보호)
+function isLikelyJsonResponse(response: AxiosResponse): boolean {
+    const ct = String(response.headers?.['content-type'] ?? '').toLowerCase();
+    // 보통 JSON이면 application/json 또는 +json
+    return ct.includes('application/json') || ct.includes('+json');
+}
+
+// -----------------------------
+// refresh 전용 클라이언트(인터셉터 없음)
+// - 재귀/무한루프 방지용
+// - export 하지 않음(내부 전용)
+// -----------------------------
+const refreshClient = axios.create({
+    baseURL: BASE_URL,
+    withCredentials: true,
+    headers: { 'Content-Type': 'application/json' },
+    timeout: 10000,
+});
+
+// refresh 호출(SSR 쿠키 헤더 주입 가능)
+async function requestRefreshToken(isServer: boolean, cookieHeader?: string): Promise<string> {
+    const { data: body } = await refreshClient.post<ApiResponse<{ accessToken: string }>>(
+        '/api/auth/refresh',
+        {},
+        {
+            headers: {
+                ...(isServer && cookieHeader ? { Cookie: cookieHeader } : {}),
+            },
+        }
+    );
+
+    if (!isApiResponse(body)) {
+        throw new Error('Invalid refresh response shape');
+    }
+    if (!body.ok) {
+        throw new Error(body.error?.message || 'Refresh failed');
+    }
+
+    const token = body.data?.accessToken;
+    if (!token) {
+        throw new Error('Refresh succeeded but no access token returned.');
+    }
+    return token;
+}
+
+// -----------------------------
+// 인터셉터 부착
+// -----------------------------
+function attachInterceptors(
+    instance: AxiosInstance,
+    isServer: boolean,
+    cookieHeader?: string
+) {
     instance.interceptors.response.use(
-        // ----------------------------------------------------------------
-        // 1. 성공 응답(200) 처리
-        // ----------------------------------------------------------------
+        // 1) 성공 응답: ApiResponse면 언랩 + ok=false면 throw
         (response: AxiosResponse) => {
-            const resData = response.data;
+            // JSON이 아닐 가능성이 있으면(파일 등) 언랩 시도 자체를 건너뜀
+            if (!isLikelyJsonResponse(response)) return response;
 
-            if (resData && typeof resData === 'object' && 'ok' in resData) {
-                if (!resData.ok) {
-                    // 백엔드 에러 메시지
-                    const customError = new Error(resData.error?.message || 'Unknown API Error');
+            const body = response.data;
 
-                    return Promise.reject(customError);
+            if (isApiResponse(body)) {
+                if (!body.ok) {
+                    const err = new Error(body.error?.message || 'Unknown API Error');
+                    (err as any).code = body.error?.code;
+                    throw err;
                 }
+                // 언랩: 이후 호출부에서는 res.data가 곧 payload(T)
+                response.data = body.data;
             }
 
             return response;
         },
 
-        // ----------------------------------------------------------------
-        // 2. 실패 응답(401, 403, 500 등) 처리: 토큰 갱신 로직
-        // ----------------------------------------------------------------
+        // 2) 실패 응답: 401/403 → refresh 후 재시도
         async (error: AxiosError) => {
-            const originalRequest = error.config as CustomRequestConfig;
+            const originalRequest = error.config as CustomRequestConfig | undefined;
 
-            // [조건] 401(인증 만료) 또는 403(권한 없음) && 재시도 안 함
-            if (
-                (error.response?.status === 401 || error.response?.status === 403) &&
-                originalRequest &&
-                !originalRequest._retry
-            ) {
+            if (!originalRequest) {
+                return Promise.reject(error);
+            }
+
+            const status = error.response?.status;
+
+            if ((status === 401 || status === 403) && !originalRequest._retry) {
                 originalRequest._retry = true;
-                console.log(`[${isServer ? 'SSR' : 'CSR'}] Token expired. Attempting refresh...`);
 
                 try {
-                    // 1. 토큰 갱신 요청
-                    const refreshResponse = await axios.post(
-                        `${BASE_URL}/api/auth/refresh`,
-                        {},
-                        {
-                            headers: {
-                                'Content-Type': 'application/json',
-                                // SSR일 경우 쿠키 헤더를 직접 실어줘야 함
-                                ...(isServer && cookieHeader ? { Cookie: cookieHeader } : {}),
-                            },
-                            withCredentials: true, // CSR일 경우 브라우저 쿠키 자동 포함
-                        }
-                    );
+                    const newAccessToken = await requestRefreshToken(isServer, cookieHeader);
 
-                    // 2. 새 토큰 추출 (백엔드 응답 구조 참조)
-                    const newAccessToken = refreshResponse.data.message || refreshResponse.data.accessToken;
-
-                    if (!newAccessToken) {
-                        throw new Error('Refresh succeeded but no access token returned.');
-                    }
-
-                    // 3. 재요청 헤더 설정 (Bearer 토큰 주입)
+                    // 재요청에 Bearer 주입
+                    originalRequest.headers = originalRequest.headers ?? {};
                     originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
 
-                    console.log(`[${isServer ? 'SSR' : 'CSR'}] Retry with new token success.`);
-
-                    // 4. 원래 요청 재시도
+                    // 원래 요청 재시도(이 요청은 instance 인터셉터 적용됨)
                     return instance(originalRequest);
-
                 } catch (refreshError) {
-                    console.error(`[${isServer ? 'SSR' : 'CSR'}] Refresh failed. Logout.`);
-
-                    // 클라이언트(브라우저) 환경이라면 로그인 페이지로 이동
+                    // refresh 실패 시: CSR은 로그인으로, SSR은 상위에서 처리
                     if (!isServer && typeof window !== 'undefined') {
                         window.location.href = '/login';
                     }
-
-                    // SSR 환경 > Page/Layout이 처리하게 함
                     return Promise.reject(refreshError);
                 }
             }
@@ -90,9 +137,9 @@ function attachRefreshInterceptor(instance: AxiosInstance, isServer: boolean, co
     );
 }
 
-// ----------------------------------------------------------------------
-// 클라이언트용(CSR) 인스턴스
-// ----------------------------------------------------------------------
+// -----------------------------
+// CSR 인스턴스
+// -----------------------------
 const api = axios.create({
     baseURL: BASE_URL,
     withCredentials: true,
@@ -100,14 +147,13 @@ const api = axios.create({
     timeout: 10000,
 });
 
-// 클라이언트용 인터셉터 부착
-attachRefreshInterceptor(api, false);
+attachInterceptors(api, false);
 
 export default api;
 
-// ----------------------------------------------------------------------
-// 서버용(SSR) 인스턴스
-// ----------------------------------------------------------------------
+// -----------------------------
+// SSR 인스턴스
+// -----------------------------
 export function createServerApi(cookieHeader?: string): AxiosInstance {
     const serverInstance = axios.create({
         baseURL: BASE_URL,
@@ -118,8 +164,6 @@ export function createServerApi(cookieHeader?: string): AxiosInstance {
         timeout: 10000,
     });
 
-    // 서버용 인터셉터 부착 (쿠키 헤더 전달)
-    attachRefreshInterceptor(serverInstance, true, cookieHeader);
-
+    attachInterceptors(serverInstance, true, cookieHeader);
     return serverInstance;
 }

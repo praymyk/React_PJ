@@ -123,13 +123,13 @@ export default function DefaultContentInner({ companyId }: { companyId: number }
                 monthlySalary
             };
 
-            const res = await api.post<ApiResponse<DignityAiContent>>(
+            const res = await api.post<DignityAiContent>(
                 '/api/ai/generate/dignity',
                 payload,
                 { timeout: 120000 }
             );
 
-            const content = res.data.data?.content ?? '{}';
+            const content = res.data?.content ?? '{}';
 
             let parsed: DignityAi | null = null;
             try {

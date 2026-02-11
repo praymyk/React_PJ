@@ -135,12 +135,12 @@ function DefaultContentInner({ initialCompanyId }: InnerProps) {
                 const pageSizeParam = sp.get('pageSize') ?? DEFAULT_SEARCH_VALUES.pageSize;
                 sp.set('pageSize', pageSizeParam);
 
-                const { data: responseBody } = await api.get<ApiResponse<TicketListApiResponse>>('/api/common/tickets', {
+                const { data } = await api.get<TicketListApiResponse>('/api/common/tickets', {
                     params: sp,
                     signal: abortController.signal,
                 });
 
-                const ticketData = responseBody.data;
+                const ticketData = data;
 
                 if (ticketData) {
                     setRows(ticketData.rows || []);
@@ -242,11 +242,11 @@ function DefaultContentInner({ initialCompanyId }: InnerProps) {
         const fetchDetailAndEvents = async () => {
             try {
                 const [detailRes, eventRes] = await Promise.all([
-                    api.get<ApiResponse<TicketDetailApiResponse>>(
+                    api.get<TicketDetailApiResponse>(
                         `/api/common/tickets/${encodeURIComponent(selectedId)}`,
                         { signal: abortController.signal }
                     ),
-                    api.get<ApiResponse<TicketEventListApiResponse>>(
+                    api.get<TicketEventListApiResponse>(
                         `/api/common/tickets/${encodeURIComponent(selectedId)}/events`,
                         {
                             params: {
@@ -258,12 +258,12 @@ function DefaultContentInner({ initialCompanyId }: InnerProps) {
                     ),
                 ]);
 
-                if (detailRes.data.data) {
-                    setDetail(detailRes.data.data);
+                if (detailRes.data) {
+                    setDetail(detailRes.data);
                 }
 
-                if (eventRes.data.data) {
-                    setEvents(eventRes.data.data);
+                if (eventRes.data) {
+                    setEvents(eventRes.data);
                 }
 
             } catch (err: any) {

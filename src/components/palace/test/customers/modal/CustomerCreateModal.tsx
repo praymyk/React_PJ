@@ -42,9 +42,9 @@ export default function CustomerCreateModal({
         const fetchCompanies = async () => {
             setLoadingCompanies(true);
             try {
-                const res = await api.get<ApiResponse<Company[]>>('/api/companies');
+                const res = await api.get<Company[]>('/api/companies');
 
-                setCompanies(res.data.data || []);
+                setCompanies(res.data || []);
             } catch (err) {
                 console.error('업체 목록 로드 실패:', err);
                 setErrorMsg('업체 정보를 불러오지 못했습니다.');
