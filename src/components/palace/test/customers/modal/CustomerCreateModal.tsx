@@ -2,6 +2,7 @@
 
 import { useState,  useEffect, FormEvent } from 'react';
 import api from '@utils/axios'
+import { ApiResponse } from '@/types/api';
 import styles from '@components/palace/test/customers/modal/CustomerCreateModal.module.scss'
 
 interface Company {
@@ -41,8 +42,9 @@ export default function CustomerCreateModal({
         const fetchCompanies = async () => {
             setLoadingCompanies(true);
             try {
-                const res = await api.get('/api/companies');
-                setCompanies(res.data);
+                const res = await api.get<ApiResponse<Company[]>>('/api/companies');
+
+                setCompanies(res.data.data || []);
             } catch (err) {
                 console.error('업체 목록 로드 실패:', err);
                 setErrorMsg('업체 정보를 불러오지 못했습니다.');

@@ -12,10 +12,10 @@ import {
     TrendingUp,
     TrendingDown,
     Calculator,
-    RefreshCcw,
     MessageSquareQuote,
     Lightbulb
 } from 'lucide-react';
+import type { ApiResponse, ApiError } from "@/types/api";
 
 type LuxuryItem = {
     id: number;
@@ -24,11 +24,14 @@ type LuxuryItem = {
     lifespan: number;
 };
 
-// AI 응답 데이터 타입 정의
-type AiAnalysisResult = {
-    dignityLevel: string;       // 품위 등급
-    roastComment: string;       // 팩트 폭력 코멘트
-    comparisonAnalysis: string; // 비교 분석 내용
+type DignityAiContent = {
+    content: string; // 서버가 주는 문자열 JSON
+};
+
+export type DignityAi = {
+    dignityLevel: string;
+    roastComment: string;
+    comparisonAnalysis: string;
 };
 
 // 숫자 포맷팅
@@ -38,13 +41,14 @@ export default function DefaultContentInner({ companyId }: { companyId: number }
     // --- State ---
     const [currentItems, setCurrentItems] = useState<LuxuryItem[]>([]);
     const [futureItems, setFutureItems] = useState<LuxuryItem[]>([]);
+    const [salaryStr, setSalaryStr] = useState('');
 
     // 입력 폼 State
     const [newCurrent, setNewCurrent] = useState({ name: '', price: '', lifespan: '24' });
     const [newFuture, setNewFuture] = useState({ name: '', price: '', lifespan: '24' });
 
     const [loading, setLoading] = useState(false);
-    const [analysis, setAnalysis] = useState<AiAnalysisResult | null>(null);
+    const [analysis, setAnalysis] = useState<DignityAi | null>(null);
 
     // --- 계산 로직 ---
     const calcMonthly = (list: LuxuryItem[]) =>
@@ -81,7 +85,7 @@ export default function DefaultContentInner({ companyId }: { companyId: number }
     };
 
     const copyCurrentToFuture = () => {
-        // 깊은 복사 (새로운 ID 부여하여 독립성 보장)
+        // ID 부여하여 독립성 보장
         const copied = currentItems.map(item => ({
             ...item,
             id: Date.now() + Math.random()
@@ -90,7 +94,17 @@ export default function DefaultContentInner({ companyId }: { companyId: number }
         setAnalysis(null);
     };
 
-    // [핵심] AI 분석 요청 핸들러 완성
+    // 월급 입력 핸들러
+    const handleSalaryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value.replace(/[^0-9]/g, '');
+        if (value) {
+            setSalaryStr(parseInt(value, 10).toLocaleString());
+        } else {
+            setSalaryStr('');
+        }
+    };
+
+    // AI 분석 요청 핸들러
     const handleAnalyze = async () => {
         if (currentItems.length === 0 && futureItems.length === 0) {
             alert('비교할 아이템이 없습니다. 아이템을 추가해주세요.');
@@ -98,36 +112,42 @@ export default function DefaultContentInner({ companyId }: { companyId: number }
         }
 
         setLoading(true);
-        setAnalysis(null); // 기존 결과 지우기
+        setAnalysis(null);
 
         try {
+            const monthlySalary = salaryStr ? parseInt(salaryStr.replace(/,/g, ''), 10) : null;
 
             const payload = {
-                currentItems: currentItems.map(i => ({
-                    name: i.name,
-                    price: i.price,
-                    lifespan: i.lifespan
-                })),
-                futureItems: futureItems.map(i => ({
-                    name: i.name,
-                    price: i.price,
-                    lifespan: i.lifespan
-                }))
+                currentItems: currentItems.map(i => ({ name: i.name, price: i.price, lifespan: i.lifespan })),
+                futureItems: futureItems.map(i => ({ name: i.name, price: i.price, lifespan: i.lifespan })),
+                monthlySalary
             };
 
-            const res = await api.post('/api/ai/generate/dignity', payload, {
-                timeout: 120000
-            });
+            const res = await api.post<ApiResponse<DignityAiContent>>(
+                '/api/ai/generate/dignity',
+                payload,
+                { timeout: 120000 }
+            );
 
-            // 백엔드 응답 파싱
-            const content = res.data.data.content;
-            const resultData = typeof content === 'string' ? JSON.parse(content) : content;
+            const content = res.data.data?.content ?? '{}';
 
-            setAnalysis(resultData);
+            let parsed: DignityAi | null = null;
+            try {
+                parsed = JSON.parse(content) as DignityAi;
+            } catch (err) {
+                console.error('AI JSON parse failed:', err, content);
+                parsed = {
+                    dignityLevel: '파싱 실패',
+                    roastComment: 'AI가 이상한 소리를 했음',
+                    comparisonAnalysis: '응답 JSON 파싱에 실패했음. 서버 로그/응답 원문 확인 필요함.'
+                };
+            }
 
-        } catch (e) {
+            setAnalysis(parsed);
+
+        } catch (e: any) {
             console.error('AI Analysis Error:', e);
-            alert('뀹 AI가 당신의 소비 계획을 보고 말문을 잃었습니다. (서버 오류)');
+            alert(e?.message ?? '뀹 AI가 당신의 소비 계획을 보고 말문을 잃었습니다. (서버 오류)');
         } finally {
             setLoading(false);
         }
@@ -137,7 +157,21 @@ export default function DefaultContentInner({ companyId }: { companyId: number }
         <div className={styles.container}>
             <header className={styles.header}>
                 <h1>품위 유지비 계산기</h1>
-                <p>현재 아이탬과 미래 아이템을 비교해서 평가해 드림!</p>
+                <p>당신의 품위 유지비는 적당할까요?</p>
+
+                <div className={styles.salaryInputWrapper}>
+                    <label>내 월급</label>
+                    <div className={styles.inputContainer}>
+                        <input
+                            type="text"
+                            placeholder="0"
+                            value={salaryStr}
+                            onChange={handleSalaryChange}
+                        />
+                        <span className={styles.unit}>원</span>
+                    </div>
+                    <p className={styles.guide}>* 입력 시 소득 기준으로 평가</p>
+                </div>
             </header>
 
             {/* 1. 상단 대시보드 (Scoreboard) */}
@@ -293,7 +327,7 @@ export default function DefaultContentInner({ companyId }: { companyId: number }
                 </button>
             </div>
 
-            {/* [NEW] AI 분석 결과 리포트 */}
+            {/* AI 분석 결과 리포트 */}
             {analysis && (
                 <div className={styles.reportSection}>
                     <div className={styles.reportCard}>

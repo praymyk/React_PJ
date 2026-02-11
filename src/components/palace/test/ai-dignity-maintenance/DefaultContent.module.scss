@@ -1,16 +1,83 @@
 @import '@styles/theme/tokens';
 
 .container {
-  max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  font-family: var(--font-sans);
 }
 
 .header {
   text-align: center; margin-bottom: 2rem;
-  h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem; }
+  h1 { font-size: var(--font-size-2xl); font-weight: var(--font-weight-heavy); margin-bottom: 0.5rem; }
   p { color: var(--color-text-muted); }
+}
+
+/* 월급 입력 스타일 */
+.salaryInputWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  @media (max-width: 768px) {
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  label {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .inputContainer {
+    position: relative;
+    width: 200px;
+
+    @media (max-width: 768px) {
+      width: 100%;
+    }
+
+    input {
+      width: 100%;
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-subtle);
+      padding: 0.8rem 2.5rem 0.8rem 1rem; /* 오른쪽 여백 확보(단위) */
+      border-radius: 8px;
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-main);
+      text-align: right;
+      transition: all 0.2s;
+
+      &:focus {
+        border-color: var(--color-accent);
+        box-shadow: 0 0 0 3px var(--color-accent-soft);
+        outline: none;
+      }
+
+      &::placeholder {
+        color: var(--color-text-muted);
+        opacity: 0.3;
+      }
+    }
+
+    .unit {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-text-muted);
+      font-weight: var(--font-weight-bold);
+      font-size: var(--font-size-base);
+    }
+  }
+
+  .guide {
+    font-size: var(--font-size-xs);
+    color: var(--color-accent);
+    margin-top: 0.5rem;
+    opacity: 0.8;
+  }
 }
 
 /* 스코어보드 (상단 요약) */
@@ -28,8 +95,8 @@
 
   .scoreCard {
     text-align: center;
-    .label { font-size: 0.75rem; color: var(--color-text-muted); display: block; margin-bottom: 0.5rem; }
-    .value { font-size: 1.5rem; font-weight: 800; color: var(--color-text-main); }
+    .label { font-size: var(--font-size-xs); color: var(--color-text-muted); display: block; margin-bottom: 0.5rem; }
+    .value { font-size: var(--font-size-xl); font-weight: var(--font-weight-heavy); color: var(--color-text-main); }
 
     &.future .value { color: var(--color-accent); }
   }
@@ -38,8 +105,8 @@
     display: flex; flex-direction: column; align-items: center;
     padding: 0 1.5rem;
 
-    .diffValue { font-size: 1.25rem; font-weight: 800; margin: 0.2rem 0; }
-    .diffLabel { font-size: 0.7rem; color: var(--color-text-muted); }
+    .diffValue { font-size: 1.25rem; font-weight: var(--font-weight-heavy); margin: 0.2rem 0; }
+    .diffLabel { font-size: var(--font-size-xs); color: var(--color-text-muted); }
 
     /* 상태별 컬러 */
     &.up { color: #ef4444; } /* 비용 증가 -> 빨강 */
@@ -75,8 +142,8 @@
 
 .colHeader {
   display: flex; justify-content: space-between; align-items: center;
-  h2 { font-size: 1rem; font-weight: 700; margin: 0; }
-  .count { background: var(--color-bg-body); padding: 2px 8px; border-radius: 99px; font-size: 0.75rem; }
+  h2 { font-size: 1rem; font-weight: var(--font-weight-bold); margin: 0; }
+  .count { background: var(--color-bg-body); padding: 2px 8px; border-radius: 99px; font-size: var(--font-size-xs); }
 }
 
 /* 중앙 액션 버튼들 */
@@ -96,7 +163,7 @@
   }
 
   .btnSync {
-    display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.7rem;
+    display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: var(--font-size-xs);
     padding: 0.8rem 0.5rem;
   }
 
@@ -118,12 +185,12 @@
   display: flex; justify-content: space-between; align-items: center;
 
   .info {
-    .name { font-weight: 600; font-size: 0.9rem; }
-    .meta { font-size: 0.75rem; color: var(--color-text-muted); }
+    .name { font-weight: var(--font-weight-bold); font-size: var(--font-size-base); }
+    .meta { font-size: var(--font-size-xs); color: var(--color-text-muted); }
   }
 
   .cost {
-    text-align: right; font-size: 0.85rem; font-weight: 600;
+    text-align: right; font-size: var(--font-size-sm); font-weight: var(--font-weight-bold);
     display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
 
     button {
@@ -164,7 +231,7 @@
 
 .footerAction { margin-top: 2rem; text-align: center; }
 .analyzeBtn {
-  background: var(--color-accent); color: #fff; padding: 1rem 2rem; border-radius: 99px; font-weight: 700;
+  background: var(--color-accent); color: #fff; padding: 1rem 2rem; border-radius: 99px; font-weight: var(--font-weight-bold);
   border: none; cursor: pointer; display: inline-flex; gap: 0.5rem; align-items: center;
   box-shadow: 0 4px 15px var(--color-accent-soft-strong);
 }
@@ -198,8 +265,8 @@
   border-bottom: 1px solid var(--color-border-subtle);
 
   .gradeLabel {
-    font-size: 0.75rem;
-    font-weight: 700;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
     color: var(--color-text-muted);
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -207,8 +274,8 @@
   }
 
   .gradeValue {
-    font-size: 2rem;
-    font-weight: 900;
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-heavy);
     color: var(--color-text-main);
     text-align: center;
 
@@ -231,8 +298,8 @@
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    font-size: 0.85rem;
-    font-weight: 700;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
     margin-bottom: 0.8rem;
 
     /* 아이콘 색상으로 구분 */
@@ -241,7 +308,7 @@
 
   p {
     margin: 0;
-    font-size: 0.95rem;
+    font-size: var(--font-size-base);
     line-height: 1.6;
     color: var(--color-text-main);
     white-space: pre-wrap;
@@ -255,7 +322,7 @@
   }
 
   .roastText {
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     color: var(--color-text-main);
   }
 }

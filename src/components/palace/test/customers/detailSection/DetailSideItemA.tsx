@@ -3,6 +3,7 @@
 import styles from './DetailSideItem.module.scss';
 import { useEffect, useState } from 'react';
 import api from '@utils/axios'
+import { ApiResponse } from "@/types/api";
 
 import type { CustomerRow } from '@/types/customer';
 import { CustomerTicketRow, TICKET_STATUS_CONFIG } from '@/types/ticket';
@@ -29,13 +30,15 @@ export default function DetailSideItemA({ row }: Props) {
             setError(null);
 
             try {
-                const { data } = await api.get<CustomerTicketRow[]>(
+                const res = await api.get<ApiResponse<{ rows: CustomerTicketRow[] }>>(
                     `/api/common/customers/${encodeURIComponent(row.id)}/tickets`
                 );
 
                 if (!cancelled) {
-                    setHistoryItems(data);
+                    const ticketList = res.data.data?.rows || [];
+                    setHistoryItems(ticketList);
                 }
+
             } catch (err) {
                 console.error('[DetailSideItemA] history fetch error:', err);
                 if (!cancelled) {

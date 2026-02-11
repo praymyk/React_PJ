@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, Suspense } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import api from '@utils/axios';
+import { ApiResponse } from "@/types/api";
 
 import styles from '@components/palace/ticket/DefaultContent.module.scss';
 
@@ -134,19 +135,22 @@ function DefaultContentInner({ initialCompanyId }: InnerProps) {
                 const pageSizeParam = sp.get('pageSize') ?? DEFAULT_SEARCH_VALUES.pageSize;
                 sp.set('pageSize', pageSizeParam);
 
-                const { data } = await api.get<TicketListApiResponse>('/api/common/tickets', {
+                const { data: responseBody } = await api.get<ApiResponse<TicketListApiResponse>>('/api/common/tickets', {
                     params: sp,
                     signal: abortController.signal,
                 });
 
-                setRows(data.rows);
-                setPage(data.page);
-                setPageSize(data.pageSize);
-                setTotal(data.total);
+                const ticketData = responseBody.data;
 
-                // 첫 로딩 시 자동 선택
-                if (!selectedId && data.rows.length > 0) {
-                    setSelectedId(String(data.rows[0].id));
+                if (ticketData) {
+                    setRows(ticketData.rows || []);
+                    setPage(ticketData.page);
+                    setPageSize(ticketData.pageSize);
+                    setTotal(ticketData.total);
+
+                    if (!selectedId && ticketData.rows.length > 0) {
+                        setSelectedId(String(ticketData.rows[0].id));
+                    }
                 }
 
             } catch (err: any) {
@@ -238,11 +242,11 @@ function DefaultContentInner({ initialCompanyId }: InnerProps) {
         const fetchDetailAndEvents = async () => {
             try {
                 const [detailRes, eventRes] = await Promise.all([
-                    api.get<TicketDetailApiResponse>(
+                    api.get<ApiResponse<TicketDetailApiResponse>>(
                         `/api/common/tickets/${encodeURIComponent(selectedId)}`,
                         { signal: abortController.signal }
                     ),
-                    api.get<TicketEventListApiResponse>(
+                    api.get<ApiResponse<TicketEventListApiResponse>>(
                         `/api/common/tickets/${encodeURIComponent(selectedId)}/events`,
                         {
                             params: {
@@ -254,8 +258,13 @@ function DefaultContentInner({ initialCompanyId }: InnerProps) {
                     ),
                 ]);
 
-                setDetail(detailRes.data);
-                setEvents(eventRes.data);
+                if (detailRes.data.data) {
+                    setDetail(detailRes.data.data);
+                }
+
+                if (eventRes.data.data) {
+                    setEvents(eventRes.data.data);
+                }
 
             } catch (err: any) {
                 if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') {

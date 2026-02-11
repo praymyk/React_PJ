@@ -2,6 +2,7 @@ import { buildCookieHeader } from '@/utils/ssrCookie';
 import { getCompanyIdSSR } from '@/api/auth';
 import { createServerApi } from '@utils/axios';
 import { AxiosInstance } from 'axios';
+import { ApiResponse } from "@/types/api";
 
 import type {
     CustomerRow,
@@ -39,10 +40,22 @@ export async function fetchCustomerList(
     params: CustomerApiParams
 ): Promise<PaginatedResponse<CustomerRow>> {
     try {
-        const { data } = await client.get<PaginatedResponse<CustomerRow>>('/api/customers', {
-            params,
-        });
-        return data;
+        const { data: responseBody } = await client.get<ApiResponse<PaginatedResponse<CustomerRow>>>(
+            '/api/customers',
+            { params }
+        );
+
+        if (!responseBody.data) {
+            return {
+                rows: [],
+                total: 0,
+                page: params.page || 1,
+                pageSize: params.pageSize || 10,
+            };
+        }
+
+        return responseBody.data;
+
     } catch (error) {
         console.error('[SSR] 고객 목록 조회 실패:', error);
         return emptyListResult();

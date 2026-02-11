@@ -8,6 +8,11 @@ import api from '@/utils/axios';
 import styles from '@components/palace/test/ai-case-notes/DefaultContent.module.scss';
 import HeaderSection from '@components/common/SubContentForm/headerSection/HeaderSection';
 import KindTabSection from '@components/palace/test/ai-case-notes/tabSection/KindTabSection';
+import type {ApiResponse} from "@/types/api";
+
+type TemplateAiContent = {
+    content: string; // 서버가 주는 문자열 JSON
+};
 
 type ApiTemplateRow = {
     id: number;
@@ -86,18 +91,18 @@ export function DefaultContentInner({ companyId } : Props) {
         setListError(null);
 
         try {
-            const res = await api.get('/api/common/template', {
+            const res = await api.get<ApiResponse<{ rows: ApiTemplateRow[] }>>('/api/common/template', {
                 params: {
                     companyId,
                     kind
                 }
             });
 
-            const json = res.data;
+            const responseBody = res.data;
 
-            if (!json.ok) throw new Error('API Response not ok');
+            if (!responseBody.ok) throw new Error('API Error');
 
-            const apiRows: ApiTemplateRow[] = json.data.rows;
+            const apiRows = responseBody.data?.rows || [];
 
             const uiRows: UiTemplateRow[] = apiRows.map((r) => ({
                 id: String(r.id),
@@ -141,7 +146,7 @@ export function DefaultContentInner({ companyId } : Props) {
 
         try {
             // 백엔드 API 호출
-            const res = await api.post('/api/ai/generate/template', {
+            const res = await api.post<ApiResponse<TemplateAiContent>>('/api/ai/generate/template', {
                 kind: kind,
                 prompt: p
             }, {

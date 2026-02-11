@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
+import axios, {AxiosInstance, AxiosError, InternalAxiosRequestConfig, AxiosResponse} from 'axios';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -8,19 +8,38 @@ interface CustomRequestConfig extends InternalAxiosRequestConfig {
 
 function attachRefreshInterceptor(instance: AxiosInstance, isServer: boolean, cookieHeader?: string) {
 
-    // 응답 인터셉터
     instance.interceptors.response.use(
-        (response) => response,
+        // ----------------------------------------------------------------
+        // 1. 성공 응답(200) 처리
+        // ----------------------------------------------------------------
+        (response: AxiosResponse) => {
+            const resData = response.data;
+
+            if (resData && typeof resData === 'object' && 'ok' in resData) {
+                if (!resData.ok) {
+                    // 백엔드 에러 메시지
+                    const customError = new Error(resData.error?.message || 'Unknown API Error');
+
+                    return Promise.reject(customError);
+                }
+            }
+
+            return response;
+        },
+
+        // ----------------------------------------------------------------
+        // 2. 실패 응답(401, 403, 500 등) 처리: 토큰 갱신 로직
+        // ----------------------------------------------------------------
         async (error: AxiosError) => {
             const originalRequest = error.config as CustomRequestConfig;
 
-            // [조건] 401(인증 만료) 또는 403(권한 없음) && 아직 재시도 안 함
+            // [조건] 401(인증 만료) 또는 403(권한 없음) && 재시도 안 함
             if (
                 (error.response?.status === 401 || error.response?.status === 403) &&
                 originalRequest &&
                 !originalRequest._retry
             ) {
-                originalRequest._retry = true; // 무한 루프 방지
+                originalRequest._retry = true;
                 console.log(`[${isServer ? 'SSR' : 'CSR'}] Token expired. Attempting refresh...`);
 
                 try {

@@ -2,6 +2,7 @@ import { buildCookieHeader } from '@/utils/ssrCookie';
 import { getCompanyIdSSR } from '@/api/auth';
 import { createServerApi } from '@utils/axios';
 import {AxiosInstance} from "axios";
+import {ApiResponse} from "@/types/api";
 
 import type { CustomerRow, CustomerSearchParams } from '@/types/customer';
 
@@ -9,6 +10,7 @@ import {
     fetchCustomerList,
     parseSearchParams
 } from '../data';
+
 
 // ======================================================
 // 상세 페이지용 데이터 로더 (SSR)
@@ -58,8 +60,14 @@ async function fetchCustomerDetail(
     id: string
 ): Promise<CustomerRow | null> {
     try {
-        const { data } = await client.get<CustomerRow>(`/api/customers/${id}`);
-        return data;
+        const { data: responseBody } = await client.get<ApiResponse<CustomerRow>>(`/api/customers/${id}`);
+
+        if (!responseBody.data) {
+            return null;
+        }
+
+        return responseBody.data;
+
     } catch (error) {
         // 404나 권한 없음 등 에러 시 null 반환
         return null;
