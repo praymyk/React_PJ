@@ -2,7 +2,6 @@ import { buildCookieHeader } from '@/utils/ssrCookie';
 import { getCompanyIdSSR } from '@/api/auth';
 import { createServerApi } from '@utils/axios';
 import { AxiosInstance } from 'axios';
-import { ApiResponse } from "@/types/api";
 
 import type {
     CustomerRow,

@@ -16,9 +16,14 @@
 
 /* 좌측 메뉴 영역 */
 .menu {
+  position: sticky;
+  top: var(--layout-header-height);
+  align-self: flex-start;
+  height: calc(100dvh - var(--layout-header-height) - var(--layout-footer-height));
+  overflow: auto;
+
   background-color: transparent;
   color: var(--color-text-main);
-
   @extend %themeTransition;
 }
 

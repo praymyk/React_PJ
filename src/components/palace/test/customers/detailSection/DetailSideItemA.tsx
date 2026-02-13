@@ -3,7 +3,6 @@
 import styles from './DetailSideItem.module.scss';
 import { useEffect, useState } from 'react';
 import api from '@utils/axios'
-import { ApiResponse } from "@/types/api";
 
 import type { CustomerRow } from '@/types/customer';
 import { CustomerTicketRow, TICKET_STATUS_CONFIG } from '@/types/ticket';

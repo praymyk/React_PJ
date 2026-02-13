@@ -20,9 +20,9 @@ export default function LoginPage() {
     return (
         <div className={styles.loginContainer}>
             <div className={styles.loginCard}>
-                <h1 className={styles.loginTitle}> 냠냠프로젝트 로그인</h1>
+                <h1 className={styles.loginTitle}> 냥냥프로젝트 로그인</h1>
                 <p className={styles.loginSubtitle}>
-                    냠냠사이트 확인을 위해 계정으로 로그인해주세요.
+                    냥냥사이트 확인을 위해 계정으로 로그인해주세요.
                 </p>
                 {error && (
                     <p className={styles.errorText}>{error}</p>

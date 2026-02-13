@@ -2,7 +2,6 @@
 
 import { useState,  useEffect, FormEvent } from 'react';
 import api from '@utils/axios'
-import { ApiResponse } from '@/types/api';
 import styles from '@components/palace/test/customers/modal/CustomerCreateModal.module.scss'
 
 interface Company {

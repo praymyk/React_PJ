@@ -2,7 +2,6 @@ import { buildCookieHeader } from '@/utils/ssrCookie';
 import { getCompanyIdSSR } from '@/api/auth';
 import { createServerApi } from '@utils/axios';
 import {AxiosInstance} from "axios";
-import {ApiResponse} from "@/types/api";
 
 import type { CustomerRow, CustomerSearchParams } from '@/types/customer';
 
@@ -27,20 +26,19 @@ export async function getDetailPageData(id: string, raw: CustomerSearchParams) {
     const listParams = parseSearchParams(raw, companyId);
 
     try {
-        // 3. [핵심] 병렬 호출 (리스트 + 상세정보 동시 요청)
+        // 3. 리스트 + 상세정보 동시 요청
         const [listResponse, detailData] = await Promise.all([
             fetchCustomerList(client, listParams),
             fetchCustomerDetail(client, id)
         ]);
 
-        // 상세 데이터가 없으면 null 반환 (404 처리용)
+        // 404 처리
         if (!detailData) return null;
 
         return {
             customer: detailData,           // 상세 정보
             customerList: listResponse.rows,// 사이드바 목록용 리스트
 
-            // 페이징 유지를 위한 메타 정보
             page: listResponse.page,
             pageSize: listResponse.pageSize,
             total: listResponse.total,
@@ -69,7 +67,7 @@ async function fetchCustomerDetail(
         return data;
 
     } catch (error) {
-        // 404나 권한 없음 등 에러 시 null 반환
+        // 404나 권한 없음
         return null;
     }
 }

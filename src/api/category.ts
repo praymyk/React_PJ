@@ -1,6 +1,5 @@
 import api from '@utils/axios';
 import { AxiosInstance } from 'axios';
-import { ApiResponse } from '@/types/api';
 
 import type {
     CategoryApiParams,

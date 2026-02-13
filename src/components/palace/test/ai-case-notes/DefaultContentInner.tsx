@@ -8,11 +8,6 @@ import api from '@/utils/axios';
 import styles from '@components/palace/test/ai-case-notes/DefaultContent.module.scss';
 import HeaderSection from '@components/common/SubContentForm/headerSection/HeaderSection';
 import KindTabSection from '@components/palace/test/ai-case-notes/tabSection/KindTabSection';
-import type {ApiResponse} from "@/types/api";
-
-type TemplateAiContent = {
-    content: string; // 서버가 주는 문자열 JSON
-};
 
 type ApiTemplateRow = {
     id: number;

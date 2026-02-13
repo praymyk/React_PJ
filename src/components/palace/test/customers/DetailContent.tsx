@@ -112,8 +112,6 @@ export default function DetailContent({
 
             <DetailSection row={customer} />
 
-            <div className={styles.divider} style={{ margin: '20px 0' }} />
-
             <SearchForm
                 fields={fields}
                 onSearch={handleSearch}

@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState, Suspense } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import api from '@utils/axios';
-import { ApiResponse } from "@/types/api";
 
 import styles from '@components/palace/ticket/DefaultContent.module.scss';
 
@@ -35,7 +34,7 @@ const statusClassOf = (status: TicketApiRow['status']) => STATUS_CLASS[status];
 // ======================================================
 const DEFAULT_SEARCH_VALUES: Record<string, string> = {
     at: 'receivedAt:desc',
-    pageSize: '1',
+    pageSize: 'all',
 };
 // ======================================================
 // 티켓 이벤트 (InquirySection) 페이지 사이즈
@@ -182,7 +181,7 @@ function DefaultContentInner({ initialCompanyId }: InnerProps) {
     const goToPage = (nextPage: number) => {
         const safeTotalPages = Math.max(
             1,
-            Math.ceil(total / (pageSize || 1)),
+            Math.ceil(total / (pageSize)),
         );
         const safePage = Math.min(Math.max(nextPage, 1), safeTotalPages);
 

@@ -154,10 +154,11 @@ export default function DefaultContentInner({ companyId }: { companyId: number }
     };
 
     return (
-        <div className={styles.container}>
+        <div className={styles.root}>
             <header className={styles.header}>
                 <h1>품위 유지비 계산기</h1>
-                <p>당신의 품위 유지비는 적당할까요?</p>
+                <p>당신의 품위 유지비 적당도를 확인해 보자.</p>
+                <p className={styles.guide}>* 입력된 내용은 저장되지 않으니 안심하고 사용하세요.</p>
 
                 <div className={styles.salaryInputWrapper}>
                     <label>내 월급</label>
@@ -248,7 +249,7 @@ export default function DefaultContentInner({ companyId }: { companyId: number }
                     <button
                         className={styles.btnSync}
                         onClick={copyCurrentToFuture}
-                        title="현재 목록을 미래로 복사"
+                        title="현재 목록을 예상으 복사"
                     >
                         <Copy size={16} />
                         <span>Sync</span>
@@ -257,7 +258,7 @@ export default function DefaultContentInner({ companyId }: { companyId: number }
                     <button
                         className={styles.btnReset}
                         onClick={() => setFutureItems([])}
-                        title="미래 목록 초기화"
+                        title="예상 목록 초기화"
                     >
                         <RotateCcw size={16} />
                     </button>
@@ -266,13 +267,13 @@ export default function DefaultContentInner({ companyId }: { companyId: number }
                 {/* [RIGHT] Future Items */}
                 <section className={`${styles.column} ${styles.futureCol}`}>
                     <div className={styles.colHeader}>
-                        <h2>미래 시뮬레이션</h2>
+                        <h2>예상 보유 목록</h2>
                         <span className={styles.count}>{futureItems.length}</span>
                     </div>
                     {/* ... (입력 폼 동일) ... */}
                     <div className={styles.miniInput}>
                         <input
-                            placeholder="추가할 꿈의 아이템"
+                            placeholder="추가할 아이템"
                             value={newFuture.name}
                             onChange={e => setNewFuture({...newFuture, name: e.target.value})}
                         />
