@@ -13,26 +13,9 @@ export const metadata: Metadata = {
     description: 'IPCC dashboard powered by Next.js',
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-
-    const cookieHeader = (await cookies())
-        .getAll()
-        .map(c => `${c.name}=${c.value}`)
-        .join('; ');
-
-    let me;
-
-    try {
-        me = await getMeSSR(cookieHeader);
-    } catch {
-        redirect('/login');
-        me = { preferences: { darkMode: false } };
-    }
-
-    const isDark = Boolean(me?.preferences?.darkMode);
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="ko" className={isDark ? 'dark' : ''}>
+        <html lang="ko">
         <body>
         <MainLayout>{children}</MainLayout>
         </body>

@@ -29,19 +29,23 @@ export function useLogin() {
         setError('');
 
         try {
+            const res = await login({ username, password });
 
-            await login({ username, password });
-
+            // 아이디 저장
             const maxAge = rememberId ? 60 * 60 * 24 * 30 : 0;
             document.cookie = `rememberedLoginId=${rememberId ? encodeURIComponent(username) : ''}; path=/; max-age=${maxAge}`;
 
-            router.push('/palace');
+            // Hybrid: accessToken 저장
+            sessionStorage.setItem('accessToken', res.accessToken);
 
+            router.push('/palace');
         } catch (err: any) {
             console.error(err);
-            const msg = err.response?.data?.message || err.message || '로그인 실패.';
+
+            const msg = err?.message || '로그인 실패.';
             setError(msg);
-            setLoading(false); // 실패했을 때만 로딩 끔 (다시 입력해야 하니까)
+        } finally {
+            setLoading(false);
         }
     };
 

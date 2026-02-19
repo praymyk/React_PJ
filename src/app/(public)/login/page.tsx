@@ -53,7 +53,7 @@ export default function LoginPage() {
                         {loading ? (
                             <>
                                 {/* 로딩 spinner */}
-                                <span className='${styles.spinner} uSpinner'></span>
+                                <span className={`${styles.spinner} uSpinner`} />
                                 <span>로그인 중...</span>
                             </>
                         ) : (
@@ -70,6 +70,14 @@ export default function LoginPage() {
                             />
                             <span>아이디 저장</span>
                         </label>
+
+                        {/* TODO: 비번찾기 링크 자리 */}
+                        {/* <a className={styles.subLink} href="/forgot">비밀번호 찾기</a> */}
+                    </div>
+
+                    <div className={styles.signupRow}>
+                        <span>계정이 없으신가요?</span>
+                        <a className={styles.signupLink} href="/signup">회원가입</a>
                     </div>
                 </form>
             </div>

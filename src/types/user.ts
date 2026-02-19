@@ -30,13 +30,6 @@ export type Profile = {
     updatedAt: string;
 };
 
-/** /api/auth/login 응답 body */
-export type LoginResponse = {
-    message?: string;
-    user: UserInfo;
-    preferences: UserPreferences;
-};
-
 /** /api/auth/me 응답 */
 export type MeResponse = {
     user: UserInfo;

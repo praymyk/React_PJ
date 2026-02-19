@@ -6,7 +6,10 @@ export type LoginRequest = {
     password: string;
 };
 
-export type LoginResponse = MeResponse;
+export type LoginResponse = {
+    accessToken: string;
+    profile: MeResponse;
+};
 
 /**
  * CSR 로그인

@@ -8,6 +8,7 @@ import SubMenuContent, { Panel as SidebarPanel } from '@components/layout/sideba
 import { sidebarRegistry } from '@/data/sidebarItems';
 
 export default function PalaceLayout({ children }: { children: React.ReactNode }) {
+
     return (
         <SidebarProvider>
             <PalaceLayoutContent>{children}</PalaceLayoutContent>

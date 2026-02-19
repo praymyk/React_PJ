@@ -68,7 +68,6 @@
 
 /* 아이디 저장 + 버튼 줄 */
 .loginActions {
-  margin-top: 0.6rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -111,6 +110,26 @@
   &:disabled { opacity: 0.6; cursor: default; box-shadow: none; }
 }
 
+.signupRow {
+  margin-top: 0.2rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.signupLink {
+  color: var(--color-accent);
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 .spinner {
   flex: 0 0 auto;
 }
+
