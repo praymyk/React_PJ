@@ -41,8 +41,6 @@ export function useLogin() {
             router.push('/palace');
 
         } catch (err: any) {
-            console.error(err);
-
             setLoading(false);
 
             const msg = err?.message || '로그인 실패.';

@@ -20,7 +20,40 @@ export default function SignupPage() {
     const [loading, setLoading] = useState(false);
 
     const [globalError, setGlobalError] = useState('');
+    const [accountError, setAccountError] = useState('');
+    const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
+
+    const handleAccountBlur = async () => {
+        if (!formData.account) {
+            setAccountError('');
+            return;
+        }
+
+        try {
+            // 백엔드에 아이디 중복 확인 API 호출 (아직 안 만들었다면 만들어야 합니다!)
+            await api.get(`/api/auth/check-account?account=${formData.account}`);
+            setAccountError(''); // 통과하면 에러 메시지 초기화
+        } catch (err: any) {
+            // 백엔드에서 409 Conflict 등의 에러를 던지면 캐치
+            setAccountError('이미 사용 중인 아이디입니다.');
+        }
+    };
+
+    // 이메일 입력칸에서 포커스가 벗어날 때 실행되는 함수
+    const handleEmailBlur = async () => {
+        if (!formData.email) {
+            setEmailError('');
+            return;
+        }
+
+        try {
+            await api.get(`/api/auth/check-email?email=${formData.email}`);
+            setEmailError('');
+        } catch (err: any) {
+            setEmailError('이미 가입된 이메일입니다.');
+        }
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -89,13 +122,15 @@ export default function SignupPage() {
                     <div className={styles.inputGroup}>
                         <label className={styles.signupLabel}>
                             이메일<span className={styles.labelRequired}>*</span>
+                            {emailError && <span className={styles.labelError}>{emailError}</span>}
                         </label>
                         <input
                             type="email"
                             name="email"
-                            className={styles.signupInput}
+                            className={`${styles.signupInput} ${emailError ? styles.inputError : ''}`}
                             value={formData.email}
                             onChange={handleChange}
+                            onBlur={handleEmailBlur}
                             placeholder="example@email.com"
                             required
                         />
@@ -119,13 +154,15 @@ export default function SignupPage() {
                     <div className={styles.inputGroup}>
                         <label className={styles.signupLabel}>
                             아이디<span className={styles.labelRequired}>*</span>
+                            {accountError && <span className={styles.labelError}>{accountError}</span>}
                         </label>
                         <input
                             type="text"
                             name="account"
-                            className={styles.signupInput}
+                            className={`${styles.signupInput} ${accountError ? styles.inputError : ''}`}
                             value={formData.account}
                             onChange={handleChange}
+                            onBlur={handleAccountBlur}
                             placeholder="로그인에 사용할 아이디"
                             required
                         />
@@ -149,6 +186,7 @@ export default function SignupPage() {
                     <div className={styles.inputGroup}>
                         <label className={styles.signupLabel}>
                             비밀번호 확인<span className={styles.labelRequired}>*</span>
+                            {passwordError && <span className={styles.labelError}>{passwordError}</span>}
                         </label>
                         <input
                             type="password"
@@ -159,8 +197,6 @@ export default function SignupPage() {
                             placeholder="비밀번호 다시 입력"
                             required
                         />
-                        {/* 비밀번호 검증 에러 */}
-                        {passwordError && <div className={styles.errorText}>{passwordError}</div>}
                     </div>
 
                     {/* 전체 폼 또는 API 에러 메시지 렌더링 */}
