@@ -71,7 +71,7 @@ export function parseSearchParams(raw: CustomerSearchParams, companyId: number):
         page: Number(raw.page ?? '1') || 1,
         pageSize: Number(raw.pageSize ?? '10') || 10,
         keyword: raw.keyword?.trim() || undefined,
-        status: (rawStatus === 'active' || rawStatus === 'inactive') ? rawStatus : undefined,
+        status: (rawStatus === 'ACTIVE' || rawStatus === 'INACTIVE') ? rawStatus : undefined,
         sortBy: ['id', 'name', 'email', 'status', 'created_at'].includes(rawSortBy || '') ? rawSortBy : undefined,
         sortDir: (rawSortDir === 'asc' || rawSortDir === 'desc') ? (rawSortDir as 'asc' | 'desc') : undefined,
     };

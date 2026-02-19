@@ -1,4 +1,4 @@
-export type UserStatus = 'active' | 'inactive';
+// export type UserStatus = 'ACTIVE' | 'INACTIVE';
 
 export type UserInfo = {
     id: number;
@@ -24,7 +24,7 @@ export type Profile = {
     email: string;
     username: string;
     extension: string | null;
-    status: 'active' | 'inactive' | 'hidden';
+    status: 'ACTIVE' | 'INACTIVE' | 'HIDDEN';
     createdAt: string;
     deactivatedAt: string | null;
     updatedAt: string;

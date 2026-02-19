@@ -26,7 +26,7 @@ export default function CustomerCreateModal({
     const [companyId, setCompanyId] = useState<number | ''>(''); // 선택된 업체 ID
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [status, setStatus] = useState<'active' | 'inactive'>('active');
+    const [status, setStatus] = useState<'ACTIVE' | 'INACTIVE'>('ACTIVE');
     const [phone, setPhone] = useState('');
     const [organization, setOrganization] = useState('');
     const [memo, setMemo] = useState('');
@@ -61,7 +61,7 @@ export default function CustomerCreateModal({
         setCompanyId('');
         setName('');
         setEmail('');
-        setStatus('active');
+        setStatus('ACTIVE');
         setPhone('');
         setOrganization('');
         setMemo('');
@@ -197,11 +197,11 @@ export default function CustomerCreateModal({
                             className={styles.select}
                             value={status}
                             onChange={(e) =>
-                                setStatus(e.target.value === 'inactive' ? 'inactive' : 'active')
+                                setStatus(e.target.value === 'INACTIVE' ? 'INACTIVE' : 'ACTIVE')
                             }
                         >
-                            <option value="active">활성</option>
-                            <option value="inactive">비활성</option>
+                            <option value="ACTIVE">활성</option>
+                            <option value="INACTIVE">비활성</option>
                         </select>
                     </div>
 

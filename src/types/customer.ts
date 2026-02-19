@@ -2,7 +2,7 @@ export type CustomerRow = {
     id: number;
     name: string;
     email: string;
-    status: 'active' | 'inactive';
+    status: 'ACTIVE' | 'INACTIVE';
     createdAt: string;
 };
 
@@ -17,11 +17,11 @@ export type CustomerSearchParams = {
 };
 
 export const CUSTOMER_STATUS_CONFIG = {
-    active: {
+    ACTIVE: {
         label: '활성',
         color: 'var(--color-status-active)',
     },
-    inactive: {
+    INACTIVE: {
         label: '비활성',
         color: 'var(--color-status-inactive)',
     },

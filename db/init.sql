@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS companies (
 
 -- 더미 회사
 INSERT INTO companies (name, status)
-VALUES ('Nyam_Company', 'active')
+VALUES ('Nyam_Company', 'ACTIVE')
     ON DUPLICATE KEY UPDATE name = VALUES(name), status = VALUES(status);
 
 
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash  VARCHAR(255)   NOT NULL,
 
     -- [변경] ENUM -> VARCHAR (JPA와 충돌 해결)
-    status         VARCHAR(20)    NOT NULL DEFAULT 'active',
+    status         VARCHAR(20)    NOT NULL DEFAULT 'ACTIVE',
 
     created_at     TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deactivated_at DATETIME            NULL,
@@ -55,7 +55,7 @@ INSERT INTO users (company_id, account, public_id, name, profile_name, email, ex
 VALUES (
            '1', 'admin', 'u-0001', '정윤석', '냠냠', 'admin@example.com', '6001',
            '$2b$10$qykjsIxU9K6Wbp9t5RNoz.IBpbcy2vi7GifaDqgX0Cs1wzLyvxybC',
-           'active' -- 문자열로 잘 들어감
+           'ACTIVE' -- 문자열로 잘 들어감
        );
 
 
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS customers (
                                          name       VARCHAR(100)    NOT NULL,
     email      VARCHAR(255)    NOT NULL,
     -- [변경] ENUM -> VARCHAR
-    status     VARCHAR(20)     NOT NULL DEFAULT 'active',
+    status     VARCHAR(20)     NOT NULL DEFAULT 'ACTIVE',
 
     -- [날짜 컬럼] created_at, updated_at 추가
     created_at TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -78,9 +78,9 @@ CREATE TABLE IF NOT EXISTS customers (
 
 -- 초기 데이터
 INSERT INTO customers (company_id, name, email, status) VALUES
-                                                            (1, '홍냐냐', 'hong@example.com', 'active'),
-                                                            (1, '김냐냐', 'kim@example.com',  'inactive'),
-                                                            (1, '이냐냐', 'lee@example.com',  'active');
+                                                            (1, '홍냐냐', 'hong@example.com', 'ACTIVE'),
+                                                            (1, '김냐냐', 'kim@example.com',  'INACTIVE'),
+                                                            (1, '이냐냐', 'lee@example.com',  'ACTIVE');
 
 
 -- 4. 티켓 테이블

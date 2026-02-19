@@ -23,7 +23,7 @@ export const tableColumns: Column<CustomerRow>[] = [
     },
     {
         header: '상태',
-        render: (row) => (row.status === 'active' ? '활성' : '비활성'),
+        render: (row) => (row.status === 'ACTIVE' ? '활성' : '비활성'),
         width: '80px',
         sortable: true,
         sortKey: 'status',

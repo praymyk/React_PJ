@@ -216,9 +216,9 @@ export function MainCard({ profile, onProfileChange }: Props) {
                             <label className={styles.toggleWrapper}>
                                 <input
                                     type="checkbox"
-                                    checked={draft.status === 'hidden'}
+                                    checked={draft.status === 'HIDDEN'}
                                     onChange={(e) => {
-                                        const nextStatus = e.target.checked ? 'hidden' : 'active';
+                                        const nextStatus = e.target.checked ? 'HIDDEN' : 'ACTIVE';
                                         setDraft(prev => ({
                                             ...prev,
                                             status: nextStatus,
@@ -227,18 +227,18 @@ export function MainCard({ profile, onProfileChange }: Props) {
                                 />
                                 <span className={styles.toggleVisual} />
                                 <span className={styles.toggleText}>
-                                    {draft.status === 'hidden' ? '비공개' : '공개'}
+                                    {draft.status === 'HIDDEN' ? '비공개' : '공개'}
                                 </span>
                             </label>
                         ) : (
                             <span
                                 className={
-                                    profile.status === 'hidden'
+                                    profile.status === 'HIDDEN'
                                         ? styles.badgePrivate
                                         : styles.badgePublic
                                 }
                             >
-                                {profile.status === 'hidden' ? '비공개' : '공개'}
+                                {profile.status === 'HIDDEN' ? '비공개' : '공개'}
                             </span>
                         )}
                     </div>

@@ -16,8 +16,8 @@ export const searchRegistry = {
             width: '140px',
             options: [
                 { label: '전체', value: '' },
-                { label: '활성', value: 'active' },
-                { label: '비활성', value: 'inactive' },
+                { label: '활성', value: 'ACTIVE' },
+                { label: '비활성', value: 'INACTIVE' },
             ],
         },
     ] as SearchField[],
