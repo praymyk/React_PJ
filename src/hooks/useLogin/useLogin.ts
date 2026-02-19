@@ -44,8 +44,6 @@ export function useLogin() {
 
             const msg = err?.message || '로그인 실패.';
             setError(msg);
-        } finally {
-            setLoading(false);
         }
     };
 
