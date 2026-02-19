@@ -182,50 +182,32 @@ export default function DefaultContent({ items, offsetTop = 0 }: MainMenuProps) 
                                     </span>
                                 </Link>
 
-                                {submenuItems.length > 0 && (
-                                    <ul
-                                        className={`${styles.submenuMobile} ${
-                                            isOpen
-                                                ? styles.submenuMobileOpen
-                                                : ''
-                                        }`}
-                                    >
-                                        {submenuItems.map(
-                                            ({
-                                                 label: subLabel,
-                                                 icon: SubIcon,
-                                                 path: subPath,
-                                             }) => (
-                                                <li
-                                                    key={subPath}
-                                                    className={
-                                                        styles.submenuItemWrapper
-                                                    }
-                                                >
-                                                    <Link
-                                                        href={subPath}
-                                                        className={
-                                                            styles.submenuItem
-                                                        }
-                                                    >
-                                                        <SubIcon
-                                                            className={
-                                                                styles.submenuIcon
-                                                            }
-                                                        />
-                                                        <span
-                                                            className={
-                                                                styles.submenuLabel
-                                                            }
-                                                        >
-                                                            {subLabel}
-                                                        </span>
-                                                    </Link>
-                                                </li>
-                                            ),
-                                        )}
-                                    </ul>
-                                )}
+                                {submenuItems.map(({ label: subLabel, icon: SubIcon, path: subPath, isReady }) => (
+                                    <li key={subPath} className={styles.submenuItemWrapper}>
+                                        <Link
+                                            href={isReady === false ? '#' : subPath}
+                                            className={styles.submenuItem}
+                                            onClick={(e) => {
+
+                                                if (isReady === false) {
+                                                    e.preventDefault();
+                                                    alert('현재 준비 중인 메뉴입니다.');
+                                                }
+                                            }}
+                                        >
+                                            <SubIcon className={styles.submenuIcon} />
+                                            <span className={styles.submenuLabel}>
+                                                {subLabel}
+                                            </span>
+                                            {/* 준비 중 뱃지 UI */}
+                                            {isReady === false && (
+                                                <span style={{ marginLeft: '8px', fontSize: '0.7rem', color: '#f59e0b' }}>
+                                                    [준비중]
+                                                </span>
+                                            )}
+                                        </Link>
+                                    </li>
+                                ))}
                             </li>
                         );
                     })}
@@ -262,8 +244,8 @@ export default function DefaultContent({ items, offsetTop = 0 }: MainMenuProps) 
                                 <>
                                     <Icon className={styles.menuIcon} />
                                     <span className={styles.menuLabel}>
-                {label}
-            </span>
+                                        {label}
+                                    </span>
                                 </>
                             );
 
@@ -313,44 +295,32 @@ export default function DefaultContent({ items, offsetTop = 0 }: MainMenuProps) 
                             marginTop: submenuOffset, // 호버한 메인 메뉴 높이만큼 아래로
                         }}
                     >
-                        {activeSubmenuItems.length > 0 && (
-                            <ul className={styles.submenuListDesktop}>
-                                {activeSubmenuItems.map(
-                                    ({
-                                         label: subLabel,
-                                         icon: SubIcon,
-                                         path: subPath,
-                                     }) => (
-                                        <li
-                                            key={subPath}
-                                            className={
-                                                styles.submenuItemWrapper
-                                            }
-                                        >
-                                            <Link
-                                                href={subPath}
-                                                className={
-                                                    styles.submenuItem
-                                                }
-                                            >
-                                                <SubIcon
-                                                    className={
-                                                        styles.submenuIcon
-                                                    }
-                                                />
-                                                <span
-                                                    className={
-                                                        styles.submenuLabel
-                                                    }
-                                                >
-                                                    {subLabel}
-                                                </span>
-                                            </Link>
-                                        </li>
-                                    ),
-                                )}
-                            </ul>
-                        )}
+
+                        {activeSubmenuItems.map(({ label: subLabel, icon: SubIcon, path: subPath, isReady }) => (
+                            <li key={subPath} className={styles.submenuItemWrapper}>
+                                <Link
+                                    href={isReady === false ? '#' : subPath}
+                                    className={styles.submenuItem}
+                                    onClick={(e) => {
+                                        if (isReady === false) {
+                                            e.preventDefault();
+                                            alert('현재 준비 중인 메뉴입니다.');
+                                        }
+                                    }}
+                                >
+                                    <SubIcon className={styles.submenuIcon} />
+                                    <span className={styles.submenuLabel}>
+                                        {subLabel}
+                                    </span>
+                                    {/* 준비 중 뱃지 UI */}
+                                    {isReady === false && (
+                                        <span style={{ marginLeft: '8px', fontSize: '0.7rem', color: '#f59e0b' }}>
+                                            [준비중]
+                                        </span>
+                                    )}
+                                </Link>
+                            </li>
+                        ))}
                     </div>
                 </div>
             )}

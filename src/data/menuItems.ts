@@ -15,12 +15,14 @@ export interface MenuItem {
     icon: IconType;
     path: string;
     roles?: string[];  // 허용된 역할 추가
+    isReady?: boolean;
 }
 export interface SubMenuItem {
     label: string;
     icon: IconType;
     path: string;
     roles?: string[];  // 허용된 역할 추가
+    isReady?: boolean;
 }
 
 export type MenuGroup = 'palace' | 'settings' | 'stats' | 'test' | 'main';
@@ -57,6 +59,6 @@ export const submenuRegistry: Record<SubMenuGroup, SubMenuItem[]> = {
     ],
     '/palace/settings': [
         { label: '환경 설정', icon: FaRegCircle, path: '/palace/settings/env' },
-        { label: '권한 설정', icon: FaRegCircle, path: '/palace/settings/auth' },
+        { label: '권한 설정', icon: FaRegCircle, path: '/palace/settings/auth', isReady: false },
     ],
 };
