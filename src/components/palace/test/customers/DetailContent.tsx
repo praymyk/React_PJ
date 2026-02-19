@@ -6,9 +6,9 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import styles from './DefaultContent.module.scss';
 
 import DetailSection from '@components/palace/test/customers/detailSection/DetailSection';
-import SearchForm from '@components/common/SearchForm/SearchForm';
+import SearchForm from '@components/common/searchForm/SearchForm';
 import TableSection from '@components/palace/test/customers/tableSection/TableSection';
-import HeaderSection from "@components/common/SubContentForm/headerSection/HeaderSection";
+import HeaderSection from "@components/common/subContentForm/headerSection/HeaderSection";
 import CustomerCreateModal from "@components/palace/test/customers/modal/CustomerCreateModal";
 
 import { searchRegistry } from '@/app/(protected)/palace/test/customers/searchFields';

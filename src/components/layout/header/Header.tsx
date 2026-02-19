@@ -2,55 +2,53 @@
 
 import { useEffect, useState } from 'react';
 import api from '@utils/axios';
-import { useRouter } from 'next/navigation';
+
 import styles from '@components/layout/header/Header.module.scss';
 import { FiSun, FiMoon } from 'react-icons/fi';
 
 export default function Header() {
-    const router = useRouter();
 
-    // 브라우저에서 계정 다크 모드 상태를 못 읽은 상태 초기화
     const [darkMode, setDarkMode] = useState<boolean | null>(null);
 
     useEffect(() => {
-        if (typeof document === 'undefined') return;
+        // 1. 마운트 직후 현재 상태 동기화 (AuthGuard가 세팅한 값 읽기)
+        setDarkMode(document.documentElement.classList.contains('dark'));
 
-        /** 설정에서 다크모드 변경시 동기화용 함수 */
-        const syncThemeState = () => {
-            const isDark = document.documentElement.classList.contains('dark');
+        // 2. html 태그의 class 속성 변화를 실시간 감시
+        const observer = new MutationObserver(() => {
+            setDarkMode(document.documentElement.classList.contains('dark'));
+        });
 
-            setDarkMode(isDark);
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['class'], // class 속성만 콕 집어서 감시
+        });
+
+        // 3. 멀티 탭 동기화
+        const handleStorageChange = (e: StorageEvent) => {
+            if (e.key === 'theme') {
+                const isNowDark = e.newValue === 'dark';
+                setDarkMode(isNowDark);
+                document.documentElement.classList.toggle('dark', isNowDark);
+            }
         };
-
-        // 1. 처음 마운트 될 때 실행
-        syncThemeState();
-
-        // 2. 다른 컴포넌트(설정 페이지)에서 'theme-change' 이벤트 발동시
-        window.addEventListener('theme-change', syncThemeState);
+        window.addEventListener('storage', handleStorageChange);
 
         return () => {
-            window.removeEventListener('theme-change', syncThemeState);
-            window.removeEventListener('storage', syncThemeState);
+            observer.disconnect();
+            window.removeEventListener('storage', handleStorageChange);
         };
-
-
     }, []);
 
-    // 2) 다크모드 토글 핸들러: DOM + localStorage + 서버 설정까지 한 번에 갱신
     const handleToggleTheme = async () => {
-
         if (darkMode === null) return;
 
         const next = !darkMode;
         setDarkMode(next);
 
-        // (1) DOM 클래스 즉시 반영 → 화면은 바로 바뀜 (깜빡임 없음)
-        if (typeof document !== 'undefined') {
-            document.documentElement.classList.toggle('dark', next);
-
-            // ★브라우저 저장소에 상태 저장 (페이지 이동 시 기억용)
-            localStorage.setItem('theme', next ? 'dark' : 'light');
-        }
+        // (1) DOM 클래스 및 브라우저 저장소 즉시 반영
+        document.documentElement.classList.toggle('dark', next);
+        localStorage.setItem('theme', next ? 'dark' : 'light');
 
         // (2) DB 환경설정 업데이트
         try {
@@ -75,8 +73,8 @@ export default function Header() {
         }
     };
 
-    // 3) 다크 모드 렌더:서버/클라이언트 모두 동일한 마크업을 내보내도록
-    const isDark = darkMode === true;
+    // 아직 마운트되기 전(null)
+    if (darkMode === null) return null;
 
     return (
         <header className={styles.header}>
@@ -96,12 +94,12 @@ export default function Header() {
                 <button
                     type="button"
                     className={styles.themeToggle}
-                    data-active={isDark}
+                    data-active={darkMode}
                     onClick={handleToggleTheme}
-                    aria-label={isDark ? '라이트 모드로 전환' : '다크 모드로 전환'}
-                    title={isDark ? '라이트 모드로 전환' : '다크 모드로 전환'}
+                    aria-label={darkMode ? '라이트 모드로 전환' : '다크 모드로 전환'}
+                    title={darkMode ? '라이트 모드로 전환' : '다크 모드로 전환'}
                 >
-                    {isDark ? (
+                    {darkMode ? (
                         <FiSun className={styles.themeToggleIcon} />
                     ) : (
                         <FiMoon className={styles.themeToggleIcon} />

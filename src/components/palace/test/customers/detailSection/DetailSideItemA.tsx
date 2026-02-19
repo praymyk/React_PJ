@@ -29,12 +29,12 @@ export default function DetailSideItemA({ row }: Props) {
             setError(null);
 
             try {
-                const { data } = await api.get<{ rows: CustomerTicketRow[] }>(
+                const { data } = await api.get<CustomerTicketRow[]>(
                     `/api/common/customers/${encodeURIComponent(row.id)}/tickets`
                 );
 
                 if (!cancelled) {
-                    setHistoryItems(data.rows ?? []);
+                    setHistoryItems(data || []);
                 }
 
             } catch (err) {

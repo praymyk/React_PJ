@@ -1,4 +1,4 @@
-import Alert from '@components/common/AlertForm/Alert';
+import Alert from '@components/common/alertForm/Alert';
 
 export default function Page() {
     return (

@@ -1,4 +1,4 @@
-import type { SearchField } from '@components/common/SearchForm/searchTypes';
+import type { SearchField } from '@components/common/searchForm/searchTypes';
 
 export const searchRegistry = {
     searchItems: [

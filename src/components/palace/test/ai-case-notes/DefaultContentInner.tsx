@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import api from '@/utils/axios';
 
 import styles from '@components/palace/test/ai-case-notes/DefaultContent.module.scss';
-import HeaderSection from '@components/common/SubContentForm/headerSection/HeaderSection';
+import HeaderSection from '@components/common/subContentForm/headerSection/HeaderSection';
 import KindTabSection from '@components/palace/test/ai-case-notes/tabSection/KindTabSection';
 
 type ApiTemplateRow = {

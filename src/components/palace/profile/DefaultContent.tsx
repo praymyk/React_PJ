@@ -7,7 +7,7 @@ import styles from '@components/palace/profile/DefaultContent.module.scss';
 import { MainCard } from '@components/palace/profile/MainCard';
 import { ActivityCard } from '@components/palace/profile/ActivityCard';
 import { DetailPanel } from '@components/palace/profile/DetailPanel';
-import HeaderSection from "@components/common/SubContentForm/headerSection/HeaderSection";
+import HeaderSection from "@components/common/subContentForm/headerSection/HeaderSection";
 
 import type { Profile } from '@/types/user'
 

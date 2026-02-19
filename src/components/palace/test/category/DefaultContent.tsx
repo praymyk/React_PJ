@@ -2,7 +2,7 @@
 
 import { useMemo, useRef, useState } from 'react';
 import styles from '@components/palace/test/category/DefaultContent.module.scss';
-import HeaderSection from "@components/common/SubContentForm/headerSection/HeaderSection";
+import HeaderSection from "@components/common/subContentForm/headerSection/HeaderSection";
 
 import { saveCategoryTree } from '@/api/category';
 

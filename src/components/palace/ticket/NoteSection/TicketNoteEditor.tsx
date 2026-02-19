@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import RichTextEditor from '@components/common/Editor/RichTextEditor';
+import RichTextEditor from '@components/common/editor/RichTextEditor';
 import api from '@utils/axios';
 
 import styles from './TicketNoteEditor.module.scss';

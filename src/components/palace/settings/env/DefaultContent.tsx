@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import api from '@utils/axios'
 import styles from '@components/palace/settings/env/DefaultContent.module.scss';
-import HeaderSection from "@components/common/SubContentForm/headerSection/HeaderSection";
+import HeaderSection from "@components/common/subContentForm/headerSection/HeaderSection";
 
 type EnvPreferences = {
     darkMode: boolean;

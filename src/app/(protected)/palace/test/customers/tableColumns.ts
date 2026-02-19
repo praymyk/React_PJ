@@ -1,4 +1,4 @@
-import type { Column } from '@components/common/TableForm/Table';
+import type { Column } from '@components/common/tableForm/Table';
 import type { CustomerRow } from '@/types/customer';
 
 export const tableColumns: Column<CustomerRow>[] = [

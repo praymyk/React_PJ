@@ -75,7 +75,6 @@ async function requestRefreshToken(isServer: boolean, cookieHeader?: string): Pr
     return token;
 }
 
-// auth endpoint는 refresh 재시도 제외
 function shouldSkipRefresh(url?: string): boolean {
     if (!url) return false;
     return (

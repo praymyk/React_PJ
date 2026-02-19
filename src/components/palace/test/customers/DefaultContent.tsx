@@ -3,9 +3,9 @@
 import { useMemo, useState } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
-import HeaderSection from "@components/common/SubContentForm/headerSection/HeaderSection";
+import HeaderSection from "@components/common/subContentForm/headerSection/HeaderSection";
 import CustomerCreateModal from "@components/palace/test/customers/modal/CustomerCreateModal"
-import SearchForm from '@components/common/SearchForm/SearchForm';
+import SearchForm from '@components/common/searchForm/SearchForm';
 import TableSection from '@components/palace/test/customers/tableSection/TableSection';
 import { searchRegistry } from '@/app/(protected)/palace/test/customers/searchFields';
 import { tableColumns } from '@/app/(protected)/palace/test/customers/tableColumns';

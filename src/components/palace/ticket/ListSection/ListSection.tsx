@@ -3,7 +3,7 @@
 import common from '@components/palace/ticket/DefaultContent.module.scss';
 import styles from '@components/palace/ticket/ListSection/ListSection.module.scss';
 import { TICKET_STATUS_LABELS, type TicketApiRow } from '@/app/(protected)/palace/ticket/data';
-import SearchForm from "@components/common/SearchForm/MiniSearchForm";
+import SearchForm from "@components/common/searchForm/MiniSearchForm";
 import { searchRegistry } from "@/app/(protected)/palace/ticket/searchFields";
 
 type Props = {

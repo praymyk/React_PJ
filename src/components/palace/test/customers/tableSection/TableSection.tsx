@@ -4,7 +4,7 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import {
     Table,
     type Column,
-} from '@components/common/TableForm/Table';
+} from '@components/common/tableForm/Table';
 import type { CustomerRow } from '@/types/customer';
 
 type Mode = 'list' | 'detail';

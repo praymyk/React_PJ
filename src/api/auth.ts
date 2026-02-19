@@ -20,6 +20,14 @@ export async function login(req: LoginRequest): Promise<LoginResponse> {
 }
 
 /**
+ * CSR: 현재 사용자 조회
+ */
+export async function getMe(): Promise<MeResponse> {
+    const { data } = await api.get<MeResponse>('/api/auth/me');
+    return data;
+}
+
+/**
  * SSR: 현재 사용자 조회
  */
 export async function getMeSSR(cookieHeader: string): Promise<MeResponse> {
