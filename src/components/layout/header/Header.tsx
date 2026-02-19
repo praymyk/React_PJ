@@ -68,6 +68,8 @@ export default function Header() {
         } finally {
             try {
                 localStorage.removeItem('theme');
+                sessionStorage.clear();
+
             } catch (_) {}
             window.location.href = '/login';
         }

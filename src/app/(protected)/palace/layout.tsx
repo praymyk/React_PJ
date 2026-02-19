@@ -4,8 +4,6 @@ import PalaceLayout from '@components/layout/palace/PalaceLayout';
 
 export default function TestLayout({ children }: { children: React.ReactNode }) {
     return (
-
         <PalaceLayout>{children}</PalaceLayout>
-
     );
 }
