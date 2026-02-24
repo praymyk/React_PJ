@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState, type CSSProperties } from 'react';
 import footerStyles from '@components/layout/footer/Footer.module.scss';
 import headerStyles from '@components/layout/header/Header.module.scss';
+import layoutStyles from '@components/layout/main/MainLayout.module.scss';
 
 import { LayoutSpaceContext } from '@/contexts/layoutSpace.context';
 import { LayoutSidebarProvider } from '@/contexts/layoutSidebar.context';
@@ -41,6 +42,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                 </header>
 
                 <main
+                    className={layoutStyles.appMain}
                     style={
                         {
                             '--layout-header-height': `${layoutSpace.top}px`,

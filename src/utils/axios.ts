@@ -96,6 +96,14 @@ function attachInterceptors(instance: AxiosInstance, isServer: boolean, cookieHe
             config.headers = config.headers ?? {};
             config.headers['Authorization'] = `Bearer ${token}`;
         }
+        //FormData면 Content-Type 제거
+        if (typeof FormData !== 'undefined' && config.data instanceof FormData) {
+            if (config.headers) {
+                delete (config.headers as any)['Content-Type'];
+                delete (config.headers as any)['content-type'];
+            }
+        }
+
         return config;
     });
 
@@ -125,7 +133,7 @@ function attachInterceptors(instance: AxiosInstance, isServer: boolean, cookieHe
 
             const status = axiosError.response?.status;
 
-            // ApiResponse.fail이면 메시지 추출
+            // ApiResponse.fail > 메시지 추출
             const errBody: any = axiosError.response?.data;
             const apiFailMessage =
                 isApiResponse(errBody) && !errBody.ok

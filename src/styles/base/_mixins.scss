@@ -13,10 +13,12 @@
   align-items: center;
   justify-content: center;
 
+  height: var(--btn-height-md);
+  padding: 0 var(--btn-padding-x);
+
   font-size: var(--font-button-size);
   line-height: 1;
 
-  padding: 0.5rem 0.75rem;
   border-radius: 999px;
   border: 1px solid transparent;
   cursor: pointer;
@@ -26,25 +28,21 @@
 
   @extend %themeTransition;
 
-  /* Hover: 살짝 떠오르는 느낌 */
   &:hover:not(:disabled) {
     transform: translateY(-1px);
     filter: brightness(1.03);
   }
 
-  /* Active: 눌리는 느낌 */
   &:active:not(:disabled) {
     transform: translateY(0);
     filter: brightness(0.98);
   }
 
-  /* Focus: 접근성 링 */
   &:focus-visible {
     outline: none;
     box-shadow: 0 0 0 3px var(--color-accent-soft);
   }
 
-  /* Disabled */
   &:disabled {
     opacity: 0.45;
     cursor: default;

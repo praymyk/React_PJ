@@ -1,5 +1,5 @@
-@import '@styles/base/fonts'; // 폰트 관련 설정은 fonts.scss로 분리
-@import '@styles/theme/tokens';
+@use '../base/fonts';
+@use './tokens';
 
 $font-sans: var(--font-geist-sans);
 
@@ -8,26 +8,16 @@ body {
   color: var(--color-text-main);
 }
 
+html {
+  font-size: 16px;
+}
+
 /* 글로벌 리셋 */
 body,
 html {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
-
-main {
-  padding-top: var(--layout-header-height, 0px);
-  padding-bottom: var(--layout-footer-height, 0px);
-  min-height: 100vh;
-  display: flex;
-  box-sizing: border-box;
-
-  /* 모듈 내부 요소들 width:100% overflow 방지*/
-  * {
-    box-sizing: border-box;
-    min-width: 0;
-  }
 }
 
 /* ===== 스크롤바 (맥 스타일 기준) ===== */

@@ -1,5 +1,3 @@
-// export type UserStatus = 'ACTIVE' | 'INACTIVE';
-
 export type UserInfo = {
     id: number;
     companyId: number;

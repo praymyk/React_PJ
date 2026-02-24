@@ -15,6 +15,8 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
             return;
         }
 
+        console.log("사용자 인증");
+
         let mounted = true;
 
         const checkSession = async () => {

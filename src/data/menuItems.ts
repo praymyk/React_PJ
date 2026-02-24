@@ -33,6 +33,7 @@ export type SubMenuGroup = '/palace/test' | '/palace/stats' | '/palace/settings'
 export const menuRegistry: Record<MenuGroup, MenuItem[]> = {
     palace: [
         { label: '대시보드', icon: FaHome, path: '/palace' },
+        { label: '대시보드2', icon: FaHome, path: '/palace2' },
         { label: '티켓',     icon: FaTicketAlt, path: '/palace/ticket' },
         { label: '테스트',   icon: FaFlask, path: '/palace/test' },
         { label: '통계',     icon: FaChartPie, path: '/palace/stats' },

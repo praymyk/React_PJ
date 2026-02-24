@@ -245,5 +245,99 @@ INSERT INTO response_templates (company_id, kind, title, prompt, content, create
     (1, 'inquiry_reply', '1:1문의_기본응대', '...', '내용...', (SELECT id FROM users WHERE account='admin' LIMIT 1)),
     (1, 'sms_reply', '문자_간단안내', '...', '내용...', (SELECT id FROM users WHERE account='admin' LIMIT 1));
 
+/* ------------------------ 소설 커뮤니티 프로젝트 ----------- */
+
+-- 작품(Work) 테이블
+CREATE TABLE IF NOT EXISTS works (
+                                     id               BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                                     company_id       BIGINT UNSIGNED NOT NULL,
+                                     author_user_id   BIGINT UNSIGNED NOT NULL,
+
+                                     title            VARCHAR(200) NOT NULL,
+    description      TEXT NULL,
+
+    thumbnail_url    VARCHAR(500) NULL,
+    thumbnail_key    VARCHAR(255) NULL,
+
+    -- 모드: Normal / Interactive / Mystery / Visual
+    mode             VARCHAR(20) NOT NULL DEFAULT 'Normal',
+
+    -- 작가 기준 AI 이미지 생성 허용 여부
+    ai_image_enabled TINYINT(1) NOT NULL DEFAULT 1,
+
+    -- 상태: DRAFT / PUBLISHED / PRIVATE / DELETED 등
+    status           VARCHAR(20) NOT NULL DEFAULT 'DRAFT',
+
+    -- 태그: JSON 배열 저장 (예: ["추리","단서"])
+    tags_json        JSON NULL,
+
+    created_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id),
+
+    KEY idx_works_company (company_id),
+    KEY idx_works_author (author_user_id),
+    KEY idx_works_status (status),
+    KEY idx_works_mode (mode),
+
+    CONSTRAINT fk_works_company
+    FOREIGN KEY (company_id) REFERENCES companies(id),
+
+    CONSTRAINT fk_works_author_user
+    FOREIGN KEY (author_user_id) REFERENCES users(id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
+
+-- 4. 작품 에피소드(Episode) 테이블
+CREATE TABLE IF NOT EXISTS work_episodes (
+                                             id               BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                                             work_id          BIGINT UNSIGNED NOT NULL,
+                                             episode_no       INT NOT NULL,
+                                             title            VARCHAR(200) NOT NULL,
+    -- 본문 원문(작성 그대로)
+    raw_text         LONGTEXT NULL,
+    -- 문단 배열(JSON) - 빈 줄 기준 분리된 결과 저장용(선택)
+    paragraphs_json  JSON NULL,
+    -- 공개 상태: DRAFT / PUBLISHED / PRIVATE / DELETED 등
+    status           VARCHAR(20) NOT NULL DEFAULT 'DRAFT',
+    created_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_episode_work_no (work_id, episode_no),
+    INDEX idx_episode_work (work_id),
+    INDEX idx_episode_status (status),
+    CONSTRAINT fk_episode_work
+    FOREIGN KEY (work_id) REFERENCES works(id)
+                                                                  ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 더미 작품 1개
+INSERT INTO works (
+    company_id, author_user_id, title, description,
+    thumbnail_url, thumbnail_key,
+    mode, ai_image_enabled, status, tags_json
+)
+VALUES (
+           1, 1,
+           '13번 방의 진실',
+           '추리/단서 기반 인터랙티브 소설',
+           'https://example.com/thumbnails/w1.jpg',
+           'thumbnails/w1.jpg',
+           'MYSTERY',
+           1,
+           'DRAFT',
+           JSON_ARRAY('추리','단서','분기')
+       );
+
+
+-- 더미 에피소드 1화
+INSERT INTO work_episodes (work_id, episode_no, title, raw_text, status)
+VALUES (
+           (SELECT id FROM works WHERE title='13번 방의 진실' ORDER BY id DESC LIMIT 1),
+    1,
+    'Episode 1',
+    '복도 끝, 13번 방 앞에 섰다...\n\n바닥에는 누군가 급히 끌고 간 듯한 자국...\n\n문틈 아래로는 희미한 빛이 새어 나왔다...',
+    'DRAFT'
+    );

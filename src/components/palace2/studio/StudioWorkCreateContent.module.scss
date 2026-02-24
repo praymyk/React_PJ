@@ -1,0 +1,381 @@
+@use '@styles/base/mixins' as *;
+@use '@styles/theme/tokens' as *;
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr) 360px;
+  gap: 0.3rem;
+  padding: 0.3rem;
+  height: 100%;
+  align-items: start;
+
+  color: var(--color-text-main);
+  @extend %themeTransition;
+}
+
+.leftColumn,
+.mainColumn,
+.sideColumn {
+  min-width: 0;
+}
+
+.surface {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 14px;
+  box-shadow: var(--shadow-elevated);
+  @extend %themeTransition;
+}
+
+/* 좌측 내 작품 */
+.myWorksPanel {
+  @extend .surface;
+  padding: 0.9rem 1rem;
+
+  position: sticky;
+  top: 0;
+  max-height: calc(100vh - 24px);
+  overflow: auto;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.panelTitle {
+  font-weight: var(--font-weight-heavy);
+  font-size: var(--font-size-base);
+}
+
+.panelMeta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.panelTools {
+  margin-bottom: 10px;
+}
+
+.searchInput {
+  width: 100%;
+  border-radius: 12px;
+  padding: 0.5rem 0.6rem;
+  background: var(--color-bg-nav);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: var(--color-text-main);
+  outline: none;
+
+  &:focus {
+    border-color: rgba(88,101,242,0.45);
+    box-shadow: 0 0 0 3px var(--color-accent-soft);
+  }
+}
+
+.myWorksList {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.myWorkItem {
+  @extend %buttonBase;
+  width: 100%;
+  text-align: left;
+
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 0.5rem;
+  align-items: center;
+
+  padding: 0.5rem 0.6rem;
+  border-radius: 10px;
+
+  background: transparent;
+  border: 1px solid transparent;
+
+  &:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.10);
+    border-color: rgba(255,255,255,0.06);
+  }
+}
+
+.myWorkThumb {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--color-accent-soft), rgba(0,0,0,0.2));
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.myWorkThumbImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.myWorkBody {
+  min-width: 0;
+}
+
+.myWorkName {
+  font-weight: var(--font-weight-bold);
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.myWorkSub {
+  margin-top: 2px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.emptyHint {
+  padding: 10px 2px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+}
+
+/* 중앙 생성 */
+.createPanel {
+  @extend .surface;
+  padding: 0.9rem 1rem;
+
+}
+
+/* 우측 미리보기 */
+.sidePanel {
+  @extend .surface;
+  padding: 0.9rem 1rem;
+
+
+  position: sticky;
+  top: 0;
+  max-height: calc(100vh - 24px);
+  overflow: auto;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-bottom: 0.7rem;
+
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  margin-bottom: 0.7rem;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-weight: var(--font-weight-heavy);
+  font-size: var(--font-size-md);
+  letter-spacing: -0.2px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.fieldFull {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.label {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  border-radius: 12px;
+  padding: 0.55rem 0.65rem;
+  background: var(--color-bg-nav);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--color-text-main);
+  outline: none;
+
+  &:focus {
+    border-color: rgba(88, 101, 242, 0.45);
+    box-shadow: 0 0 0 3px var(--color-accent-soft);
+  }
+}
+
+.textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+/* 썸네일 업로더 */
+.hiddenFile {
+  display: none;
+}
+
+.dropZone {
+  border-radius: 12px;
+  background: var(--color-bg-nav);
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  padding: 0.85rem;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.10);
+    border-color: rgba(88, 101, 242, 0.35);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--color-accent-soft);
+    border-color: rgba(88, 101, 242, 0.45);
+  }
+}
+
+.thumbEmpty {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.6rem 0.1rem;
+}
+
+.thumbHint {
+  font-weight: var(--font-weight-bold);
+}
+
+.thumbSub {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.thumbPreview {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.thumbImg {
+  width: 100%;
+  max-height: 240px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.toggleRow {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 0.65rem;
+  border-radius: 12px;
+  background: var(--color-bg-nav);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.primaryBtn {
+  @extend %buttonBase;
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.sideTitle {
+  font-weight: var(--font-weight-bold);
+  margin-bottom: 0.6rem;
+}
+
+.previewTitle {
+  font-weight: var(--font-weight-heavy);
+  font-size: var(--font-size-md);
+}
+
+.previewSub {
+  margin-top: 0.15rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.previewThumb {
+  margin-top: 0.6rem;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.previewThumbImg {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+
+.previewThumbPlaceholder {
+  height: 220px;
+  background:
+          linear-gradient(135deg, var(--color-accent-soft), transparent),
+          rgba(0, 0, 0, 0.18);
+}
+
+/* 태그 */
+.tagRow {
+  margin-top: 0.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.tag {
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: var(--font-size-xxs);
+  border: 1px solid var(--color-border-subtle);
+  color: var(--color-text-muted);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+/* 에러 */
+.errorBox {
+  padding: 0.6rem 0.7rem;
+  border-radius: 12px;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  background: rgba(239, 68, 68, 0.08);
+  color: var(--color-text-main);
+  font-size: var(--font-size-sm);
+  margin-bottom: 0.6rem;
+}
+
+@media (max-width: 1100px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .myWorksPanel,
+  .sidePanel {
+    position: static;
+    max-height: none;
+  }
+}
