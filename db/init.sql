@@ -26,38 +26,53 @@ VALUES ('Nyam_Company', 'ACTIVE')
 
 
 -- 2. 시스템 사용자(상담사/관리자 등) 테이블
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+
 CREATE TABLE IF NOT EXISTS users (
-                                     id             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    company_id            BIGINT UNSIGNED NOT NULL,
-    account        VARCHAR(50)    NOT NULL,
-    public_id      VARCHAR(100)   NOT NULL,
-    name           VARCHAR(100)   NOT NULL,
-    profile_name   VARCHAR(100)       NULL,
-    email          VARCHAR(255)   NOT NULL,
-    extension      VARCHAR(20)        NULL,
-    password_hash  VARCHAR(255)   NOT NULL,
+                                     id               BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                                     company_id       BIGINT UNSIGNED NOT NULL,
 
-    -- [변경] ENUM -> VARCHAR (JPA와 충돌 해결)
-    status         VARCHAR(20)    NOT NULL DEFAULT 'ACTIVE',
+                                     account          VARCHAR(50)  NOT NULL,
+    public_id        VARCHAR(100) NOT NULL,
 
-    created_at     TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deactivated_at DATETIME            NULL,
-    updated_at     TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    name             VARCHAR(100) NOT NULL,
+    profile_name     VARCHAR(100) NULL,
+    email            VARCHAR(255) NOT NULL,
+    extension        VARCHAR(20)  NULL,
+    password_hash    VARCHAR(255) NOT NULL,
+
+    status           VARCHAR(20)  NOT NULL DEFAULT 'ACTIVE',
+
+    /* 토큰 무효화(강제 로그아웃)용 */
+    token_version    INT NOT NULL DEFAULT 0,
+
+    /* 마지막 로그아웃 시간(선택) */
+    last_logout_at   DATETIME NULL,
+
+    created_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deactivated_at   DATETIME NULL,
+    updated_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (id),
     UNIQUE KEY uq_users_account (account),
     UNIQUE KEY uq_users_email (email),
-    INDEX idx_users_extension (extension)
-    ) ENGINE=InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+    INDEX idx_users_extension (extension),
+    INDEX idx_users_company_id (company_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 테스트용 시스템 사용자
-INSERT INTO users (company_id, account, public_id, name, profile_name, email, extension, password_hash, status)
+INSERT INTO users (
+    company_id, account, public_id, name, profile_name, email, extension,
+    password_hash, status, token_version, last_logout_at
+)
 VALUES (
-           '1', 'admin', 'u-0001', '정윤석', '냠냠', 'admin@example.com', '6001',
+           1, 'admin', 'u-0001', '정윤석', '냠냠', 'admin@example.com', '6001',
            '$2b$10$qykjsIxU9K6Wbp9t5RNoz.IBpbcy2vi7GifaDqgX0Cs1wzLyvxybC',
-           'ACTIVE' -- 문자열로 잘 들어감
+           'ACTIVE',
+           0,
+           NULL
        );
-
 
 -- 3. 고객 정보 테이블
 CREATE TABLE IF NOT EXISTS customers (

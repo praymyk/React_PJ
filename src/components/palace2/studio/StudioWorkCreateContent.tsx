@@ -178,7 +178,6 @@ export default function StudioWorkCreateContent() {
                                 >
                                     <div className={styles.myWorkThumb} aria-hidden>
                                         {w.thumbnailUrl ? (
-                                            // eslint-disable-next-line @next/next/no-img-element
                                             <img className={styles.myWorkThumbImg} src={w.thumbnailUrl} alt="" />
                                         ) : null}
                                     </div>
