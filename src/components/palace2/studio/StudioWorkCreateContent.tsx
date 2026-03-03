@@ -73,7 +73,7 @@ export default function StudioWorkCreateContent() {
         (async () => {
             try {
                 setWorksLoading(true);
-                const list = await listMyWorks(me.user.id);
+                const list = await listMyWorks();
                 if (!mounted) return;
                 setMyWorks(list ?? []);
                 setWorksError('');
@@ -110,7 +110,7 @@ export default function StudioWorkCreateContent() {
         };
     }, [thumbnailPreviewUrl]);
 
-    // 작품 선택 → 에피소드 작성 이동
+    // 작품 선택 > 에피소드 작성 이동
     const goToEpisodeCreate = (workId: number) => {
         router.push(`/palace2/studio/${workId}/episodes/new?ep=1`);
     };

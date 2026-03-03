@@ -52,10 +52,8 @@ export async function uploadWorkThumbnail(workId: number, file: File): Promise<s
     return res.data;
 }
 
-export async function listMyWorks(authorUserId: number): Promise<WorkSummary[]> {
-    // 백엔드 엔드포인트: GET /api/works?authorUserId=123
-    const res = await api.get<WorkSummary[]>('/api/works', {
-        params: { authorUserId },
-    });
+export async function listMyWorks(): Promise<WorkSummary[]> {
+    // 백엔드: GET /api/works/my
+    const res = await api.get<WorkSummary[]>('/api/works/my');
     return res.data;
 }

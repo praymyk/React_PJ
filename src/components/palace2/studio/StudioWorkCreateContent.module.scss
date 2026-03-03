@@ -36,6 +36,9 @@
   top: 0;
   max-height: calc(100vh - 24px);
   overflow: auto;
+
+  display: flex;
+  flex-direction: column;
 }
 
 .panelHeader {
@@ -78,6 +81,11 @@
 .myWorksList {
   display: grid;
   gap: 0.5rem;
+
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 2px; /* 스크롤바 공간 */
 }
 
 .myWorkItem {
@@ -86,7 +94,7 @@
   text-align: left;
 
   display: grid;
-  grid-template-columns: 36px 1fr;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
   gap: 0.5rem;
   align-items: center;
 
@@ -95,6 +103,9 @@
 
   background: transparent;
   border: 1px solid transparent;
+
+  /* buttonBase가 justify-content:center 같은 걸 갖고 있을 수 있어서 */
+  justify-content: unset;
 
   &:hover:not(:disabled) {
     background: rgba(0, 0, 0, 0.10);
@@ -124,10 +135,17 @@
 
 .myWorkName {
   font-weight: var(--font-weight-bold);
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.myWorkCta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  padding-left: 0.25rem;
 }
 
 .myWorkSub {
