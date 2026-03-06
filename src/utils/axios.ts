@@ -89,7 +89,7 @@ function shouldSkipRefresh(url?: string): boolean {
 // -----------------------------
 function attachInterceptors(instance: AxiosInstance, isServer: boolean, cookieHeader?: string) {
 
-    // 0) 요청: CSR에서는 accessToken을 Bearer로 항상 주입
+    // 0) 요청: CSR에서는 accessToken을 Bearer로 주입
     instance.interceptors.request.use((config) => {
         const token = typeof window !== 'undefined' ? sessionStorage.getItem('accessToken') : null;
         if (token) {
