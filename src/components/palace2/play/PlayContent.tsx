@@ -272,7 +272,7 @@ export default function PlayContent() {
                     ))}
                 </section>
 
-                {/* Bottom sticky: choices */}
+                {/* Bottom sticky : choices */}
                 <div className={styles.choiceDock} role="region" aria-label="Choices">
                     <div className={styles.choiceDockInner}>
                         <div className={styles.choiceDockTitle}>다음 행동을 선택</div>
