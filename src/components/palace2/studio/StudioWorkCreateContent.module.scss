@@ -1,14 +1,51 @@
 @use '@styles/base/mixins' as *;
 @use '@styles/theme/tokens' as *;
 
+/* ==========================================================================
+   1. 공통 플레이스홀더 (Placeholders)
+   ========================================================================== */
+%textEllipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+%inputBase {
+  width: 100%;
+  border-radius: 12px;
+  padding: 0.55rem 0.65rem;
+  background: var(--color-bg-nav);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--color-text-main);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus {
+    border-color: rgba(88, 101, 242, 0.45);
+    box-shadow: 0 0 0 3px var(--color-accent-soft);
+  }
+}
+
+%stickyPanel {
+  position: sticky;
+  top: 0;
+  max-height: calc(100vh - 24px);
+  overflow-y: auto;
+}
+
+/* ==========================================================================
+   2. 전역 레이아웃 (Layout)
+   ========================================================================== */
 .contentGrid {
   display: grid;
   grid-template-columns: 320px minmax(0, 1fr) 360px;
   gap: 0.3rem;
   padding: 0.3rem;
+  width: 100%;
+  box-sizing: border-box;
   height: 100%;
-  align-items: start;
-
+  align-items: stretch;
   color: var(--color-text-main);
   @extend %themeTransition;
 }
@@ -17,6 +54,9 @@
 .mainColumn,
 .sideColumn {
   min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .surface {
@@ -27,16 +67,49 @@
   @extend %themeTransition;
 }
 
-/* 좌측 내 작품 */
+/* ==========================================================================
+   3. 공통 UI 컴포넌트
+   ========================================================================== */
+.primaryBtn {
+  @extend %buttonBase;
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.errorBox {
+  padding: 0.6rem 0.7rem;
+  border-radius: 12px;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  background: rgba(239, 68, 68, 0.08);
+  color: var(--color-text-main);
+  font-size: var(--font-size-sm);
+  margin-bottom: 0.6rem;
+}
+
+.tagRow {
+  margin-top: 0.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.tag {
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: var(--font-size-xxs);
+  border: 1px solid var(--color-border-subtle);
+  color: var(--color-text-muted);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+/* ==========================================================================
+   4. 좌측 패널 (내 작품)
+   ========================================================================== */
 .myWorksPanel {
   @extend .surface;
+  @extend %stickyPanel;
+  flex: 1; /* leftColumn 내부에서 높이를 꽉 채움 */
   padding: 0.9rem 1rem;
-
-  position: sticky;
-  top: 0;
-  max-height: calc(100vh - 24px);
-  overflow: auto;
-
   display: flex;
   flex-direction: column;
 }
@@ -64,52 +137,51 @@
 }
 
 .searchInput {
-  width: 100%;
-  border-radius: 12px;
-  padding: 0.5rem 0.6rem;
-  background: var(--color-bg-nav);
-  border: 1px solid rgba(255,255,255,0.06);
-  color: var(--color-text-main);
-  outline: none;
-
-  &:focus {
-    border-color: rgba(88,101,242,0.45);
-    box-shadow: 0 0 0 3px var(--color-accent-soft);
-  }
+  @extend %inputBase;
 }
 
+/* 리스트 아이템 영역 */
 .myWorksList {
   display: grid;
   gap: 0.5rem;
-
   flex: 1;
   min-height: 0;
-  overflow: auto;
-  padding-right: 2px; /* 스크롤바 공간 */
+  overflow-y: auto;
+  padding-right: 2px;
+  align-content: start;
+}
+
+.emptyHint {
+  padding: 10px 2px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
 }
 
 .myWorkItem {
   @extend %buttonBase;
+  box-sizing: border-box;
   width: 100%;
+  margin: 0;
   text-align: left;
 
-  display: grid;
+  height: auto !important;
+  min-height: fit-content;
+
+  display: grid !important;
   grid-template-columns: 36px minmax(0, 1fr) auto;
   gap: 0.5rem;
   align-items: center;
 
   padding: 0.5rem 0.6rem;
   border-radius: 10px;
-
   background: transparent;
   border: 1px solid transparent;
-
-  /* buttonBase가 justify-content:center 같은 걸 갖고 있을 수 있어서 */
-  justify-content: unset;
+  transition: background-color 0.2s, border-color 0.2s;
 
   &:hover:not(:disabled) {
     background: rgba(0, 0, 0, 0.10);
-    border-color: rgba(255,255,255,0.06);
+    border-color: rgba(255, 255, 255, 0.06);
   }
 }
 
@@ -131,14 +203,23 @@
 
 .myWorkBody {
   min-width: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .myWorkName {
+  @extend %textEllipsis;
   font-weight: var(--font-weight-bold);
   font-size: var(--font-size-sm);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+.myWorkSub {
+  @extend %textEllipsis;
+  margin-top: 2px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
 }
 
 .myWorkCta {
@@ -148,36 +229,13 @@
   padding-left: 0.25rem;
 }
 
-.myWorkSub {
-  margin-top: 2px;
-  color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
-}
-
-.emptyHint {
-  padding: 10px 2px;
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-  line-height: 1.4;
-}
-
-/* 중앙 생성 */
+/* ==========================================================================
+   5. 중앙 패널 (작품 생성)
+   ========================================================================== */
 .createPanel {
   @extend .surface;
+  flex: 1; /* 높이 꽉 채우기 */
   padding: 0.9rem 1rem;
-
-}
-
-/* 우측 미리보기 */
-.sidePanel {
-  @extend .surface;
-  padding: 0.9rem 1rem;
-
-
-  position: sticky;
-  top: 0;
-  max-height: calc(100vh - 24px);
-  overflow: auto;
 }
 
 .sectionHeader {
@@ -186,13 +244,10 @@
   justify-content: space-between;
   gap: 0.6rem;
   margin-bottom: 0.7rem;
-
   padding: 8px 10px;
   border-radius: 12px;
   background: rgba(0, 0, 0, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.06);
-
-  margin-bottom: 0.7rem;
 }
 
 .sectionTitle {
@@ -202,6 +257,7 @@
   letter-spacing: -0.2px;
 }
 
+/* 폼 영역 */
 .formGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -224,26 +280,28 @@
   font-size: var(--font-size-sm);
 }
 
+/* 공통 인풋 스타일 적용 */
 .input,
 .select,
 .textarea {
-  width: 100%;
-  border-radius: 12px;
-  padding: 0.55rem 0.65rem;
-  background: var(--color-bg-nav);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  color: var(--color-text-main);
-  outline: none;
-
-  &:focus {
-    border-color: rgba(88, 101, 242, 0.45);
-    box-shadow: 0 0 0 3px var(--color-accent-soft);
-  }
+  @extend %inputBase;
 }
 
 .textarea {
   min-height: 96px;
   resize: vertical;
+}
+
+.toggleRow {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 0.65rem;
+  border-radius: 12px;
+  background: var(--color-bg-nav);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 /* 썸네일 업로더 */
@@ -257,6 +315,7 @@
   border: 1px dashed rgba(255, 255, 255, 0.12);
   padding: 0.85rem;
   cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
 
   &:hover {
     background: rgba(0, 0, 0, 0.10);
@@ -298,22 +357,14 @@
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.toggleRow {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.6rem 0.65rem;
-  border-radius: 12px;
-  background: var(--color-bg-nav);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.primaryBtn {
-  @extend %buttonBase;
-  background: var(--color-accent);
-  color: #fff;
+/* ==========================================================================
+   6. 우측 패널 (미리보기)
+   ========================================================================== */
+.sidePanel {
+  @extend .surface;
+  @extend %stickyPanel;
+  flex: 1; /* 높이 꽉 채우기 */
+  padding: 0.9rem 1rem;
 }
 
 .sideTitle {
@@ -340,53 +391,26 @@
   background: rgba(0, 0, 0, 0.12);
 }
 
-.previewThumbImg {
-  width: 100%;
+.previewThumbImg,
+.previewThumbPlaceholder {
   height: 220px;
-  object-fit: cover;
   display: block;
 }
 
+.previewThumbImg {
+  width: 100%;
+  object-fit: cover;
+}
+
 .previewThumbPlaceholder {
-  height: 220px;
-  background:
-          linear-gradient(135deg, var(--color-accent-soft), transparent),
-          rgba(0, 0, 0, 0.18);
+  background: linear-gradient(135deg, var(--color-accent-soft), transparent), rgba(0, 0, 0, 0.18);
 }
 
-/* 태그 */
-.tagRow {
-  margin-top: 0.6rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-}
-
-.tag {
-  padding: 3px 8px;
-  border-radius: 999px;
-  font-size: var(--font-size-xxs);
-  border: 1px solid var(--color-border-subtle);
-  color: var(--color-text-muted);
-  background: rgba(0, 0, 0, 0.12);
-}
-
-/* 에러 */
-.errorBox {
-  padding: 0.6rem 0.7rem;
-  border-radius: 12px;
-  border: 1px solid rgba(239, 68, 68, 0.35);
-  background: rgba(239, 68, 68, 0.08);
-  color: var(--color-text-main);
-  font-size: var(--font-size-sm);
-  margin-bottom: 0.6rem;
-}
-
+/* ==========================================================================
+   7. 미디어 쿼리 (반응형)
+   ========================================================================== */
 @media (max-width: 1100px) {
-  .contentGrid {
-    grid-template-columns: 1fr;
-  }
-
+  .contentGrid,
   .formGrid {
     grid-template-columns: 1fr;
   }

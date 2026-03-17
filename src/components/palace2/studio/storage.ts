@@ -8,7 +8,7 @@ export type Work = {
     description: string;
     tags: string[];
     mode: WorkMode;
-    aiImageEnabled: boolean; // 작가 기준 “생성 허용”
+    aiImageEnabled: boolean;
     createdAt: string;
     updatedAt: string;
 };

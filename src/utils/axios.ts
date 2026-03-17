@@ -164,7 +164,6 @@ function attachInterceptors(instance: AxiosInstance, isServer: boolean, cookieHe
                 }
             }
 
-            // refresh 대상이 아니면, ApiResponse.fail 메시지로 reject
             if (apiFailMessage) {
                 const e = new Error(apiFailMessage);
                 (e as any).code = apiFailCode;

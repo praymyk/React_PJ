@@ -1,21 +1,34 @@
 @use '@styles/base/mixins' as *;
 @use '@styles/theme/tokens' as *;
 
-.contentGrid {
-  display: grid;
-  gap: 0.3rem;
-  padding: 0.3rem;
-  height: 100%;
-  grid-template-columns: 280px minmax(0, 1fr) 360px;
-  color: var(--color-text-main);
-  @extend %themeTransition;
+/* ==========================================================================
+   1. 공통 플레이스홀더 (Placeholders)
+   ========================================================================== */
+%textEllipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
-/* columns */
-.leftColumn, .rightColumn { min-width: 0; }
-.mainColumn { min-width: 0; display: flex; flex-direction: column; gap: 0.3rem; }
+%inputBase {
+  width: 100%;
+  border-radius: 12px;
+  padding: 0.55rem 0.65rem;
+  background: var(--color-bg-nav);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--color-text-main);
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
-.section, .sidePanel {
+  &:focus {
+    border-color: rgba(88, 101, 242, 0.45);
+    box-shadow: 0 0 0 3px var(--color-accent-soft);
+  }
+}
+
+%surfacePanel {
   background: var(--color-bg-surface);
   border: 1px solid var(--color-border-subtle);
   border-radius: 14px;
@@ -24,97 +37,68 @@
   @extend %themeTransition;
 }
 
-.sectionHeader {
+%stickyPanel {
+  position: sticky;
+  top: 0;
+  max-height: calc(100vh - 24px);
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.6rem;
-  margin-bottom: 0.7rem;
+  flex-direction: column;
 }
-.sectionTitle { margin: 0; font-weight: var(--font-weight-bold); }
-.sectionTools { display: inline-flex; gap: 0.4rem; }
 
-.hint { color: var(--color-text-muted); font-size: var(--font-size-sm); }
-
-/* left panel */
-.sideHeader { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.4rem; }
-.sideTitle { font-weight: var(--font-weight-bold); }
-.workName { color: var(--color-text-muted); font-size: var(--font-size-sm); margin-bottom: 0.6rem; }
-
-.epList { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.35rem; }
-.epItem {
-  width: 100%;
-  @extend %buttonBase;
+/* ==========================================================================
+   2. 전역 레이아웃 (Layout)
+   ========================================================================== */
+.contentGrid {
   display: grid;
-  grid-template-columns: 64px 1fr auto;
-  gap: 0.4rem;
-  text-align: left;
-  background: var(--color-bg-nav);
-  border-color: rgba(255,255,255,0.06);
-  border-radius: 12px;
-  padding: 0.55rem 0.65rem;
+  grid-template-columns: 280px minmax(0, 1fr) 360px;
+  gap: 0.3rem;
+  padding: 0.3rem;
 
-  &[data-active='1'] {
-    background: var(--color-accent-soft);
-    border-color: rgba(88,101,242,0.45);
-  }
-}
-.epNo { color: var(--color-text-muted); font-size: var(--font-size-xs); }
-.epTitle { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.epStatus { color: var(--color-text-muted); font-size: var(--font-size-xxs); }
-.epStatus[data-status='PUBLISHED'] { color: var(--color-text-main); }
-
-/* editor inputs */
-.metaRow { display: flex; align-items: center; gap: 0.5rem; }
-.metaBadge {
-  padding: 0.25rem 0.5rem;
-  border-radius: 999px;
-  background: rgba(0,0,0,0.12);
-  border: 1px solid var(--color-border-subtle);
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
-}
-
-.input, .textarea {
+  /* 부모 가로폭 100% 채우기 & 컬럼 높이 동기화 */
   width: 100%;
-  border-radius: 12px;
-  padding: 0.55rem 0.65rem;
-  background: var(--color-bg-nav);
-  border: 1px solid rgba(255,255,255,0.06);
-  color: var(--color-text-main);
-  outline: none;
   box-sizing: border-box;
-
-  &:focus {
-    border-color: rgba(88,101,242,0.45);
-    box-shadow: 0 0 0 3px var(--color-accent-soft);
-  }
-}
-.textarea { min-height: 220px; resize: vertical; line-height: 1.6; }
-
-/* paragraph/anchors */
-.paragraphList { display: grid; gap: 0.6rem; }
-.paragraphItem {
-  border-radius: 12px;
-  background: var(--color-bg-nav);
-  border: 1px solid rgba(255,255,255,0.06);
-  padding: 0.75rem;
-}
-.paragraphHead { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; margin-bottom: 0.45rem; }
-.paragraphIndex { font-weight: var(--font-weight-bold); }
-.paragraphText { color: var(--color-text-muted); font-size: var(--font-size-sm); line-height: 1.55; }
-
-.anchorRow { margin-top: 0.6rem; display: flex; flex-wrap: wrap; gap: 0.4rem; }
-.anchorChip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  border-radius: 999px;
-  padding: 0.35rem 0.6rem;
-  border: 1px solid rgba(34,197,94,0.35);
-  background: rgba(0,0,0,0.12);
+  height: 100%;
+  align-items: stretch;
   color: var(--color-text-main);
+  @extend %themeTransition;
+}
+
+.leftColumn,
+.mainColumn,
+.rightColumn {
+  min-width: 0;
+  height: 100%; /* 부모의 stretch된 높이를 꽉 채움 */
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem; /* 메인 컬럼 안의 섹션 간격 */
+}
+
+/* ==========================================================================
+   3. 공통 UI (버튼, 라벨 등)
+   ========================================================================== */
+.primaryBtn, .secondaryBtn, .smallBtn {
+  @extend %buttonBase;
+}
+
+.primaryBtn {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.secondaryBtn {
+  background: var(--color-accent-soft);
+  color: var(--color-text-main);
+  border-color: rgba(255,255,255,0.06);
+}
+
+.smallBtn {
+  padding: 0.35rem 0.55rem;
   font-size: var(--font-size-xs);
+  background: transparent;
+  border-color: var(--color-border-subtle);
+  color: var(--color-text-main);
+  transition: background-color 0.2s ease;
+  &:hover:not(:disabled) { background: var(--color-accent-soft); }
 }
 
 .linkBtn {
@@ -126,73 +110,157 @@
   &:hover:not(:disabled) { color: var(--color-text-main); text-decoration: underline; }
 }
 
-/* preview */
+.hint {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* ==========================================================================
+   4. 좌측 패널 (에피소드 리스트)
+   ========================================================================== */
+.sidePanel {
+  @extend %surfacePanel;
+  @extend %stickyPanel;
+  flex: 1; /* leftColumn, rightColumn 내부 꽉 채우기 */
+}
+
+.sideHeader { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.4rem; }
+.sideTitle { font-weight: var(--font-weight-bold); }
+.workName { color: var(--color-text-muted); font-size: var(--font-size-sm); margin-bottom: 0.6rem; }
+
+/* 리스트 내부 독립 스크롤 영역 */
+.epList {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: 0.35rem;
+  flex: 1; min-height: 0; overflow-y: auto; padding-right: 2px; align-content: start;
+}
+
+.epItem {
+  @extend %buttonBase;
+  box-sizing: border-box;
+  width: 100%;
+  height: auto !important; /* %buttonBas 버튼 높이 해제 */
+
+  display: grid !important;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  gap: 0.4rem;
+  align-items: center;
+  text-align: left;
+
+  background: var(--color-bg-nav);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 0.55rem 0.65rem;
+  transition: background-color 0.2s, border-color 0.2s;
+
+  &[data-active='1'] {
+    background: var(--color-accent-soft);
+    border-color: rgba(88,101,242,0.45);
+  }
+  &:hover:not(:disabled):not([data-active='1']) {
+    background: rgba(0, 0, 0, 0.10);
+  }
+}
+
+.epNo { color: var(--color-text-muted); font-size: var(--font-size-xs); }
+.epTitle { @extend %textEllipsis; width: auto; }
+.epStatus { color: var(--color-text-muted); font-size: var(--font-size-xxs); }
+.epStatus[data-status='PUBLISHED'] { color: var(--color-text-main); }
+
+/* ==========================================================================
+   5. 중앙 패널 (에피소드 편집)
+   ========================================================================== */
+.section {
+  @extend %surfacePanel;
+  display: flex;
+  flex-direction: column;
+}
+
+.sectionHeader {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 0.6rem; margin-bottom: 0.7rem;
+}
+.sectionTitle { margin: 0; font-weight: var(--font-weight-bold); }
+.sectionTools { display: inline-flex; gap: 0.4rem; }
+
+/* 제목 및 메타 */
+.metaRow { display: flex; align-items: center; gap: 0.5rem; }
+.metaBadge {
+  padding: 0.25rem 0.5rem; border-radius: 999px;
+  background: rgba(0,0,0,0.12); border: 1px solid var(--color-border-subtle);
+  font-size: var(--font-size-xs); color: var(--color-text-muted);
+}
+
+.input, .textarea { @extend %inputBase; }
+.textarea {
+  min-height: 220px; resize: vertical; line-height: 1.6;
+  flex: 1; /* 메인 영역이 길어지면 에디터도 꽉 차게 늘어남 */
+}
+
+/* 문단 및 앵커 */
+.paragraphList { display: grid; gap: 0.6rem; }
+.paragraphItem {
+  border-radius: 12px; background: var(--color-bg-nav);
+  border: 1px solid rgba(255,255,255,0.06); padding: 0.75rem;
+}
+.paragraphHead { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; margin-bottom: 0.45rem; }
+.paragraphIndex { font-weight: var(--font-weight-bold); }
+.paragraphText { color: var(--color-text-muted); font-size: var(--font-size-sm); line-height: 1.55; }
+
+.anchorRow { margin-top: 0.6rem; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.anchorChip {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  border-radius: 999px; padding: 0.35rem 0.6rem;
+  border: 1px solid rgba(34,197,94,0.35); background: rgba(0,0,0,0.12);
+  color: var(--color-text-main); font-size: var(--font-size-xs);
+}
+
+/* ==========================================================================
+   6. 우측 패널 (미리보기)
+   ========================================================================== */
 .previewTop { padding-bottom: 0.65rem; border-bottom: 1px solid rgba(255,255,255,0.06); }
 .previewWork { font-weight: var(--font-weight-heavy); }
 .previewEp { margin-top: 0.2rem; color: var(--color-text-muted); font-size: var(--font-size-sm); }
 
-.previewFeed { margin-top: 0.75rem; display: grid; gap: 0.75rem; max-height: 68vh; overflow: auto; padding-right: 2px; }
+/* 미리보기 내부 독립 스크롤 영역 */
+.previewFeed {
+  margin-top: 0.75rem; display: grid; gap: 0.75rem;
+  flex: 1; min-height: 0; overflow-y: auto; padding-right: 2px; align-content: start;
+}
 .previewParagraph { margin: 0; line-height: 1.75; color: var(--color-text-main); }
 
 .previewImage { margin: 0; display: grid; gap: 0.35rem; }
 .previewImageFrame {
-  position: relative;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.06);
-  background: var(--color-bg-nav);
+  position: relative; border-radius: 14px; overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.06); background: var(--color-bg-nav);
 }
 .previewImagePlaceholder {
   height: 190px;
-  background:
-          linear-gradient(135deg, var(--color-accent-soft), transparent),
-          rgba(0,0,0,0.18);
+  background: linear-gradient(135deg, var(--color-accent-soft), transparent), rgba(0,0,0,0.18);
 }
-.previewBadgeRow {
-  position: absolute;
-  left: 10px;
-  bottom: 10px;
-  display: inline-flex;
-  gap: 6px;
-}
-.badge {
+.previewBadgeRow { position: absolute; left: 10px; bottom: 10px; display: inline-flex; gap: 6px; }
+
+/* 배지(Badge) 중복 통합 */
+%previewBadge {
   @extend %buttonBase;
-  pointer-events: none;
-  border-radius: 999px;
-  padding: 0.2rem 0.5rem;
-  font-size: var(--font-size-xxs);
-  background: rgba(0,0,0,0.12);
-  border-color: rgba(34,197,94,0.35);
-  color: var(--color-text-main);
+  pointer-events: none; border-radius: 999px; padding: 0.2rem 0.5rem;
+  font-size: var(--font-size-xxs); background: rgba(0,0,0,0.12);
 }
-.badgeMuted {
-  @extend %buttonBase;
-  pointer-events: none;
-  border-radius: 999px;
-  padding: 0.2rem 0.5rem;
-  font-size: var(--font-size-xxs);
-  background: rgba(0,0,0,0.12);
-  border-color: var(--color-border-subtle);
-  color: var(--color-text-muted);
-}
+.badge { @extend %previewBadge; border-color: rgba(34,197,94,0.35); color: var(--color-text-main); }
+.badgeMuted { @extend %previewBadge; border-color: var(--color-border-subtle); color: var(--color-text-muted); }
+
 .previewCaption { color: var(--color-text-muted); font-size: var(--font-size-sm); }
 
-/* buttons */
-.primaryBtn, .secondaryBtn, .smallBtn { @extend %buttonBase; }
-.primaryBtn { background: var(--color-accent); color: #fff; }
-.secondaryBtn { background: var(--color-accent-soft); color: var(--color-text-main); border-color: rgba(255,255,255,0.06); }
-.smallBtn {
-  padding: 0.35rem 0.55rem;
-  font-size: var(--font-size-xs);
-  background: transparent;
-  border-color: var(--color-border-subtle);
-  color: var(--color-text-main);
-  &:hover:not(:disabled) { background: var(--color-accent-soft); }
-}
-
-/* responsive */
+/* ==========================================================================
+   7. 미디어 쿼리 (반응형)
+   ========================================================================== */
 @media (max-width: 1200px) {
   .contentGrid {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sidePanel {
+    position: static;
+    max-height: none;
   }
 }
