@@ -92,7 +92,7 @@ export default function StudioEpisodeEditorContent() {
         }
     };
 
-    // preview blocks(텍스트 사이에 이미지 placeholder)
+    // preview blocks(텍스트 사이에 이미지 placeholder 용)
     const previewBlocks = useMemo(() => {
         const byIndex = new Map<number, Anchor[]>();
         for (const a of anchors) {
