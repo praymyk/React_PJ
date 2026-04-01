@@ -125,7 +125,7 @@
 }
 
 .sideHeader { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.4rem; }
-.sideTitle { font-weight: var(--font-weight-bold); }
+.sideTitle { font-weight: var(--font-weight-bold); color: var(--color-text-main); }
 .workName { color: var(--color-text-muted); font-size: var(--font-size-sm); margin-bottom: 0.6rem; }
 
 /* 리스트 내부 독립 스크롤 영역 */
@@ -148,24 +148,24 @@
   text-align: left;
 
   background: var(--color-bg-nav);
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid var(--color-panel-border);
   border-radius: 12px;
   padding: 0.55rem 0.65rem;
   transition: background-color 0.2s, border-color 0.2s;
 
   &[data-active='1'] {
     background: var(--color-accent-soft);
-    border-color: rgba(88,101,242,0.45);
+    border-color: var(--color-accent);
   }
   &:hover:not(:disabled):not([data-active='1']) {
-    background: rgba(0, 0, 0, 0.10);
+    background: var(--color-accent-soft-strong);
   }
 }
 
 .epNo { color: var(--color-text-muted); font-size: var(--font-size-xs); }
-.epTitle { @extend %textEllipsis; width: auto; }
+.epTitle { @extend %textEllipsis; width: auto; color: var(--color-text-main); }
 .epStatus { color: var(--color-text-muted); font-size: var(--font-size-xxs); }
-.epStatus[data-status='PUBLISHED'] { color: var(--color-text-main); }
+.epStatus[data-status='PUBLISHED'] { color: var(--color-accent); font-weight: var(--font-weight-bold); }
 
 /* ==========================================================================
    5. 중앙 패널 (에피소드 편집)
@@ -180,14 +180,14 @@
   display: flex; align-items: center; justify-content: space-between;
   gap: 0.6rem; margin-bottom: 0.7rem;
 }
-.sectionTitle { margin: 0; font-weight: var(--font-weight-bold); }
+.sectionTitle { margin: 0; font-weight: var(--font-weight-bold); color: var(--color-text-main); }
 .sectionTools { display: inline-flex; gap: 0.4rem; }
 
 /* 제목 및 메타 */
 .metaRow { display: flex; align-items: center; gap: 0.5rem; }
 .metaBadge {
   padding: 0.25rem 0.5rem; border-radius: 999px;
-  background: rgba(0,0,0,0.12); border: 1px solid var(--color-border-subtle);
+  background: var(--color-bg-nav); border: 1px solid var(--color-border-subtle);
   font-size: var(--font-size-xs); color: var(--color-text-muted);
 }
 
@@ -201,25 +201,25 @@
 .paragraphList { display: grid; gap: 0.6rem; }
 .paragraphItem {
   border-radius: 12px; background: var(--color-bg-nav);
-  border: 1px solid rgba(255,255,255,0.06); padding: 0.75rem;
+  border: 1px solid var(--color-panel-border); padding: 0.75rem;
 }
 .paragraphHead { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; margin-bottom: 0.45rem; }
-.paragraphIndex { font-weight: var(--font-weight-bold); }
+.paragraphIndex { font-weight: var(--font-weight-bold); color: var(--color-text-main); }
 .paragraphText { color: var(--color-text-muted); font-size: var(--font-size-sm); line-height: 1.55; }
 
 .anchorRow { margin-top: 0.6rem; display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .anchorChip {
   display: inline-flex; align-items: center; gap: 0.5rem;
   border-radius: 999px; padding: 0.35rem 0.6rem;
-  border: 1px solid rgba(34,197,94,0.35); background: rgba(0,0,0,0.12);
+  border: 1px solid var(--color-accent-soft-strong); background: var(--color-bg-nav);
   color: var(--color-text-main); font-size: var(--font-size-xs);
 }
 
 /* ==========================================================================
    6. 우측 패널 (미리보기)
    ========================================================================== */
-.previewTop { padding-bottom: 0.65rem; border-bottom: 1px solid rgba(255,255,255,0.06); }
-.previewWork { font-weight: var(--font-weight-heavy); }
+.previewTop { padding-bottom: 0.65rem; border-bottom: 1px solid var(--color-panel-border); }
+.previewWork { font-weight: var(--font-weight-heavy); color: var(--color-text-main); }
 .previewEp { margin-top: 0.2rem; color: var(--color-text-muted); font-size: var(--font-size-sm); }
 
 /* 미리보기 내부 독립 스크롤 영역 */
@@ -232,11 +232,11 @@
 .previewImage { margin: 0; display: grid; gap: 0.35rem; }
 .previewImageFrame {
   position: relative; border-radius: 14px; overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.06); background: var(--color-bg-nav);
+  border: 1px solid var(--color-panel-border); background: var(--color-bg-nav);
 }
 .previewImagePlaceholder {
   height: 190px;
-  background: linear-gradient(135deg, var(--color-accent-soft), transparent), rgba(0,0,0,0.18);
+  background: linear-gradient(135deg, var(--color-accent-soft), transparent), var(--color-bg-nav);
 }
 .previewBadgeRow { position: absolute; left: 10px; bottom: 10px; display: inline-flex; gap: 6px; }
 
@@ -244,10 +244,10 @@
 %previewBadge {
   @extend %buttonBase;
   pointer-events: none; border-radius: 999px; padding: 0.2rem 0.5rem;
-  font-size: var(--font-size-xxs); background: rgba(0,0,0,0.12);
+  font-size: var(--font-size-xxs); background: var(--color-bg-nav);
 }
-.badge { @extend %previewBadge; border-color: rgba(34,197,94,0.35); color: var(--color-text-main); }
-.badgeMuted { @extend %previewBadge; border-color: var(--color-border-subtle); color: var(--color-text-muted); }
+.badge { @extend %previewBadge; border: 1px solid var(--color-accent-soft-strong); color: var(--color-text-main); }
+.badgeMuted { @extend %previewBadge; border: 1px solid var(--color-border-subtle); color: var(--color-text-muted); }
 
 .previewCaption { color: var(--color-text-muted); font-size: var(--font-size-sm); }
 

@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { listEpisodes, type EpisodeSummary } from '@/api/episode';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import styles from './StudioEpisodeEditorContent.module.scss';
 import {
     getEpisode,
     getWork,
-    listEpisodeMetas,
     nextEpisodeNo,
     saveEpisode,
     splitParagraphs,
@@ -24,7 +24,8 @@ export default function StudioEpisodeEditorContent() {
 
     const [workTitle, setWorkTitle] = useState<string>('(loading)');
     const [episode, setEpisode] = useState<Episode | null>(null);
-    const [episodeList, setEpisodeList] = useState(listEpisodeMetas(workId));
+    const [episodeList, setEpisodeList] = useState<EpisodeSummary[]>([]);
+    const [loadingList, setLoadingList] = useState(false);
     const [saving, setSaving] = useState(false);
 
     // 편집 상태
@@ -33,13 +34,29 @@ export default function StudioEpisodeEditorContent() {
     const [anchors, setAnchors] = useState<Anchor[]>([]);
     const paragraphs = useMemo(() => splitParagraphs(body), [body]);
 
+    // 에피소드 리스트 로드 (서버 API)
+    const reloadList = useCallback(async () => {
+        if (!workId) return;
+        setLoadingList(true);
+        try {
+            const data = await listEpisodes(workId);
+            setEpisodeList(data);
+        } catch (err) {
+            console.error('에피소드 목록 로딩 실패:', err);
+        } finally {
+            setLoadingList(false);
+        }
+    }, [workId]);
+
     useEffect(() => {
+        // 1) 작품 정보 (일단 로컬/Mock 유지)
         const w = getWork(workId);
         setWorkTitle(w?.title ?? '(unknown work)');
 
-        const metas = listEpisodeMetas(workId);
-        setEpisodeList(metas);
+        // 2) 에피소드 목록 (서버 API 호출)
+        reloadList();
 
+        // 3) 선택 에피소드 상세 (일단 로컬 유지)
         const ep = getEpisode(episodeId);
         if (ep) {
             setEpisode(ep);
@@ -47,9 +64,7 @@ export default function StudioEpisodeEditorContent() {
             setBody(ep.body);
             setAnchors(ep.anchors ?? []);
         }
-    }, [workId, episodeId]);
-
-    const reloadList = () => setEpisodeList(listEpisodeMetas(workId));
+    }, [workId, episodeId, reloadList]);
 
     const goEpisode = (id: string) => router.push(`/palace2/studio/${workId}/episodes/${id}`);
 
