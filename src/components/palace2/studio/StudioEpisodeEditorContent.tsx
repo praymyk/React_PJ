@@ -1,29 +1,37 @@
 'use client';
 
-import { listEpisodes, type EpisodeSummary } from '@/api/episode';
+import { 
+    listEpisodes, 
+    createEpisode as createEpisodeApi, 
+    getEpisode as getEpisodeApi,
+    updateEpisode as updateEpisodeApi,
+    type EpisodeSummary,
+    type EpisodeDetail,
+    type Anchor
+} from '@/api/episode';
+import type { WorkCreateResponse } from '@/api/works';
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import styles from './StudioEpisodeEditorContent.module.scss';
-import {
-    getEpisode,
-    getWork,
-    nextEpisodeNo,
-    saveEpisode,
-    splitParagraphs,
-    createEpisode,
-    type Anchor,
-    type Episode,
-} from './storage';
 
-export default function StudioEpisodeEditorContent() {
+// utils for splitting paragraphs
+function splitParagraphs(raw: string | null | undefined) {
+    if (!raw) return [];
+    return raw
+        .split(/\n{2,}/g)
+        .map(s => s.trim())
+        .filter(Boolean);
+}
+
+export default function StudioEpisodeEditorContent({ initialWork }: { initialWork?: WorkCreateResponse }) {
     const router = useRouter();
     const params = useParams<{ workId: string; episodeId: string }>();
 
     const workId = params?.workId;
     const episodeId = params?.episodeId;
 
-    const [workTitle, setWorkTitle] = useState<string>('(loading)');
-    const [episode, setEpisode] = useState<Episode | null>(null);
+    const [workTitle, setWorkTitle] = useState<string>(initialWork?.title ?? '(loading)');
+    const [episode, setEpisode] = useState<EpisodeDetail | null>(null);
     const [episodeList, setEpisodeList] = useState<EpisodeSummary[]>([]);
     const [loadingList, setLoadingList] = useState(false);
     const [saving, setSaving] = useState(false);
@@ -41,38 +49,62 @@ export default function StudioEpisodeEditorContent() {
         try {
             const data = await listEpisodes(workId);
             setEpisodeList(data);
+
+            // 'new' 상태일 때 넘버링 자동 완성
+            if (episodeId === 'new') {
+                const maxNo = data.reduce((max, ep) => Math.max(max, ep.episodeNo), 0);
+                const nextNo = maxNo + 1;
+                setEpisode({
+                    id: 'new', workId: workId as string, episodeNo: nextNo, title: `${nextNo}화 제목을 입력하세요`,
+                    body: '', paragraphs: [], anchors: [], status: 'DRAFT',
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                });
+                setTitle(`${nextNo}화 제목을 입력하세요`);
+                setBody('');
+                setAnchors([]);
+            }
         } catch (err) {
             console.error('에피소드 목록 로딩 실패:', err);
         } finally {
             setLoadingList(false);
         }
-    }, [workId]);
+    }, [workId, episodeId]);
 
     useEffect(() => {
-        // 1) 작품 정보 (일단 로컬/Mock 유지)
-        const w = getWork(workId);
-        setWorkTitle(w?.title ?? '(unknown work)');
+        // 1) 작품 정보 설정 (Props가 있으면 바로 사용)
+        if (initialWork) {
+            setWorkTitle(initialWork.title);
+        }
 
         // 2) 에피소드 목록 (서버 API 호출)
         reloadList();
 
-        // 3) 선택 에피소드 상세 (일단 로컬 유지)
-        const ep = getEpisode(episodeId);
-        if (ep) {
-            setEpisode(ep);
-            setTitle(ep.title);
-            setBody(ep.body);
-            setAnchors(ep.anchors ?? []);
-        }
-    }, [workId, episodeId, reloadList]);
+        // 3) 선택 에피소드 상세 (서버 API 호출)
+        const fetchEpisodeDetail = async () => {
+            if (episodeId && episodeId !== 'new' && workId) {
+                try {
+                    const ep = await getEpisodeApi(workId, episodeId);
+                    setEpisode(ep);
+                    setTitle(ep.title);
+                    setBody(ep.body ?? '');
+                    setAnchors(ep.anchors ?? []);
+                } catch (error) {
+                    console.error('에피소드 상세 조회 실패:', error);
+                    alert('에피소드 정보를 불러오는데 실패했습니다.');
+                }
+            }
+        };
+
+        fetchEpisodeDetail();
+
+    }, [workId, episodeId, reloadList, initialWork]);
 
     const goEpisode = (id: string) => router.push(`/palace2/studio/${workId}/episodes/${id}`);
 
     const onCreateNext = () => {
-        const no = nextEpisodeNo(workId);
-        const ep = createEpisode(workId, no);
-        reloadList();
-        goEpisode(ep.id);
+        if (!workId) return;
+        goEpisode('new');
     };
 
     const addAuthorAnchor = (afterParagraphIndex: number) => {
@@ -87,21 +119,34 @@ export default function StudioEpisodeEditorContent() {
         setAnchors(prev => prev.filter(a => a.id !== anchorId));
     };
 
-    const onSave = () => {
-        if (!episode) return;
+    const onSave = async () => {
+        if (!episode || !workId) return;
         setSaving(true);
         try {
-            const updated: Episode = {
-                ...episode,
-                title: title.trim() || `Episode ${episode.episodeNo}`,
+            const payload = {
+                episodeNo: episode.episodeNo,
+                title: title.trim() || `${episode.episodeNo}화`,
                 body,
                 paragraphs,
                 anchors,
-                updatedAt: new Date().toISOString(),
+                status: episode.status,
             };
-            saveEpisode(updated);
-            setEpisode(updated);
-            reloadList();
+
+            if (episode.id === 'new') {
+                // 신규 등록: POST 요청으로 한 번에 모든 데이터 생성
+                const newEp = await createEpisodeApi(workId, payload);
+                
+                await reloadList();
+                goEpisode(newEp.id);
+            } else {
+                // 본문/앵커 업데이트 (PUT)
+                await updateEpisodeApi(workId, episode.id, payload);
+                setEpisode({ ...episode, ...payload, updatedAt: new Date().toISOString() });
+                await reloadList();
+            }
+        } catch (err: any) {
+            console.error('저장 실패:', err);
+            alert('저장 중 오류가 발생했습니다.');
         } finally {
             setSaving(false);
         }

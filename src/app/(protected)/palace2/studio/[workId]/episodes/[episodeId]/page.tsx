@@ -29,6 +29,8 @@ export default async function StudioEpisodeEditorPage({
             redirect('/palace2/studio');
         }
 
+        return <StudioEpisodeEditorContent initialWork={work} />;
+
     } catch (error) {
         // 리다이렉트 예외는 무시하고 다른 에러만 처리
         if ((error as any).digest?.startsWith('NEXT_REDIRECT')) {
@@ -39,6 +41,4 @@ export default async function StudioEpisodeEditorPage({
         // 세션 만료 등의 사유로 정보를 가져오지 못하면 로그인 페이지로
         redirect('/login');
     }
-
-    return <StudioEpisodeEditorContent />;
 }

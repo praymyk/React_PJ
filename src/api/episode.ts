@@ -59,7 +59,7 @@ export async function getEpisode(workId: string | number, episodeId: string | nu
  */
 export async function createEpisode(
     workId: string | number,
-    payload: { episodeNo: number; title?: string }
+    payload: Partial<EpisodeDetail>
 ): Promise<EpisodeDetail> {
     const res = await api.post<EpisodeDetail>(`/api/works/${workId}/episodes`, payload);
     return res.data;

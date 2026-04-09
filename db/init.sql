@@ -303,31 +303,6 @@ CREATE TABLE IF NOT EXISTS works (
     FOREIGN KEY (author_user_id) REFERENCES users(id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-
-
--- 4. 작품 에피소드(Episode) 테이블
-CREATE TABLE IF NOT EXISTS work_episodes (
-                                             id               BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-                                             work_id          BIGINT UNSIGNED NOT NULL,
-                                             episode_no       INT NOT NULL,
-                                             title            VARCHAR(200) NOT NULL,
-    -- 본문 원문(작성 그대로)
-    raw_text         LONGTEXT NULL,
-    -- 문단 배열(JSON) - 빈 줄 기준 분리된 결과 저장용(선택)
-    paragraphs_json  JSON NULL,
-    -- 공개 상태: DRAFT / PUBLISHED / PRIVATE / DELETED 등
-    status           VARCHAR(20) NOT NULL DEFAULT 'DRAFT',
-    created_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    UNIQUE KEY uq_episode_work_no (work_id, episode_no),
-    INDEX idx_episode_work (work_id),
-    INDEX idx_episode_status (status),
-    CONSTRAINT fk_episode_work
-    FOREIGN KEY (work_id) REFERENCES works(id)
-                                                                  ON DELETE CASCADE
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 -- 더미 작품 1개
 INSERT INTO works (
     company_id, author_user_id, title, description,
@@ -347,12 +322,36 @@ VALUES (
        );
 
 
+-- 4. 작품 에피소드(Episode) 테이블
+CREATE TABLE IF NOT EXISTS work_episodes (
+                                             id               BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                                             work_id          BIGINT UNSIGNED NOT NULL,
+                                             episode_no       INT NOT NULL,
+                                             title            VARCHAR(200) NOT NULL,
+    raw_text         LONGTEXT NULL,
+    paragraphs_json  JSON NULL,
+    anchors_json     JSON NULL,
+    status           VARCHAR(20) NOT NULL DEFAULT 'DRAFT',
+    created_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_episode_work_no (work_id, episode_no),
+    INDEX idx_episode_work (work_id),
+    INDEX idx_episode_status (status),
+    CONSTRAINT fk_episode_work
+    FOREIGN KEY (work_id) REFERENCES works(id)
+                                                                  ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
 -- 더미 에피소드 1화
-INSERT INTO work_episodes (work_id, episode_no, title, raw_text, status)
+INSERT INTO work_episodes (work_id, episode_no, title, raw_text, paragraphs_json, anchors_json, status)
 VALUES (
            (SELECT id FROM works WHERE title='13번 방의 진실' ORDER BY id DESC LIMIT 1),
     1,
     'Episode 1',
     '복도 끝, 13번 방 앞에 섰다...\n\n바닥에는 누군가 급히 끌고 간 듯한 자국...\n\n문틈 아래로는 희미한 빛이 새어 나왔다...',
+    JSON_ARRAY('복도 끝, 13번 방 앞에 섰다...', '바닥에는 누군가 급히 끌고 간 듯한 자국...', '문틈 아래로는 희미한 빛이 새어 나왔다...'),
+    JSON_ARRAY(JSON_OBJECT('id', 'a_123', 'afterParagraphIndex', 0, 'source', 'AUTHOR', 'caption', '핏자국 확인')),
     'DRAFT'
     );
