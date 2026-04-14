@@ -20,4 +20,4 @@ docker run --name mysql-reactpj \
   // ec2 DB 접속
  cd /Users/jys/dev/react-pj/
 
- mysql -h mykspj-mysql.cvacmycywd6n.ap-southeast-2.rds.amazonaws.com -P 3306 -u admin -p < db/init.sql
+ mysql -h qqupdb.cvacmycywd6n.ap-southeast-2.rds.amazonaws.com -P 3306 -u admin -p < db/init.sql
