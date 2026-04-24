@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import api from '@utils/axios';
+import { logout } from '@/api/auth';
 
 import styles from '@components/layout/header/Header.module.scss';
 import { FiSun, FiMoon } from 'react-icons/fi';
@@ -60,19 +61,15 @@ export default function Header() {
         }
     };
 
+    // 로그아웃 API를 거쳐 서버/클라이언트 인증 상태를 함께 정리한다.
     const handleLogout = async () => {
         try {
-            await api.post('/api/auth/logout');
+            await logout();
         } catch (e) {
             console.warn('[Header] logout request failed', e);
-        } finally {
-            try {
-                localStorage.removeItem('theme');
-                sessionStorage.clear();
-
-            } catch (_) {}
-            window.location.href = '/login';
         }
+
+        window.location.href = '/login';
     };
 
     // 아직 마운트되기 전(null)

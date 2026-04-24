@@ -20,6 +20,27 @@ export async function login(req: LoginRequest): Promise<LoginResponse> {
 }
 
 /**
+ * 클라이언트에 저장된 인증 관련 상태를 정리한다.
+ */
+export function clearClientAuthState(): void {
+    if (typeof window === 'undefined') return;
+
+    localStorage.removeItem('theme');
+    sessionStorage.clear();
+}
+
+/**
+ * 로그아웃 API를 호출하고 클라이언트 인증 상태를 정리한다.
+ */
+export async function logout(): Promise<void> {
+    try {
+        await api.post('/api/auth/logout');
+    } finally {
+        clearClientAuthState();
+    }
+}
+
+/**
  * CSR: 현재 사용자 조회
  */
 export async function getMe(): Promise<MeResponse> {
